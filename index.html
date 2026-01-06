@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onitsujj | Building Intelligence</title>
+
+    <!-- Custom Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-visitor-state="new" data-time-period="day">
+    <!-- Neural Network Background Canvas -->
+    <canvas id="neural-bg" aria-hidden="true"></canvas>
+
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+    <!-- Cursor Elements -->
+    <div class="cursor-glow" aria-hidden="true"></div>
+    <div class="cursor-whisper" aria-hidden="true"></div>
+
+    <!-- Behavior Whisper - appears based on actions -->
+    <div class="behavior-whisper" aria-hidden="true"></div>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" aria-label="Toggle sound" data-sound="off">
+        <span class="sound-on">♪</span>
+        <span class="sound-off">♪̸</span>
+    </button>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <!-- Particle Canvas for Name -->
+        <canvas id="particle-name" aria-hidden="true"></canvas>
+
+        <div class="hero-content">
+            <p class="hero-whisper">
+                <span class="greeting-text">something is waking up...</span>
+            </p>
+
+            <!-- Spacer for particle name - text hidden but reserves space -->
+            <h1 class="name-spacer" aria-hidden="true"></h1>
+            <span class="sr-only">Onitsujj</span>
+
+            <p class="title">
+                <span class="glitch-text" data-text="I teach machines to think">I teach machines to think</span>
+            </p>
+            <p class="tagline">Building agents that feel alive</p>
+            <a href="#projects" class="cta">
+                <span class="cta-text">Explore the grid</span>
+                <span class="cta-arrow">↓</span>
+            </a>
+        </div>
+        <div class="hero-ambient"></div>
+    </header>
+
+    <!-- Scroll Narrative - fragments that appear as you scroll -->
+    <div class="scroll-narrative" aria-hidden="true">
+        <span class="narrative-fragment" data-trigger="0.1">Every agent starts as a question...</span>
+        <span class="narrative-fragment" data-trigger="0.25">What if software could understand?</span>
+        <span class="narrative-fragment" data-trigger="0.5">I built this to show you, not tell you...</span>
+        <span class="narrative-fragment" data-trigger="0.75">The code is listening...</span>
+    </div>
+
+    <!-- Projects Section -->
+    <main id="projects" class="projects-section">
+        <div class="section-header">
+            <h2 class="section-title">Selected Works</h2>
+            <p class="section-whisper">hover to wake them</p>
+        </div>
+
+        <div class="projects-grid">
+            <!-- Project 1 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="1">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">01</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">React • Node.js • OpenAI</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">Agent System</span>
+                            <p class="expanded-description">An autonomous agent that processes natural language and executes complex workflows.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+
+            <!-- Project 2 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="2">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">02</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">Python • FastAPI • LangChain</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">AI Pipeline</span>
+                            <p class="expanded-description">Multi-model orchestration system for intelligent document processing.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+
+            <!-- Project 3 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="3">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">03</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">TypeScript • Next.js • Claude API</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">Conversational UI</span>
+                            <p class="expanded-description">Voice-first interface that understands context and intent.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+
+            <!-- Project 4 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="4">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">04</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">Rust • WebAssembly • GPT-4</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">Edge Intelligence</span>
+                            <p class="expanded-description">Lightweight agents running at the edge with sub-100ms latency.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+
+            <!-- Project 5 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="5">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">05</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">Go • Kubernetes • Vector DB</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">Memory System</span>
+                            <p class="expanded-description">Long-term memory architecture for persistent agent knowledge.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+
+            <!-- Project 6 -->
+            <article class="project-card" data-cursor-text="View Project" data-project-id="6">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div class="project-image">
+                            <div class="placeholder-visual">
+                                <span class="project-number">06</span>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="glitch-text" data-text="Project Name">Project Name</h3>
+                            <p class="tech-stack">Swift • iOS • On-Device ML</p>
+                        </div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <div class="card-expanded">
+                        <div class="expanded-content">
+                            <span class="expanded-label">Mobile Agent</span>
+                            <p class="expanded-description">Privacy-first AI assistant running entirely on device.</p>
+                            <a href="#" class="project-link">Explore →</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-breathing"></div>
+                <div class="card-interest-indicator"></div>
+            </article>
+        </div>
+    </main>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-content">
+            <p class="about-whisper">the human behind the agents</p>
+            <p class="about-text">
+                I build systems that think, learn, and adapt. Every agent I create is designed to feel less like software and more like a collaborator.
+                <span class="highlight">Curious minds</span> welcome.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-cta">
+                <span class="glitch-text" data-text="Let's build something intelligent">Let's build something intelligent</span>
+            </p>
+            <nav class="footer-links">
+                <a href="https://github.com/onitsujj" target="_blank" rel="noopener" class="footer-link magnetic-btn" data-cursor-text="Code">
+                    <span>GitHub</span>
+                </a>
+                <a href="https://linkedin.com/in/onitsujj" target="_blank" rel="noopener" class="footer-link magnetic-btn" data-cursor-text="Connect">
+                    <span>LinkedIn</span>
+                </a>
+                <a href="mailto:hello@onitsujj.com" class="footer-link magnetic-btn" data-cursor-text="Say Hi">
+                    <span>Email</span>
+                </a>
+            </nav>
+        </div>
+        <p class="copyright">© 2026 Onitsujj · Crafted with curiosity</p>
+        <p class="signature">This portfolio is watching you. In a friendly way.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
