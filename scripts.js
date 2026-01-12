@@ -87,10 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'high':
                 default:
-                    CONFIG.particleCount = 3000;
-                    CONFIG.neuralNodes = 50;
-                    CONFIG.neuralConnections = 80;
-                    CONFIG.trailLength = 20;
+                    CONFIG.particleCount = 5000;
+                    CONFIG.neuralNodes = 70;
+                    CONFIG.neuralConnections = 100;
+                    CONFIG.trailLength = 25;
                     CONFIG.enableCursorTrail = true;
                     break;
             }
@@ -696,6 +696,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const soundSystem = new SoundSystem();
     const behaviorSystem = new BehaviorSystem();
 
+    // Expose for testing
+    window.particleSystem = particleSystem;
+
     if (state.visitCount > 1) behaviorSystem.onReturn();
 
     // ========================================
@@ -795,6 +798,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const projectId = card.dataset.projectId;
 
         if (!state.cardInterests[projectId]) state.cardInterests[projectId] = 0;
+
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('visible'); // Ensure it's visible
+
+            // Increment interest count
+            state.cardInterests[projectId]++;
+            localStorage.setItem('portfolio_interests', JSON.stringify(state.cardInterests));
+
+            // Trigger behavior system
+            behaviorSystem.onCardInterest(projectId, state.cardInterests[projectId]);
+            soundSystem.playHover();
+
+            if (state.cardInterests[projectId] >= 3) {
+                card.classList.add('interested');
+            }
+        });
+
         if (state.cardInterests[projectId] >= 3) card.classList.add('interested');
 
         card.addEventListener('mousemove', (e) => {
@@ -977,5 +997,51 @@ document.addEventListener('DOMContentLoaded', () => {
     → hello@onitsujj.com
 
     `, 'color: #00ffff; font-family: monospace; font-size: 11px;');
+
+
+    // ========================================
+    // COMMAND DOCK LOGIC
+    // ========================================
+    const dockItems = document.querySelectorAll('.dock-item');
+
+    dockItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            soundSystem.playHover();
+        });
+
+        item.addEventListener('click', (e) => {
+            // Remove active class from all
+            dockItems.forEach(i => i.classList.remove('active'));
+            // Add to clicked (unless it's an external link)
+            const href = item.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                item.classList.add('active');
+                state.hasInteracted = true;
+                soundSystem.playClick();
+            }
+        });
+    });
+
+    // Update active state on scroll
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+
+        // Simple scroll spy logic
+        if (scrollY < window.innerHeight * 0.5) {
+            updateActiveDock('Home');
+        } else {
+            updateActiveDock('Projects');
+        }
+    });
+
+    function updateActiveDock(label) {
+        dockItems.forEach(item => {
+            if (item.getAttribute('aria-label') === label) {
+                item.classList.add('active');
+            } else if (item.getAttribute('href').startsWith('#')) {
+                item.classList.remove('active');
+            }
+        });
+    }
 
 });

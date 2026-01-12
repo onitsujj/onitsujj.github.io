@@ -271,6 +271,14 @@
         </div>
     </section>
 
+    <!-- NEW: Scanline Overlay -->
+    <div class="holo-scanline"></div>
+
+    <!-- NEW: Ambient Auroras -->
+    <div class="ambient-aura aura-1"></div>
+    <div class="ambient-aura aura-2"></div>
+    <div class="ambient-aura aura-3"></div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -296,7 +304,45 @@
         <p class="signature">This portfolio is watching you. In a friendly way.</p>
     </footer>
 
-    <script src="scripts.js?v=2.0"></script>
+    <!-- NEW: Floating Command Dock -->
+    <nav class="command-dock">
+        <div class="dock-glass">
+            <a href="#" class="dock-item active" aria-label="Home" data-cursor-text="Home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="#projects" class="dock-item" aria-label="Projects" data-cursor-text="Works">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </a>
+            <div class="dock-divider"></div>
+            <a href="https://github.com/onitsujj" target="_blank" class="dock-item" aria-label="GitHub"
+                data-cursor-text="Code">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                    </path>
+                </svg>
+            </a>
+            <a href="mailto:hello@onitsujj.com" class="dock-item" aria-label="Contact" data-cursor-text="Contact">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+            </a>
+            <div class="sound-visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <script src="scripts.js?v=2.1"></script>
 </body>
 
 </html>

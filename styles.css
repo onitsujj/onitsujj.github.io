@@ -4,7 +4,9 @@
    ======================================== */
 
 /* Reset & Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -79,8 +81,15 @@ body {
 
 /* Restore cursor on touch devices */
 @media (hover: none) {
-    body { cursor: auto; }
-    .cursor-glow, .cursor-whisper, #cursor-trail { display: none !important; }
+    body {
+        cursor: auto;
+    }
+
+    .cursor-glow,
+    .cursor-whisper,
+    #cursor-trail {
+        display: none !important;
+    }
 }
 
 a {
@@ -218,10 +227,27 @@ a {
     pointer-events: none;
 }
 
-.narrative-fragment:nth-child(1) { top: 20%; left: 10%; }
-.narrative-fragment:nth-child(2) { top: 35%; right: 10%; text-align: right; }
-.narrative-fragment:nth-child(3) { top: 55%; left: 15%; }
-.narrative-fragment:nth-child(4) { top: 70%; right: 15%; text-align: right; }
+.narrative-fragment:nth-child(1) {
+    top: 20%;
+    left: 10%;
+}
+
+.narrative-fragment:nth-child(2) {
+    top: 35%;
+    right: 10%;
+    text-align: right;
+}
+
+.narrative-fragment:nth-child(3) {
+    top: 55%;
+    left: 15%;
+}
+
+.narrative-fragment:nth-child(4) {
+    top: 70%;
+    right: 15%;
+    text-align: right;
+}
 
 .narrative-fragment.visible {
     opacity: 1;
@@ -278,19 +304,51 @@ a {
 }
 
 @keyframes glitch-1 {
-    0%, 100% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
+
+    0%,
+    100% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
 }
 
 @keyframes glitch-2 {
-    0%, 100% { transform: translate(0); }
-    20% { transform: translate(2px, -2px); }
-    40% { transform: translate(2px, 2px); }
-    60% { transform: translate(-2px, -2px); }
-    80% { transform: translate(-2px, 2px); }
+
+    0%,
+    100% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(2px, -2px);
+    }
+
+    40% {
+        transform: translate(2px, 2px);
+    }
+
+    60% {
+        transform: translate(-2px, -2px);
+    }
+
+    80% {
+        transform: translate(-2px, 2px);
+    }
 }
 
 /* ========================================
@@ -347,8 +405,8 @@ body:hover .cursor-glow {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,255,255,0.03) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 50% 120%, rgba(255,255,255,0.02) 0%, transparent 50%);
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 120%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
     pointer-events: none;
     z-index: 1;
 }
@@ -431,7 +489,7 @@ body:hover .cursor-glow {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
     transform: translateX(-100%);
     transition: transform 0.6s var(--ease-out-expo);
 }
@@ -543,16 +601,33 @@ body:hover .cursor-glow {
     z-index: -1;
 }
 
-.project-card:nth-child(2) .card-breathing { animation-delay: -0.5s; }
-.project-card:nth-child(3) .card-breathing { animation-delay: -1s; }
-.project-card:nth-child(4) .card-breathing { animation-delay: -1.5s; }
-.project-card:nth-child(5) .card-breathing { animation-delay: -2s; }
-.project-card:nth-child(6) .card-breathing { animation-delay: -2.5s; }
+.project-card:nth-child(2) .card-breathing {
+    animation-delay: -0.5s;
+}
+
+.project-card:nth-child(3) .card-breathing {
+    animation-delay: -1s;
+}
+
+.project-card:nth-child(4) .card-breathing {
+    animation-delay: -1.5s;
+}
+
+.project-card:nth-child(5) .card-breathing {
+    animation-delay: -2s;
+}
+
+.project-card:nth-child(6) .card-breathing {
+    animation-delay: -2.5s;
+}
 
 .card-inner {
     position: relative;
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    background: rgba(10, 10, 10, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     border-radius: 16px;
     overflow: hidden;
     transition: all 0.5s var(--ease-out-expo);
@@ -573,7 +648,7 @@ body:hover .cursor-glow {
 .card-glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -682,7 +757,7 @@ body:hover .cursor-glow {
     text-transform: uppercase;
     letter-spacing: 0.15em;
     color: var(--text-secondary);
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     padding: 0.3rem 0.8rem;
     border-radius: 100px;
     margin-bottom: 0.75rem;
@@ -799,11 +874,239 @@ body:hover .cursor-glow {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--text-bright);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(100%);
     transition: transform 0.4s var(--ease-out-expo);
-    z-index: -1;
 }
+
+.footer-link:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-bright);
+}
+
+.footer-link:hover::before {
+    transform: translateY(0);
+}
+
+.copyright {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-whisper);
+    margin-bottom: var(--space-xs);
+}
+
+.signature {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-whisper);
+    opacity: 0.5;
+}
+
+/* ========================================
+   NEW: AMBIENT AURORA
+   ======================================== */
+.ambient-aura {
+    position: fixed;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.aura-1 {
+    background: radial-gradient(circle, #312e81, transparent 70%);
+    top: -10%;
+    left: -10%;
+    animation: drift 20s infinite alternate;
+}
+
+.aura-2 {
+    background: radial-gradient(circle, #0891b2, transparent 70%);
+    bottom: -10%;
+    right: -10%;
+    animation: drift 25s infinite alternate-reverse;
+}
+
+.aura-3 {
+    background: radial-gradient(circle, #701a75, transparent 70%);
+    top: 40%;
+    left: 40%;
+    width: 40vw;
+    height: 40vw;
+    animation: pulse-drift 30s infinite;
+}
+
+@keyframes drift {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(50px, 30px);
+    }
+}
+
+@keyframes pulse-drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translate(-30px, 20px) scale(1.1);
+        opacity: 0.2;
+    }
+
+    100% {
+        transform: translate(10px, -10px) scale(1);
+        opacity: 0.1;
+    }
+}
+
+/* ========================================
+   NEW: HOLO SCANLINE
+   ======================================== */
+.holo-scanline {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            transparent 50%,
+            rgba(0, 0, 0, 0.05) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 9990;
+    opacity: 0.3;
+}
+
+/* ========================================
+   NEW: COMMAND DOCK
+   ======================================== */
+.command-dock {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    perspective: 1000px;
+}
+
+.dock-glass {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 4px 30px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    border-radius: 100px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.dock-glass:hover {
+    background: rgba(20, 20, 20, 0.75);
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.dock-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--text-secondary);
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    background: transparent;
+    cursor: pointer;
+    /* Restore system cursor */
+}
+
+.dock-item:hover,
+.dock-item.active {
+    color: var(--text-bright);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dock-item:hover {
+    transform: translateY(-4px) scale(1.1);
+}
+
+.dock-item:active {
+    transform: translateY(-2px) scale(0.95);
+}
+
+.dock-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 0.25rem;
+}
+
+/* Sound Visualizer in Dock */
+.sound-visualizer {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 16px;
+    margin-left: 0.5rem;
+    opacity: 0.5;
+}
+
+.sound-toggle[data-sound="on"]~.command-dock .sound-visualizer {
+    opacity: 1;
+}
+
+.bar {
+    width: 3px;
+    background: var(--text-secondary);
+    border-radius: 10px;
+    animation: visualize 1s ease-in-out infinite;
+}
+
+.bar:nth-child(1) {
+    height: 40%;
+    animation-delay: 0s;
+}
+
+.bar:nth-child(2) {
+    height: 80%;
+    animation-delay: 0.1s;
+}
+
+.bar:nth-child(3) {
+    height: 50%;
+    animation-delay: 0.2s;
+}
+
+@keyframes visualize {
+
+    0%,
+    100% {
+        height: 30%;
+        opacity: 0.5;
+    }
+
+    50% {
+        height: 90%;
+        opacity: 1;
+    }
+}
+
+
 
 .footer-link:hover {
     color: var(--bg-void);
@@ -833,8 +1136,13 @@ body:hover .cursor-glow {
    ANIMATIONS
    ======================================== */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeInUp {
@@ -842,6 +1150,7 @@ body:hover .cursor-glow {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -849,10 +1158,13 @@ body:hover .cursor-glow {
 }
 
 @keyframes breathe {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.3;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.6;
         transform: scale(1.005);
@@ -864,9 +1176,11 @@ body:hover .cursor-glow {
         opacity: 0;
         transform: scale(0.8);
     }
+
     50% {
         opacity: 0.3;
     }
+
     100% {
         opacity: 0;
         transform: scale(2);
@@ -874,14 +1188,28 @@ body:hover .cursor-glow {
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(4px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(4px);
+    }
 }
 
 /* Data scramble animation for glitch effect */
 @keyframes scramble {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
 }
 
 /* ========================================
@@ -938,13 +1266,18 @@ body:hover .cursor-glow {
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 
-    #neural-bg, #cursor-trail, #particle-name {
+    #neural-bg,
+    #cursor-trail,
+    #particle-name {
         display: none;
     }
 
