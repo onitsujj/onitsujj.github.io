@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'high':
                 default:
-                    CONFIG.particleCount = 2000;
+                    CONFIG.particleCount = 3000;
                     CONFIG.neuralNodes = 50;
                     CONFIG.neuralConnections = 80;
                     CONFIG.trailLength = 20;
@@ -216,10 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this.ctx = canvas.getContext('2d');
             this.particles = [];
             this.mouse = { x: 0, y: 0, radius: 100 };
-            this.text = 'Onitsujj';
+            this.text = 'ONITSUJJ';
             this.assembled = false;
             // Check for touch capability to disable repulsion on scroll
             this.isTouch = window.matchMedia('(hover: none)').matches;
+            this.isMobile = false;
 
             // Physics constants (per second, scaled by delta)
             this.attractionStrength = 1.8;  // Per second
@@ -255,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const hero = document.querySelector('.hero');
             this.canvas.width = hero.offsetWidth;
             this.canvas.height = hero.offsetHeight;
+            this.isMobile = window.innerWidth <= 1024;
         }
 
         createParticles() {
@@ -289,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
             const data = imageData.data;
-            const gap = Performance.tier === 'low' ? 6 : Performance.tier === 'medium' ? 5 : 4;
+            const gap = Performance.tier === 'low' ? 6 : Performance.tier === 'medium' ? 5 : 3;
 
             this.particles = [];
 
@@ -328,9 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dy = this.mouse.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
-                // Repel from mouse (delta-scaled) - ONLY if not on touch device AND screen is wide enough
+                // Repel from mouse (delta-scaled) - ONLY if not on touch device AND not on mobile
                 // We strictly disable repulsion on mobile/tablets (< 1024px) to ensure readability while scrolling
-                if (!this.isTouch && window.innerWidth > 1024 && dist < this.mouse.radius) {
+                if (!this.isTouch && !this.isMobile && dist < this.mouse.radius) {
                     const force = (this.mouse.radius - dist) / this.mouse.radius;
                     const angle = Math.atan2(dy, dx);
                     p.vx -= Math.cos(angle) * force * this.repelStrength * delta;
