@@ -1221,6 +1221,16 @@ body:hover .cursor-glow {
         --space-xl: 4rem;
     }
 
+    /* Boost Aurora visibility on mobile */
+    .ambient-aura {
+        width: 120vw;
+        height: 120vw;
+        filter: blur(80px);
+        /* Reduced blur relative to size for more impact */
+        opacity: 0.25;
+        /* Slightly increased opacity */
+    }
+
     .projects-section {
         padding: var(--space-lg) var(--space-sm);
     }
