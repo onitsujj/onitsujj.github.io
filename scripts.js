@@ -231,8 +231,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         init() {
             this.resize();
+
+            // robust touch detection
+            const setTouch = () => {
+                this.isTouch = true;
+                // Remove listener once detected to save resources
+                window.removeEventListener('touchstart', setTouch);
+            };
+            window.addEventListener('touchstart', setTouch, { passive: true });
+
             window.addEventListener('resize', () => {
-                this.isTouch = window.matchMedia('(hover: none)').matches;
+                // Keep the matchMedia check as a backup/initial state
+                if (!this.isTouch) {
+                    this.isTouch = window.matchMedia('(hover: none)').matches;
+                }
                 this.resize();
                 this.createParticles();
             });
@@ -256,14 +268,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Calculate position of the spacer relative to the canvas
             const spacer = document.querySelector('.name-spacer');
             const hero = document.querySelector('.hero');
-            
+
             let textX = offscreen.width / 2;
             let textY = offscreen.height / 2;
 
             if (spacer && hero) {
                 const spacerRect = spacer.getBoundingClientRect();
                 const heroRect = hero.getBoundingClientRect();
-                
+
                 // Calculate center relative to hero container
                 textX = (spacerRect.left - heroRect.left) + (spacerRect.width / 2);
                 textY = (spacerRect.top - heroRect.top) + (spacerRect.height / 2);
