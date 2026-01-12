@@ -888,6 +888,11 @@ body:hover .cursor-glow {
    RESPONSIVE
    ======================================== */
 @media (max-width: 768px) {
+    :root {
+        --space-lg: 2.5rem;
+        --space-xl: 4rem;
+    }
+
     .projects-section {
         padding: var(--space-lg) var(--space-sm);
     }

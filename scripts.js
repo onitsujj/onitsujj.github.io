@@ -218,6 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.mouse = { x: 0, y: 0, radius: 100 };
             this.text = 'Onitsujj';
             this.assembled = false;
+            // Check for touch capability to disable repulsion on scroll
+            this.isTouch = window.matchMedia('(hover: none)').matches;
 
             // Physics constants (per second, scaled by delta)
             this.attractionStrength = 1.8;  // Per second
@@ -230,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         init() {
             this.resize();
             window.addEventListener('resize', () => {
+                this.isTouch = window.matchMedia('(hover: none)').matches;
                 this.resize();
                 this.createParticles();
             });
@@ -250,11 +253,27 @@ document.addEventListener('DOMContentLoaded', () => {
             offscreen.width = this.canvas.width;
             offscreen.height = this.canvas.height;
 
+            // Calculate position of the spacer relative to the canvas
+            const spacer = document.querySelector('.name-spacer');
+            const hero = document.querySelector('.hero');
+            
+            let textX = offscreen.width / 2;
+            let textY = offscreen.height / 2;
+
+            if (spacer && hero) {
+                const spacerRect = spacer.getBoundingClientRect();
+                const heroRect = hero.getBoundingClientRect();
+                
+                // Calculate center relative to hero container
+                textX = (spacerRect.left - heroRect.left) + (spacerRect.width / 2);
+                textY = (spacerRect.top - heroRect.top) + (spacerRect.height / 2);
+            }
+
             offCtx.font = `700 ${fontSize}px 'Space Grotesk', sans-serif`;
             offCtx.fillStyle = 'white';
             offCtx.textAlign = 'center';
             offCtx.textBaseline = 'middle';
-            offCtx.fillText(this.text, offscreen.width / 2, offscreen.height / 2);
+            offCtx.fillText(this.text, textX, textY);
 
             const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
             const data = imageData.data;
@@ -297,8 +316,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dy = this.mouse.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
-                // Repel from mouse (delta-scaled)
-                if (dist < this.mouse.radius) {
+                // Repel from mouse (delta-scaled) - ONLY if not on touch device
+                if (!this.isTouch && dist < this.mouse.radius) {
                     const force = (this.mouse.radius - dist) / this.mouse.radius;
                     const angle = Math.atan2(dy, dx);
                     p.vx -= Math.cos(angle) * force * this.repelStrength * delta;
