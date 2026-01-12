@@ -328,8 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dy = this.mouse.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
-                // Repel from mouse (delta-scaled) - ONLY if not on touch device
-                if (!this.isTouch && dist < this.mouse.radius) {
+                // Repel from mouse (delta-scaled) - ONLY if not on touch device AND screen is wide enough
+                // We strictly disable repulsion on mobile/tablets (< 1024px) to ensure readability while scrolling
+                if (!this.isTouch && window.innerWidth > 1024 && dist < this.mouse.radius) {
                     const force = (this.mouse.radius - dist) / this.mouse.radius;
                     const angle = Math.atan2(dy, dx);
                     p.vx -= Math.cos(angle) * force * this.repelStrength * delta;
