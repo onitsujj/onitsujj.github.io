@@ -1015,6 +1015,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ========================================
+    // COMMAND DOCK FADE ON FOOTER VISIBILITY
+    // ========================================
+    const commandDock = document.querySelector('.command-dock');
+    const footer = document.querySelector('.footer');
+
+    if (commandDock && footer) {
+        const footerObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                // Hide dock when 80% of footer enters viewport
+                commandDock.classList.toggle('dock-hidden', entry.isIntersecting);
+            });
+        }, {
+            threshold: 0.8
+        });
+
+        footerObserver.observe(footer);
+    }
+
+    // ========================================
     // COMMAND DOCK LOGIC
     // ========================================
     const dockItems = document.querySelectorAll('.dock-item');

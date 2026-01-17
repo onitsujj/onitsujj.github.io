@@ -969,6 +969,14 @@ body:hover .cursor-glow {
     transform: translateX(-50%);
     z-index: 9999;
     perspective: 1000px;
+    opacity: 1;
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.command-dock.dock-hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    pointer-events: none;
 }
 
 .dock-glass {
