@@ -137,46 +137,20 @@ a {
 }
 
 /* ========================================
-   SOUND TOGGLE
+   FOCUS VISIBLE STYLES (Accessibility)
    ======================================== */
-.sound-toggle {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    width: 44px;
-    height: 44px;
-    background: transparent;
-    border: 1px solid var(--border-subtle);
-    border-radius: 50%;
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    cursor: none;
-    z-index: 1000;
-    transition: all 0.3s var(--ease-out-expo);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.cta:focus-visible,
+.footer-link:focus-visible,
+.dock-item:focus-visible,
+.project-link:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--glitch-1);
+    outline-offset: 2px;
 }
 
-.sound-toggle:hover {
-    border-color: var(--border-hover);
-    color: var(--text-secondary);
-}
-
-.sound-toggle .sound-on {
-    display: none;
-}
-
-.sound-toggle .sound-off {
-    display: block;
-}
-
-.sound-toggle[data-sound="on"] .sound-on {
-    display: block;
-}
-
-.sound-toggle[data-sound="on"] .sound-off {
-    display: none;
+.project-card:focus-visible .card-inner {
+    outline: 2px solid var(--glitch-1);
+    outline-offset: 2px;
 }
 
 /* ========================================
@@ -880,8 +854,8 @@ body:hover .cursor-glow {
 }
 
 .footer-link:hover {
-    border-color: var(--text-secondary);
-    color: var(--text-bright);
+    color: var(--bg-void);
+    border-color: var(--text-bright);
 }
 
 .footer-link:hover::before {
@@ -891,15 +865,16 @@ body:hover .cursor-glow {
 .copyright {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--text-whisper);
-    margin-bottom: var(--space-xs);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
 }
 
 .signature {
     font-family: var(--font-mono);
     font-size: 0.65rem;
     color: var(--text-whisper);
-    opacity: 0.5;
+    letter-spacing: 0.1em;
 }
 
 /* ========================================
@@ -1054,82 +1029,6 @@ body:hover .cursor-glow {
     height: 20px;
     background: rgba(255, 255, 255, 0.1);
     margin: 0 0.25rem;
-}
-
-/* Sound Visualizer in Dock */
-.sound-visualizer {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    height: 16px;
-    margin-left: 0.5rem;
-    opacity: 0.5;
-}
-
-.sound-toggle[data-sound="on"]~.command-dock .sound-visualizer {
-    opacity: 1;
-}
-
-.bar {
-    width: 3px;
-    background: var(--text-secondary);
-    border-radius: 10px;
-    animation: visualize 1s ease-in-out infinite;
-}
-
-.bar:nth-child(1) {
-    height: 40%;
-    animation-delay: 0s;
-}
-
-.bar:nth-child(2) {
-    height: 80%;
-    animation-delay: 0.1s;
-}
-
-.bar:nth-child(3) {
-    height: 50%;
-    animation-delay: 0.2s;
-}
-
-@keyframes visualize {
-
-    0%,
-    100% {
-        height: 30%;
-        opacity: 0.5;
-    }
-
-    50% {
-        height: 90%;
-        opacity: 1;
-    }
-}
-
-
-
-.footer-link:hover {
-    color: var(--bg-void);
-    border-color: var(--text-bright);
-}
-
-.footer-link:hover::before {
-    transform: translateY(0);
-}
-
-.copyright {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-}
-
-.signature {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-whisper);
-    letter-spacing: 0.1em;
 }
 
 /* ========================================

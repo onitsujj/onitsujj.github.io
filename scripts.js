@@ -3,6 +3,43 @@
    Delta time + Performance mode + Adaptive quality
    ======================================== */
 
+// ========================================
+// SAFE LOCALSTORAGE HELPERS
+// ========================================
+function safeGetNumber(key, defaultValue) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (raw === null) return defaultValue;
+        const value = parseInt(raw, 10);
+        return isNaN(value) ? defaultValue : value;
+    } catch {
+        return defaultValue;
+    }
+}
+
+function safeGetJSON(key, defaultValue) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (raw === null) return defaultValue;
+        const parsed = JSON.parse(raw);
+        return parsed !== null ? parsed : defaultValue;
+    } catch {
+        return defaultValue;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+    } catch {
+        // localStorage unavailable (private browsing, quota exceeded)
+    }
+}
+
+// Expose for testing
+window.safeGetNumber = safeGetNumber;
+window.safeGetJSON = safeGetJSON;
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ========================================
@@ -16,15 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
         samples: [],
 
         detect() {
+            // Safe hardwareConcurrency fallback (defaults to 4 if undefined)
+            const cores = navigator.hardwareConcurrency || 4;
+
             // Check for low-end device indicators
             const isLowEnd = (
-                navigator.hardwareConcurrency <= 2 ||
+                cores <= 2 ||
                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                 window.innerWidth < 768
             );
 
             const isMedium = (
-                navigator.hardwareConcurrency <= 4 ||
+                cores <= 4 ||
                 window.innerWidth < 1200
             );
 
@@ -108,7 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
         idleTimeout: 5000,
         fastScrollThreshold: 50,
         targetFps: 60,
-        enableCursorTrail: true
+        enableCursorTrail: true,
+        // Behavior thresholds (extracted magic numbers)
+        cardInterestNotice: 3,
+        cardInterestHigh: 5,
+        maxConnectionDistance: 200
     };
 
     // Detect and apply initial settings
@@ -166,16 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollSpeed: 0,
         lastScrollY: 0,
         lastScrollTime: Date.now(),
-        soundEnabled: false,
-        visitCount: parseInt(localStorage.getItem('portfolio_visits') || '0'),
-        cardInterests: JSON.parse(localStorage.getItem('portfolio_interests') || '{}'),
+        visitCount: safeGetNumber('portfolio_visits', 0),
+        cardInterests: safeGetJSON('portfolio_interests', {}),
         behaviorMessages: [],
         hasInteracted: false
     };
 
     // Increment visit count
     state.visitCount++;
-    localStorage.setItem('portfolio_visits', state.visitCount);
+    safeSetItem('portfolio_visits', state.visitCount);
 
     // ========================================
     // TIME OF DAY GREETINGS
@@ -254,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         resize() {
             const hero = document.querySelector('.hero');
+            if (!hero) return; // Null check
             this.canvas.width = hero.offsetWidth;
             this.canvas.height = hero.offsetHeight;
             this.isMobile = window.innerWidth <= 1024;
@@ -346,13 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.vy += attractY * this.attractionStrength * delta;
 
                 // Apply damping (frame-rate independent)
+                // Fixed: Apply velocity before damping for correct physics
+                p.x += p.vx * delta * 60;
+                p.y += p.vy * delta * 60;
+
+                // Then apply damping
                 const dampingFactor = Math.pow(this.damping, timeScale);
                 p.vx *= dampingFactor;
                 p.vy *= dampingFactor;
-
-                // Update position
-                p.x += p.vx * timeScale;
-                p.y += p.vy * timeScale;
             });
         }
 
@@ -369,6 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setMouse(x, y) {
             const rect = this.canvas.getBoundingClientRect();
+            if (!rect) return; // Null check
             this.mouse.x = x - rect.left;
             this.mouse.y = y - rect.top;
         }
@@ -425,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateConnections() {
             this.connections = [];
-            const maxDist = 200;
+            const maxDist = CONFIG.maxConnectionDistance;
 
             for (let i = 0; i < this.nodes.length; i++) {
                 for (let j = i + 1; j < this.nodes.length; j++) {
@@ -446,9 +492,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 node.x += node.vx * delta;
                 node.y += node.vy * delta;
 
-                // Bounce off edges
-                if (node.x < 0 || node.x > this.canvas.width) node.vx *= -1;
-                if (node.y < 0 || node.y > this.canvas.height) node.vy *= -1;
+                // Bounce off edges with position clamping
+                if (node.x < 0) {
+                    node.x = 0;
+                    node.vx *= -1;
+                } else if (node.x > this.canvas.width) {
+                    node.x = this.canvas.width;
+                    node.vx *= -1;
+                }
+
+                if (node.y < 0) {
+                    node.y = 0;
+                    node.vy *= -1;
+                } else if (node.y > this.canvas.height) {
+                    node.y = this.canvas.height;
+                    node.vy *= -1;
+                }
 
                 // Update pulse (delta-scaled)
                 node.pulsePhase += this.pulseSpeed * delta;
@@ -567,77 +626,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========================================
-    // SOUND DESIGN SYSTEM
-    // ========================================
-    class SoundSystem {
-        constructor() {
-            this.ctx = null;
-            this.enabled = false;
-            this.initialized = false;
-        }
-
-        init() {
-            if (this.initialized) return;
-            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            this.initialized = true;
-        }
-
-        enable() {
-            this.init();
-            this.enabled = true;
-            this.playAmbient();
-        }
-
-        disable() {
-            this.enabled = false;
-        }
-
-        playTone(frequency, duration, volume = 0.1) {
-            if (!this.enabled || !this.ctx) return;
-
-            const oscillator = this.ctx.createOscillator();
-            const gainNode = this.ctx.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(this.ctx.destination);
-
-            oscillator.frequency.value = frequency;
-            oscillator.type = 'sine';
-
-            gainNode.gain.setValueAtTime(0, this.ctx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.01);
-            gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + duration);
-
-            oscillator.start(this.ctx.currentTime);
-            oscillator.stop(this.ctx.currentTime + duration);
-        }
-
-        playHover() { this.playTone(800, 0.1, 0.05); }
-        playClick() {
-            this.playTone(600, 0.15, 0.08);
-            setTimeout(() => this.playTone(900, 0.1, 0.05), 50);
-        }
-
-        playAmbient() {
-            if (!this.enabled || !this.ctx) return;
-
-            const oscillator = this.ctx.createOscillator();
-            const gainNode = this.ctx.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(this.ctx.destination);
-
-            oscillator.frequency.value = 60;
-            oscillator.type = 'sine';
-            gainNode.gain.value = 0.02;
-
-            oscillator.start();
-            this.ambientOsc = oscillator;
-            this.ambientGain = gainNode;
-        }
-    }
-
-    // ========================================
     // BEHAVIOR AWARENESS SYSTEM
     // ========================================
     class BehaviorSystem {
@@ -648,6 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         showWhisper(message, duration = 3000) {
+            if (!this.whisperEl) return; // Null check
             if (this.shownMessages.has(message)) return;
             this.shownMessages.add(message);
 
@@ -656,7 +645,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             clearTimeout(this.messageTimeout);
             this.messageTimeout = setTimeout(() => {
-                this.whisperEl.classList.remove('visible');
+                if (this.whisperEl) {
+                    this.whisperEl.classList.remove('visible');
+                }
             }, duration);
         }
 
@@ -671,8 +662,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         onCardInterest(projectId, count) {
-            if (count === 3) this.showWhisper('this one catches your eye...');
-            else if (count === 5) this.showWhisper('definitely interested in this one...');
+            if (count === CONFIG.cardInterestNotice) this.showWhisper('this one catches your eye...');
+            else if (count === CONFIG.cardInterestHigh) this.showWhisper('definitely interested in this one...');
         }
 
         onReturn() {
@@ -681,6 +672,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         onScrollToBottom() { this.showWhisper('you\'ve seen everything... or have you?'); }
+    }
+
+    // ========================================
+    // CURSOR SYSTEM (Integrated)
+    // ========================================
+    class CursorSystem {
+        constructor() {
+            this.cursorGlow = document.querySelector('.cursor-glow');
+            this.cursorWhisper = document.querySelector('.cursor-whisper');
+            this.lerpFactor = 0.15;
+        }
+
+        update() {
+            state.cursorX = this.lerp(state.cursorX, state.mouseX, this.lerpFactor);
+            state.cursorY = this.lerp(state.cursorY, state.mouseY, this.lerpFactor);
+
+            if (this.cursorGlow) {
+                this.cursorGlow.style.left = state.cursorX + 'px';
+                this.cursorGlow.style.top = state.cursorY + 'px';
+            }
+
+            if (this.cursorWhisper) {
+                this.cursorWhisper.style.left = state.mouseX + 'px';
+                this.cursorWhisper.style.top = state.mouseY + 'px';
+            }
+        }
+
+        lerp(start, end, factor) {
+            return start + (end - start) * factor;
+        }
     }
 
     // ========================================
@@ -693,11 +714,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const particleSystem = new ParticleNameSystem(particleCanvas);
     const neuralNetwork = new NeuralNetwork(neuralCanvas);
     const cursorTrail = new CursorTrail(trailCanvas);
-    const soundSystem = new SoundSystem();
     const behaviorSystem = new BehaviorSystem();
+    const cursorSystem = new CursorSystem();
 
     // Expose for testing
     window.particleSystem = particleSystem;
+    window.neuralNetwork = neuralNetwork;
+    window.behaviorSystem = behaviorSystem;
+    window.Performance = Performance;
+    window.state = state;
 
     if (state.visitCount > 1) behaviorSystem.onReturn();
 
@@ -721,6 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
         particleSystem.update(delta);
         neuralNetwork.update(delta);
         cursorTrail.update(delta);
+        cursorSystem.update(); // Integrated cursor update
 
         // Draw all systems
         particleSystem.draw();
@@ -732,12 +758,8 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(masterLoop);
 
     // ========================================
-    // CURSOR SYSTEM
+    // MOUSE MOVEMENT HANDLER
     // ========================================
-    const cursorGlow = document.querySelector('.cursor-glow');
-    const cursorWhisper = document.querySelector('.cursor-whisper');
-    const lerp = (start, end, factor) => start + (end - start) * factor;
-
     document.addEventListener('mousemove', (e) => {
         state.mouseX = e.clientX;
         state.mouseY = e.clientY;
@@ -754,41 +776,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, CONFIG.idleTimeout);
     });
 
-    function updateCursor() {
-        state.cursorX = lerp(state.cursorX, state.mouseX, 0.15);
-        state.cursorY = lerp(state.cursorY, state.mouseY, 0.15);
-
-        cursorGlow.style.left = state.cursorX + 'px';
-        cursorGlow.style.top = state.cursorY + 'px';
-        cursorWhisper.style.left = state.mouseX + 'px';
-        cursorWhisper.style.top = state.mouseY + 'px';
-
-        requestAnimationFrame(updateCursor);
-    }
-    updateCursor();
-
     // Cursor whisper on interactive elements
     document.querySelectorAll('[data-cursor-text]').forEach(el => {
         el.addEventListener('mouseenter', () => {
-            cursorWhisper.textContent = el.dataset.cursorText;
-            cursorWhisper.style.opacity = '1';
-            soundSystem.playHover();
+            if (cursorSystem.cursorWhisper) {
+                cursorSystem.cursorWhisper.textContent = el.dataset.cursorText;
+                cursorSystem.cursorWhisper.style.opacity = '1';
+            }
         });
-        el.addEventListener('mouseleave', () => cursorWhisper.style.opacity = '0');
+        el.addEventListener('mouseleave', () => {
+            if (cursorSystem.cursorWhisper) {
+                cursorSystem.cursorWhisper.style.opacity = '0';
+            }
+        });
     });
 
     // ========================================
-    // SOUND TOGGLE
-    // ========================================
-    const soundToggle = document.querySelector('.sound-toggle');
-    soundToggle.addEventListener('click', () => {
-        const isOn = soundToggle.dataset.sound === 'on';
-        soundToggle.dataset.sound = isOn ? 'off' : 'on';
-        isOn ? soundSystem.disable() : (soundSystem.enable(), soundSystem.playClick());
-    });
-
-    // ========================================
-    // PROJECT CARDS
+    // PROJECT CARDS (Single mouseenter handler)
     // ========================================
     const cards = document.querySelectorAll('.project-card');
 
@@ -799,25 +803,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!state.cardInterests[projectId]) state.cardInterests[projectId] = 0;
 
+        // SINGLE mouseenter handler (fixed duplicate issue)
         card.addEventListener('mouseenter', () => {
-            card.classList.add('visible'); // Ensure it's visible
+            card.classList.add('visible');
 
-            // Increment interest count
+            // Increment interest count ONCE
             state.cardInterests[projectId]++;
-            localStorage.setItem('portfolio_interests', JSON.stringify(state.cardInterests));
+            safeSetItem('portfolio_interests', state.cardInterests);
 
             // Trigger behavior system
             behaviorSystem.onCardInterest(projectId, state.cardInterests[projectId]);
-            soundSystem.playHover();
 
-            if (state.cardInterests[projectId] >= 3) {
+            if (state.cardInterests[projectId] >= CONFIG.cardInterestNotice) {
                 card.classList.add('interested');
+            }
+
+            // Glitch effect
+            const title = card.querySelector('.glitch-text');
+            if (title) {
+                title.classList.add('glitching');
+                setTimeout(() => title.classList.remove('glitching'), 200);
             }
         });
 
-        if (state.cardInterests[projectId] >= 3) card.classList.add('interested');
+        if (state.cardInterests[projectId] >= CONFIG.cardInterestNotice) {
+            card.classList.add('interested');
+        }
 
         card.addEventListener('mousemove', (e) => {
+            if (!cardInner) return; // Null check
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -825,26 +839,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const rotateY = (rect.width / 2 - x) / 15;
 
             cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
-            cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
-        });
-
-        card.addEventListener('mouseenter', () => {
-            state.cardInterests[projectId]++;
-            localStorage.setItem('portfolio_interests', JSON.stringify(state.cardInterests));
-            if (state.cardInterests[projectId] >= 3) card.classList.add('interested');
-            behaviorSystem.onCardInterest(projectId, state.cardInterests[projectId]);
-
-            const title = card.querySelector('.glitch-text');
-            if (title) {
-                title.classList.add('glitching');
-                setTimeout(() => title.classList.remove('glitching'), 200);
+            if (cardGlow) {
+                cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
+                cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
             }
-            soundSystem.playHover();
         });
 
         card.addEventListener('mouseleave', () => {
-            cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            if (cardInner) {
+                cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            }
         });
     });
 
@@ -868,12 +872,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', () => {
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollProgress = window.scrollY / scrollHeight;
+        const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
 
         const now = Date.now();
         const dt = now - state.lastScrollTime;
         const dy = Math.abs(window.scrollY - state.lastScrollY);
-        state.scrollSpeed = dy / dt * 1000;
+
+        // Fixed: Prevent division by zero
+        state.scrollSpeed = dt > 0 ? (dy / dt) * 1000 : 0;
 
         if (state.scrollSpeed > CONFIG.fastScrollThreshold && state.hasInteracted) {
             behaviorSystem.onFastScroll();
@@ -904,9 +910,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = document.querySelector(anchor.getAttribute('href'));
+            const href = anchor.getAttribute('href');
+            if (!href) return;
+            const target = document.querySelector(href);
             if (target) {
-                soundSystem.playClick();
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
@@ -929,11 +936,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // HERO PARALLAX
     // ========================================
     const heroContent = document.querySelector('.hero-content');
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 15;
-        const y = (e.clientY / window.innerHeight - 0.5) * 15;
-        heroContent.style.transform = `translate(${x}px, ${y}px)`;
-    });
+    if (heroContent) {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 15;
+            const y = (e.clientY / window.innerHeight - 0.5) * 15;
+            heroContent.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    }
 
     // ========================================
     // EASTER EGG - KONAMI CODE
@@ -951,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 behaviorSystem.showWhisper('▲▲▼▼◄►◄►BA... legendary mode unlocked', 5000);
                 particleSystem.mouse.radius = 300;
                 setTimeout(() => particleSystem.mouse.radius = 100, 2000);
-                soundSystem.playClick();
                 konamiIndex = 0;
             }
         } else {
@@ -963,16 +971,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // GLITCH TEXT ON RANDOM INTERVALS
     // ========================================
     const glitchTexts = document.querySelectorAll('.glitch-text');
+    let glitchTimerId = null;
 
     function randomGlitch() {
+        if (glitchTexts.length === 0) return;
         const text = glitchTexts[Math.floor(Math.random() * glitchTexts.length)];
         if (text) {
             text.classList.add('glitching');
             setTimeout(() => text.classList.remove('glitching'), 200);
         }
-        setTimeout(randomGlitch, Math.random() * 10000 + 5000);
+        glitchTimerId = setTimeout(randomGlitch, Math.random() * 10000 + 5000);
     }
-    setTimeout(randomGlitch, 5000);
+    glitchTimerId = setTimeout(randomGlitch, 5000);
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        if (glitchTimerId) clearTimeout(glitchTimerId);
+    });
 
     // ========================================
     // CONSOLE MESSAGE
@@ -1005,10 +1020,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dockItems = document.querySelectorAll('.dock-item');
 
     dockItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            soundSystem.playHover();
-        });
-
         item.addEventListener('click', (e) => {
             // Remove active class from all
             dockItems.forEach(i => i.classList.remove('active'));
@@ -1017,7 +1028,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (href && href.startsWith('#')) {
                 item.classList.add('active');
                 state.hasInteracted = true;
-                soundSystem.playClick();
             }
         });
     });
@@ -1036,9 +1046,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateActiveDock(label) {
         dockItems.forEach(item => {
-            if (item.getAttribute('aria-label') === label) {
+            const ariaLabel = item.getAttribute('aria-label');
+            const href = item.getAttribute('href');
+            if (ariaLabel === label) {
                 item.classList.add('active');
-            } else if (item.getAttribute('href').startsWith('#')) {
+            } else if (href && href.startsWith('#')) {
                 item.classList.remove('active');
             }
         });
