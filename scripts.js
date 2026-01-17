@@ -264,6 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for touch capability to disable repulsion on scroll
             this.isTouch = window.matchMedia('(hover: none)').matches;
             this.isMobile = false;
+            this.heroElement = null;
+            this.resizeTimeout = null;
 
             // Physics constants (per second, scaled by delta)
             this.attractionStrength = 1.8;  // Per second
@@ -274,6 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         init() {
+            // Cache DOM element to avoid repeated queries
+            this.heroElement = document.querySelector('.hero');
             this.resize();
 
             // robust touch detection
@@ -284,23 +288,32 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             window.addEventListener('touchstart', setTouch, { passive: true });
 
+            // Debounced resize handler to avoid excessive recalculations
             window.addEventListener('resize', () => {
                 // Keep the matchMedia check as a backup/initial state
                 if (!this.isTouch) {
                     this.isTouch = window.matchMedia('(hover: none)').matches;
                 }
-                this.resize();
-                this.createParticles();
+                clearTimeout(this.resizeTimeout);
+                this.resizeTimeout = setTimeout(() => {
+                    this.resize();
+                    this.createParticles();
+                }, 150);
             });
             this.createParticles();
         }
 
-        resize() {
-            const hero = document.querySelector('.hero');
-            if (!hero) return; // Null check
-            this.canvas.width = hero.offsetWidth;
-            this.canvas.height = hero.offsetHeight;
+        updateViewportState() {
             this.isMobile = window.innerWidth <= 1024;
+        }
+
+        resize() {
+            // Update viewport state first (must run even if hero element is missing)
+            this.updateViewportState();
+
+            if (!this.heroElement) return;
+            this.canvas.width = this.heroElement.offsetWidth;
+            this.canvas.height = this.heroElement.offsetHeight;
         }
 
         createParticles() {
