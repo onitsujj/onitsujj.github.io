@@ -843,27 +843,52 @@ document.addEventListener('DOMContentLoaded', () => {
             card.classList.add('interested');
         }
 
-        card.addEventListener('mousemove', (e) => {
-            if (!cardInner) return; // Null check
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const rotateX = (y - rect.height / 2) / 15;
-            const rotateY = (rect.width / 2 - x) / 15;
+        // Only apply 3D tilt on devices with hover capability
+        if (!window.matchMedia('(hover: none)').matches) {
+            card.addEventListener('mousemove', (e) => {
+                if (!cardInner) return; // Null check
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateX = (y - rect.height / 2) / 15;
+                const rotateY = (rect.width / 2 - x) / 15;
 
-            cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            if (cardGlow) {
-                cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
-                cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
-            }
-        });
+                cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                if (cardGlow) {
+                    cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
+                    cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
+                }
+            });
 
-        card.addEventListener('mouseleave', () => {
-            if (cardInner) {
-                cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-            }
-        });
+            card.addEventListener('mouseleave', () => {
+                if (cardInner) {
+                    cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                }
+            });
+        }
     });
+
+    // Touch-friendly card expansion
+    if (window.matchMedia('(hover: none)').matches) {
+        cards.forEach((card) => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.project-link')) return;
+                cards.forEach(c => { if (c !== card) c.classList.remove('expanded'); });
+                card.classList.toggle('expanded');
+            });
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.project-card')) {
+                cards.forEach(c => c.classList.remove('expanded'));
+            }
+        });
+    }
+
+    // Update whisper text for touch devices
+    if (window.matchMedia('(hover: none)').matches) {
+        const whisper = document.querySelector('.section-whisper');
+        if (whisper) whisper.textContent = 'tap to wake them';
+    }
 
     // ========================================
     // SCROLL REVEAL & NARRATIVES
