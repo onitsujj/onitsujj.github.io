@@ -114,25 +114,9 @@ test.describe('Mobile Card Expansion', () => {
         expect(transform).toBeDefined();
     });
 
-    test('should collapse previous card when tapping different card', async ({ page }) => {
-        await page.goto(FILE_URL);
-        await page.waitForLoadState('networkidle');
-
-        const firstCard = page.locator('.project-card').first();
-        const secondCard = page.locator('.project-card').nth(1);
-
-        // Tap first card
-        await firstCard.tap();
-        await page.waitForTimeout(600);
-
-        // Tap second card
-        await secondCard.tap();
-        await page.waitForTimeout(600);
-
-        // Second card should now be in expanded/hovered state
-        const secondCardExpanded = secondCard.locator('.card-expanded');
-        await expect(secondCardExpanded).toBeVisible();
-    });
+    // Note: 'should collapse previous card when tapping different card' test removed
+    // - Page now has only 1 project card (replaced 6 mock cards with 1 real project)
+    // - Multi-card interaction test is no longer applicable
 
     test('should collapse card when tapping outside', async ({ page }) => {
         await page.goto(FILE_URL);
