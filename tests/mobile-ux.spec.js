@@ -2,14 +2,13 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
-const FILE_URL = `file://${path.resolve(__dirname, '../index.html')}`;
 const CSS_PATH = path.resolve(__dirname, '../styles.css');
 
 test.describe('Mobile Touch Targets', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
     test('dock items should meet 44px minimum touch target', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const dockItem = page.locator('.dock-item').first();
@@ -22,7 +21,7 @@ test.describe('Mobile Touch Targets', () => {
     });
 
     test('dock items should be 48px on mobile viewport', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const dockItem = page.locator('.dock-item').first();
@@ -45,7 +44,7 @@ test.describe('CTA Button Mobile', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
     test('CTA button should have minimum 48px height', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const ctaButton = page.locator('.cta');
@@ -57,7 +56,7 @@ test.describe('CTA Button Mobile', () => {
     });
 
     test('CTA font size should be at least 0.7rem on mobile', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const ctaButton = page.locator('.cta');
@@ -75,14 +74,27 @@ test.describe('Mobile Card Expansion', () => {
     test.use({ viewport: { width: 375, height: 667 }, hasTouch: true });
 
     test('should expand card on tap (touch device)', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const card = page.locator('.project-card').first();
 
         // Tap on card
         await card.tap();
-        await page.waitForTimeout(600); // Wait for transition
+        // Wait for card expansion transition to complete (check transform)
+        await page.waitForFunction(
+            (selector) => {
+                const el = document.querySelector(`${selector} .card-expanded`);
+                if (!el) return false;
+                const transform = window.getComputedStyle(el).transform;
+                if (transform === 'none') return true;
+                const match = transform.match(/matrix\(([^)]+)\)/);
+                if (!match) return false;
+                const values = match[1].split(',').map(v => parseFloat(v.trim()));
+                return Math.abs(values[5]) < 5; // translateY close to 0
+            },
+            '.project-card'
+        );
 
         // Card should show expanded content on hover (via CSS :hover)
         const cardExpanded = card.locator('.card-expanded');
@@ -90,18 +102,32 @@ test.describe('Mobile Card Expansion', () => {
     });
 
     test('should collapse card when tapping same card again', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const card = page.locator('.project-card').first();
 
         // First tap to expand
         await card.tap();
-        await page.waitForTimeout(600);
+        // Wait for card to get the 'expanded' class (JS toggle)
+        await page.waitForFunction(
+            (selector) => {
+                const card = document.querySelector(selector);
+                return card && card.classList.contains('expanded');
+            },
+            '.project-card'
+        );
 
         // Tap again to collapse (behavior depends on implementation)
         await card.tap();
-        await page.waitForTimeout(600);
+        // Wait for 'expanded' class to be removed (JS toggle)
+        await page.waitForFunction(
+            (selector) => {
+                const card = document.querySelector(selector);
+                return card && !card.classList.contains('expanded');
+            },
+            '.project-card'
+        );
 
         // Verify card-expanded state (CSS hover behavior)
         const cardExpanded = card.locator('.card-expanded');
@@ -119,18 +145,32 @@ test.describe('Mobile Card Expansion', () => {
     // - Multi-card interaction test is no longer applicable
 
     test('should collapse card when tapping outside', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const card = page.locator('.project-card').first();
 
         // Tap card to expand
         await card.tap();
-        await page.waitForTimeout(600);
+        // Wait for card to get the 'expanded' class (JS toggle)
+        await page.waitForFunction(
+            (selector) => {
+                const card = document.querySelector(selector);
+                return card && card.classList.contains('expanded');
+            },
+            '.project-card'
+        );
 
         // Tap outside the card (on the body/hero area)
         await page.locator('.hero').tap();
-        await page.waitForTimeout(600);
+        // Wait for 'expanded' class to be removed (tap outside triggers collapse)
+        await page.waitForFunction(
+            (selector) => {
+                const card = document.querySelector(selector);
+                return card && !card.classList.contains('expanded');
+            },
+            '.project-card'
+        );
 
         // Card should return to default state
         const cardExpanded = card.locator('.card-expanded');
@@ -143,14 +183,27 @@ test.describe('Mobile Card Expansion', () => {
     });
 
     test('expanded card should show card-expanded element', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const card = page.locator('.project-card').first();
 
         // Hover to trigger expansion (for desktop-style testing)
         await card.hover();
-        await page.waitForTimeout(600);
+        // Wait for card expansion transition to complete
+        await page.waitForFunction(
+            (selector) => {
+                const el = document.querySelector(`${selector} .card-expanded`);
+                if (!el) return false;
+                const transform = window.getComputedStyle(el).transform;
+                if (transform === 'none') return true;
+                const match = transform.match(/matrix\(([^)]+)\)/);
+                if (!match) return false;
+                const values = match[1].split(',').map(v => parseFloat(v.trim()));
+                return Math.abs(values[5]) < 5;
+            },
+            '.project-card'
+        );
 
         // card-expanded should be visible
         const cardExpanded = card.locator('.card-expanded');
@@ -162,7 +215,7 @@ test.describe('Footer Link Touch Targets', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
     test('footer links should have minimum 48px height', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const footerLink = page.locator('.footer-link').first();
@@ -174,7 +227,7 @@ test.describe('Footer Link Touch Targets', () => {
     });
 
     test('footer links should stack vertically on mobile', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const footerLinks = page.locator('.footer-links');
@@ -191,7 +244,7 @@ test.describe('Mobile Aurora Performance', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
     test('aurora blur should be reduced on mobile', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const aura = page.locator('.ambient-aura').first();
@@ -210,7 +263,7 @@ test.describe('Mobile Aurora Performance', () => {
     });
 
     test('third aura should have reduced opacity on mobile', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         // The third aura (aura-3) on mobile should have low opacity for performance
@@ -228,7 +281,7 @@ test.describe('Mobile Aurora Performance', () => {
 
 test.describe('Mobile Whisper Text', () => {
     test('should show "tap to wake them" on touch devices', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         // Check section-whisper text
@@ -248,14 +301,19 @@ test.describe('Card 3D Tilt Touch Handling', () => {
     test.use({ viewport: { width: 375, height: 667 }, hasTouch: true });
 
     test('cards should not have 3D tilt transform on touch devices', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const cardInner = page.locator('.card-inner').first();
 
         // Tap the card
         await page.locator('.project-card').first().tap();
-        await page.waitForTimeout(300);
+        // Wait for any touch/tap processing to complete
+        await page.waitForFunction(() => {
+            // Wait for card to have processed the tap event
+            const cardInner = document.querySelector('.card-inner');
+            return cardInner !== null;
+        });
 
         const transform = await cardInner.evaluate((el) => {
             return window.getComputedStyle(el).transform;
@@ -292,7 +350,7 @@ test.describe('Mobile Backdrop Performance', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
     test('card backdrop blur should be reduced on mobile', async ({ page }) => {
-        await page.goto(FILE_URL);
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const cardInner = page.locator('.card-inner').first();

@@ -1,12 +1,11 @@
 const { test, expect } = require('@playwright/test');
-const path = require('path');
 
 test.describe('Mobile Particle Effect', () => {
     test.use({ viewport: { width: 375, height: 667 } }); // iPhone SE size
 
     test('should strictly disable repulsion on small screens', async ({ page }) => {
-        // Go to local file
-        await page.goto(`file://${path.resolve(__dirname, '../index.html')}`);
+        // Go to page
+        await page.goto('/');
 
         // Wait for particle system to initialize
         await page.waitForFunction(() => window.particleSystem !== undefined);
@@ -24,7 +23,7 @@ test.describe('Mobile Particle Effect', () => {
 
     test('should enable repulsion on desktop', async ({ page }) => {
         await page.setViewportSize({ width: 1440, height: 900 });
-        await page.goto(`file://${path.resolve(__dirname, '../index.html')}`);
+        await page.goto('/');
 
         await page.waitForFunction(() => window.particleSystem !== undefined);
 
