@@ -138,6 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ========================================
+    // CACHED MEDIA QUERY
+    // ========================================
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+
+    // ========================================
     // CONFIGURATION (Adaptive based on performance)
     // ========================================
     const CONFIG = {
@@ -809,6 +814,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     const cards = document.querySelectorAll('.project-card');
 
+    // Cache breathing elements to avoid DOM queries in scroll handler
+    const cardBreathingMap = new Map();
+    cards.forEach(card => {
+        const breathing = card.querySelector('.card-breathing');
+        if (breathing) cardBreathingMap.set(card, breathing);
+    });
+
     cards.forEach((card) => {
         const cardInner = card.querySelector('.card-inner');
         const cardGlow = card.querySelector('.card-glow');
@@ -844,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Apply glow tracking on devices with hover capability
-        if (!window.matchMedia('(hover: none)').matches && cardGlow) {
+        if (!isTouchDevice && cardGlow) {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -856,7 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Touch-friendly card expansion
-    if (window.matchMedia('(hover: none)').matches) {
+    if (isTouchDevice) {
         cards.forEach((card) => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.project-link')) return;
@@ -872,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update whisper text for touch devices
-    if (window.matchMedia('(hover: none)').matches) {
+    if (isTouchDevice) {
         const whisper = document.querySelector('.section-whisper');
         if (whisper) whisper.textContent = 'tap to wake them';
     }
@@ -894,40 +906,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const narrativeFragments = document.querySelectorAll('.narrative-fragment');
     let lastScrollProgress = 0;
+    let scrollRAFPending = false;
 
+    // Unified scroll handler with RAF batching to prevent layout thrashing
     window.addEventListener('scroll', () => {
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
-
+        // Capture scroll position immediately (cheap read)
+        const scrollY = window.scrollY;
         const now = Date.now();
-        const dt = now - state.lastScrollTime;
-        const dy = Math.abs(window.scrollY - state.lastScrollY);
 
-        // Fixed: Prevent division by zero
+        // Update scroll speed tracking (no layout reads needed)
+        const dt = now - state.lastScrollTime;
+        const dy = Math.abs(scrollY - state.lastScrollY);
         state.scrollSpeed = dt > 0 ? (dy / dt) * 1000 : 0;
 
         if (state.scrollSpeed > CONFIG.fastScrollThreshold && state.hasInteracted) {
             behaviorSystem.onFastScroll();
         }
 
-        state.lastScrollY = window.scrollY;
+        state.lastScrollY = scrollY;
         state.lastScrollTime = now;
 
-        narrativeFragments.forEach(fragment => {
-            const trigger = parseFloat(fragment.dataset.trigger);
-            fragment.classList.toggle('visible', scrollProgress >= trigger && scrollProgress < trigger + 0.15);
-        });
+        // Batch layout-triggering operations in RAF
+        if (!scrollRAFPending) {
+            scrollRAFPending = true;
+            requestAnimationFrame(() => {
+                scrollRAFPending = false;
 
-        if (scrollProgress > 0.95 && lastScrollProgress <= 0.95) behaviorSystem.onScrollToBottom();
-        lastScrollProgress = scrollProgress;
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
 
-        cards.forEach((card) => {
-            const rect = card.getBoundingClientRect();
-            const awakeness = 1 - Math.min(Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2) / (window.innerHeight / 2), 1);
-            const breathing = card.querySelector('.card-breathing');
-            if (breathing) breathing.style.opacity = 0.3 + (awakeness * 0.4);
-        });
-    });
+                // Update narrative fragments
+                narrativeFragments.forEach(fragment => {
+                    const trigger = parseFloat(fragment.dataset.trigger);
+                    fragment.classList.toggle('visible', scrollProgress >= trigger && scrollProgress < trigger + 0.15);
+                });
+
+                if (scrollProgress > 0.95 && lastScrollProgress <= 0.95) behaviorSystem.onScrollToBottom();
+                lastScrollProgress = scrollProgress;
+
+                // Batch read phase: collect all card positions
+                const cardData = [];
+                const viewportCenter = window.innerHeight / 2;
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenter = rect.top + rect.height / 2;
+                    const awakeness = 1 - Math.min(Math.abs(cardCenter - viewportCenter) / viewportCenter, 1);
+                    cardData.push({ card, awakeness });
+                });
+
+                // Batch write phase: apply all style changes
+                cardData.forEach(({ card, awakeness }) => {
+                    const breathing = cardBreathingMap.get(card);
+                    if (breathing) breathing.style.opacity = 0.3 + (awakeness * 0.4);
+                });
+
+            });
+        }
+    }, { passive: true });
 
     // ========================================
     // SMOOTH SCROLL
@@ -1076,17 +1111,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Update active state on scroll
+    // Update active state on scroll (lightweight - no layout reads needed)
+    let lastDockLabel = null;
     window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-
-        // Simple scroll spy logic
-        if (scrollY < window.innerHeight * 0.5) {
-            updateActiveDock('Home');
-        } else {
-            updateActiveDock('Projects');
+        // window.scrollY and window.innerHeight are cheap reads (no layout trigger)
+        const newLabel = window.scrollY < window.innerHeight * 0.5 ? 'Home' : 'Projects';
+        // Only update DOM if state changed
+        if (newLabel !== lastDockLabel) {
+            lastDockLabel = newLabel;
+            updateActiveDock(newLabel);
         }
-    });
+    }, { passive: true });
 
     function updateActiveDock(label) {
         dockItems.forEach(item => {
