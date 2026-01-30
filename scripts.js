@@ -843,27 +843,14 @@ document.addEventListener('DOMContentLoaded', () => {
             card.classList.add('interested');
         }
 
-        // Only apply 3D tilt on devices with hover capability
-        if (!window.matchMedia('(hover: none)').matches) {
+        // Apply glow tracking on devices with hover capability
+        if (!window.matchMedia('(hover: none)').matches && cardGlow) {
             card.addEventListener('mousemove', (e) => {
-                if (!cardInner) return; // Null check
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                const rotateX = (y - rect.height / 2) / 15;
-                const rotateY = (rect.width / 2 - x) / 15;
-
-                cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-                if (cardGlow) {
-                    cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
-                    cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
-                }
-            });
-
-            card.addEventListener('mouseleave', () => {
-                if (cardInner) {
-                    cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-                }
+                cardGlow.style.setProperty('--mouse-x', (x / rect.width) * 100 + '%');
+                cardGlow.style.setProperty('--mouse-y', (y / rect.height) * 100 + '%');
             });
         }
     });

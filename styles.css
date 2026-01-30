@@ -762,11 +762,14 @@ body:hover .cursor-glow {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: gap 0.3s ease;
+    cursor: pointer;
+    transition: gap 0.3s ease, color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .project-link:hover {
     gap: 0.8rem;
+    color: var(--glitch-1);
+    text-shadow: 0 0 8px var(--glitch-1), 0 0 16px rgba(0, 255, 255, 0.5);
 }
 
 /* ========================================
