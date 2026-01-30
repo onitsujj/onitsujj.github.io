@@ -71,9 +71,9 @@ test.describe('Project Cards - Black Box', () => {
         expect(href).toBe('https://pogo-max-particle-calculator.vercel.app/');
     });
 
-    test('only one project card exists', async ({ page }) => {
+    test('two project cards exist', async ({ page }) => {
         const projectCards = page.locator('.project-card');
-        await expect(projectCards).toHaveCount(1);
+        await expect(projectCards).toHaveCount(2);
     });
 
     test('card is accessible via keyboard', async ({ page }) => {
@@ -468,5 +468,127 @@ test.describe('Feature: Fixed 4-Column Grid Layout - White Box', () => {
         });
         columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
         expect(columnTracks.length).toBe(1);
+    });
+});
+
+// ============================================================================
+// Christoppers Project Card Tests
+// ============================================================================
+
+const CHRISTOPPERS_CARD_SELECTOR = '.project-card[data-project-id="2"]';
+
+test.describe('Christoppers Project Card - Black Box', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+        await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
+    });
+
+    test('displays Christoppers project title', async ({ page }) => {
+        const projectTitle = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .glitch-text`);
+        await expect(projectTitle).toHaveText('Christoppers');
+    });
+
+    test('shows correct tech stack', async ({ page }) => {
+        const techStack = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .tech-stack`);
+        await expect(techStack).toHaveText('Next.js • React • Supabase');
+    });
+
+    test('project link navigates to correct URL', async ({ page }) => {
+        const projectLink = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-link`);
+        const href = await projectLink.getAttribute('href');
+
+        expect(href).toBe('https://christoppers.com/');
+    });
+
+    test('category label shows Portfolio Gallery', async ({ page }) => {
+        const categoryLabel = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .expanded-label`);
+        await expect(categoryLabel).toHaveText('Portfolio Gallery');
+    });
+
+    test('project image loads successfully and is visible', async ({ page }) => {
+        const projectImage = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-image-src`);
+
+        // Image element should exist and be visible
+        await expect(projectImage).toBeVisible();
+
+        // Image should have loaded successfully (naturalWidth > 0 indicates loaded)
+        const isLoaded = await projectImage.evaluate((img) => {
+            return img.complete && img.naturalWidth > 0;
+        });
+        expect(isLoaded).toBe(true);
+    });
+});
+
+test.describe('Christoppers Project Card - White Box', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+        await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
+    });
+
+    test('card has correct data-project-id attribute', async ({ page }) => {
+        const card = page.locator(CHRISTOPPERS_CARD_SELECTOR);
+        const projectId = await card.getAttribute('data-project-id');
+
+        expect(projectId).toBe('2');
+    });
+
+    test('glitch text has matching data-text attribute', async ({ page }) => {
+        const glitchText = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .glitch-text`);
+        const dataText = await glitchText.getAttribute('data-text');
+        const innerText = await glitchText.textContent();
+
+        expect(dataText).toBe(innerText);
+    });
+
+    test('.project-image-src element exists with correct src attribute', async ({ page }) => {
+        const projectImage = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-image-src`);
+
+        await expect(projectImage).toHaveCount(1);
+
+        const src = await projectImage.getAttribute('src');
+        expect(src).toBe('assets/projects/christoppers.png');
+    });
+
+    test('.project-image-src has alt attribute for accessibility', async ({ page }) => {
+        const projectImage = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-image-src`);
+
+        const alt = await projectImage.getAttribute('alt');
+        expect(alt).toBeDefined();
+        expect(alt).not.toBe('');
+        expect(alt.toLowerCase()).toContain('christoppers');
+    });
+
+    test('.project-image-src has loading="lazy" for performance', async ({ page }) => {
+        const projectImage = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-image-src`);
+
+        const loading = await projectImage.getAttribute('loading');
+        expect(loading).toBe('lazy');
+    });
+
+    test('link has security attributes for external URL', async ({ page }) => {
+        const projectLink = page.locator(`${CHRISTOPPERS_CARD_SELECTOR} .project-link`);
+
+        const target = await projectLink.getAttribute('target');
+        const rel = await projectLink.getAttribute('rel');
+
+        expect(target).toBe('_blank');
+        expect(rel).toMatch(/noopener|noreferrer/);
+    });
+
+    test('card structure contains all required elements', async ({ page }) => {
+        const card = page.locator(CHRISTOPPERS_CARD_SELECTOR);
+
+        await expect(card.locator('.card-inner')).toHaveCount(1);
+        await expect(card.locator('.card-face.card-front')).toHaveCount(1);
+        await expect(card.locator('.project-image')).toHaveCount(1);
+        await expect(card.locator('.project-info')).toHaveCount(1);
+        await expect(card.locator('.glitch-text')).toHaveCount(1);
+        await expect(card.locator('.tech-stack')).toHaveCount(1);
+        await expect(card.locator('.card-expanded')).toHaveCount(1);
+        await expect(card.locator('.expanded-content')).toHaveCount(1);
+        await expect(card.locator('.expanded-label')).toHaveCount(1);
+        await expect(card.locator('.expanded-description')).toHaveCount(1);
+        await expect(card.locator('.project-link')).toHaveCount(1);
+        await expect(card.locator('.card-glow')).toHaveCount(1);
     });
 });
