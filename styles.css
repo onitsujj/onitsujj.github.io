@@ -532,8 +532,10 @@ body:hover .cursor-glow {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: var(--space-md);
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* ========================================
@@ -650,47 +652,10 @@ body:hover .cursor-glow {
     overflow: hidden;
 }
 
-.placeholder-visual {
+.project-image-src {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-card) 100%);
-    position: relative;
-}
-
-.project-number {
-    font-family: var(--font-mono);
-    font-size: 3rem;
-    font-weight: 600;
-    color: var(--text-whisper);
-    transition: all 0.5s var(--ease-out-expo);
-}
-
-.project-card:hover .project-number {
-    color: var(--text-muted);
-    transform: scale(1.1);
-}
-
-/* Pulse ring effect */
-.pulse-ring {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    border: 1px solid var(--text-whisper);
-    border-radius: 50%;
-    opacity: 0;
-    animation: pulse 3s ease-out infinite;
-}
-
-.pulse-ring.delay-1 {
-    animation-delay: 1.5s;
-}
-
-.project-card:hover .pulse-ring {
-    animation-duration: 2s;
-    border-color: var(--text-muted);
+    object-fit: cover;
 }
 
 /* Project info */
@@ -1157,7 +1122,7 @@ body:hover .cursor-glow {
     }
 
     .projects-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--space-sm);
     }
 
@@ -1235,6 +1200,10 @@ body:hover .cursor-glow {
 @media (max-width: 480px) {
     .hero {
         padding: var(--space-sm);
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
     }
 
     .cta {
