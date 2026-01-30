@@ -856,6 +856,14 @@ body:hover .cursor-glow {
     margin-bottom: 0.5rem;
 }
 
+.made-with {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-whisper);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+}
+
 .signature {
     font-family: var(--font-mono);
     font-size: 0.65rem;

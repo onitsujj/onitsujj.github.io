@@ -10,7 +10,7 @@ export class ParticleNameSystem {
         this.ctx = canvas.getContext('2d');
         this.particles = [];
         this.mouse = { x: 0, y: 0, radius: 100 };
-        this.text = 'ONITSUJJ';
+        this.text = 'OniMu Designs';
         // Use cached touch detection from config (avoid duplicate matchMedia call)
         this.isTouch = isTouchDevice;
         this.isMobile = false;
