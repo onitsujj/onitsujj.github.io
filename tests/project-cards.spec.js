@@ -546,7 +546,7 @@ test.describe('Christoppers Project Card - White Box', () => {
         await expect(projectImage).toHaveCount(1);
 
         const src = await projectImage.getAttribute('src');
-        expect(src).toBe('assets/projects/christoppers.png');
+        expect(src).toBe('assets/projects/christoppers.webp');
     });
 
     test('.project-image-src has alt attribute for accessibility', async ({ page }) => {
