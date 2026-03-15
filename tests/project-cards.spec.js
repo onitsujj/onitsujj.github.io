@@ -18,50 +18,13 @@ test.describe('Project Cards - Black Box', () => {
         await expect(techStack).toHaveText('Next.js \u2022 TypeScript \u2022 Tailwind');
     });
 
-    test('expands card on hover to show description', async ({ page }) => {
+    test('shows project summary and live link without hover', async ({ page }) => {
         const card = page.locator(FIRST_PROJECT_CARD_SELECTOR);
-        const expandedContent = card.locator('.card-expanded');
+        const description = card.locator('.expanded-description');
+        const projectLink = card.locator('.project-link');
 
-        // Before hover, expanded content should be translated off-screen (translateY(100%))
-        const transformBefore = await expandedContent.evaluate((el) => {
-            return window.getComputedStyle(el).transform;
-        });
-        // translateY(100%) results in a matrix with non-zero Y translation
-        expect(transformBefore).not.toBe('none');
-        expect(transformBefore).toContain('matrix');
-
-        // Hover over card
-        await card.hover();
-        // Wait for transition to complete - expanded content should have translateY(0)
-        await page.waitForFunction(
-            (selector) => {
-                const el = document.querySelector(`${selector} .card-expanded`);
-                if (!el) return false;
-                const transform = window.getComputedStyle(el).transform;
-                if (transform === 'none') return true;
-                const match = transform.match(/matrix\(([^)]+)\)/);
-                if (!match) return false;
-                const values = match[1].split(',').map(v => parseFloat(v.trim()));
-                return Math.abs(values[5]) < 5;
-            },
-            FIRST_PROJECT_CARD_SELECTOR,
-            { timeout: 5000 }
-        );
-
-        // After hover, expanded content should be visible (translateY(0) = matrix with no Y translation)
-        const transformAfter = await expandedContent.evaluate((el) => {
-            return window.getComputedStyle(el).transform;
-        });
-        // translateY(0) results in 'none' or a matrix with zero translation
-        // When fully expanded, the 6th value of the matrix (translateY) should be 0 or near 0
-        if (transformAfter !== 'none') {
-            const matrixMatch = transformAfter.match(/matrix\(([^)]+)\)/);
-            if (matrixMatch) {
-                const values = matrixMatch[1].split(',').map(v => parseFloat(v.trim()));
-                // matrix(a, b, c, d, tx, ty) - ty is the 6th value (index 5)
-                expect(Math.abs(values[5])).toBeLessThan(5); // Allow small rounding
-            }
-        }
+        await expect(description).toBeVisible();
+        await expect(projectLink).toBeVisible();
     });
 
     test('project link navigates to correct URL', async ({ page }) => {
@@ -76,21 +39,28 @@ test.describe('Project Cards - Black Box', () => {
         await expect(projectCards).toHaveCount(2);
     });
 
-    test('card is accessible via keyboard', async ({ page }) => {
-        // Tab to the project card's link
+    test('card link is accessible via keyboard without revealing hidden content', async ({ page }) => {
         const projectLink = page.locator(`${FIRST_PROJECT_CARD_SELECTOR} .project-link`);
 
-        // Focus the link via keyboard navigation
         await projectLink.focus();
 
-        // Check that the link is focused
         const isFocused = await projectLink.evaluate((el) => document.activeElement === el);
         expect(isFocused).toBe(true);
 
-        // Verify link is keyboard accessible (can be activated with Enter)
         const href = await projectLink.getAttribute('href');
         expect(href).toBeDefined();
         expect(href).not.toBe('#');
+
+        const styles = await projectLink.evaluate((el) => {
+            const computed = window.getComputedStyle(el);
+            return {
+                visibility: computed.visibility,
+                opacity: computed.opacity
+            };
+        });
+
+        expect(styles.visibility).not.toBe('hidden');
+        expect(parseFloat(styles.opacity)).toBeGreaterThan(0);
     });
 });
 
@@ -283,21 +253,13 @@ test.describe('Feature: Project Card Screenshot Image - White Box', () => {
     });
 });
 
-// ============================================================================
-// TDD RED PHASE: Feature 2 - Fixed 4-Column Grid Layout
-// ============================================================================
-// These tests are designed to FAIL initially because the feature doesn't exist yet.
-// Current state: `.projects-grid` uses `auto-fit, minmax(360px, 1fr)`
-// Target state: Fixed `repeat(4, 1fr)` on desktop, 2-col on tablet (<=768px), 1-col on mobile (<=480px)
-
-test.describe('Feature: Fixed 4-Column Grid Layout - Black Box', () => {
+test.describe('Feature: Adaptive Grid Layout For Two Projects', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
         await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
     });
 
-    test('displays 4 columns on desktop viewport (1200px)', async ({ page }) => {
-        // Set desktop viewport
+    test('displays 2 columns on desktop viewport (1200px)', async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
 
         const grid = page.locator('.projects-grid');
@@ -305,13 +267,11 @@ test.describe('Feature: Fixed 4-Column Grid Layout - Black Box', () => {
             return window.getComputedStyle(el).gridTemplateColumns;
         });
 
-        // Should have exactly 4 column tracks (4 space-separated values)
         const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(4);
+        expect(columnTracks.length).toBe(2);
     });
 
     test('displays 2 columns on tablet viewport (768px)', async ({ page }) => {
-        // Set tablet viewport
         await page.setViewportSize({ width: 768, height: 1024 });
 
         const grid = page.locator('.projects-grid');
@@ -319,7 +279,6 @@ test.describe('Feature: Fixed 4-Column Grid Layout - Black Box', () => {
             return window.getComputedStyle(el).gridTemplateColumns;
         });
 
-        // Should have exactly 2 column tracks
         const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
         expect(columnTracks.length).toBe(2);
     });
@@ -339,7 +298,6 @@ test.describe('Feature: Fixed 4-Column Grid Layout - Black Box', () => {
     });
 
     test('displays 1 column on small mobile viewport (375px)', async ({ page }) => {
-        // Set small mobile viewport (iPhone SE size)
         await page.setViewportSize({ width: 375, height: 667 });
 
         const grid = page.locator('.projects-grid');
@@ -351,123 +309,23 @@ test.describe('Feature: Fixed 4-Column Grid Layout - Black Box', () => {
         const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
         expect(columnTracks.length).toBe(1);
     });
-});
 
-test.describe('Feature: Fixed 4-Column Grid Layout - White Box', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/');
-        await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
-    });
-
-    test('grid uses repeat(4, 1fr) on desktop (>768px)', async ({ page }) => {
-        // Set desktop viewport (above tablet breakpoint)
-        await page.setViewportSize({ width: 1024, height: 768 });
-
-        const grid = page.locator('.projects-grid');
-        const computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-
-        // Computed style should show 4 equal-width columns
-        // When using repeat(4, 1fr), browser computes actual pixel values like "240px 240px 240px 240px"
-        const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(4);
-
-        // All columns should have equal width (within tolerance for rounding)
-        const widths = columnTracks.map(w => parseFloat(w));
-        const firstWidth = widths[0];
-        widths.forEach(width => {
-            expect(Math.abs(width - firstWidth)).toBeLessThan(2); // 2px tolerance
-        });
-    });
-
-    test('grid uses repeat(2, 1fr) at tablet breakpoint (<=768px)', async ({ page }) => {
-        // Set viewport at tablet breakpoint
-        await page.setViewportSize({ width: 768, height: 1024 });
-
-        const grid = page.locator('.projects-grid');
-        const computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-
-        // Should show 2 equal-width columns
-        const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(2);
-
-        // Both columns should have equal width
-        const widths = columnTracks.map(w => parseFloat(w));
-        expect(Math.abs(widths[0] - widths[1])).toBeLessThan(2);
-    });
-
-    test('grid uses 1fr (single column) at mobile breakpoint (<=480px)', async ({ page }) => {
-        // Set viewport at mobile breakpoint
-        await page.setViewportSize({ width: 480, height: 800 });
-
-        const grid = page.locator('.projects-grid');
-        const computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-
-        // Should show single column taking full width
-        const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(1);
-    });
-
-    test('grid does NOT use auto-fit on desktop', async ({ page }) => {
-        // Set desktop viewport
+    test('desktop layout does not create more columns than cards', async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
 
         const grid = page.locator('.projects-grid');
-        const computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
+        const result = await grid.evaluate((el) => {
+            const computedStyle = window.getComputedStyle(el).gridTemplateColumns;
+            const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
+            const cards = el.querySelectorAll('.project-card').length;
+            return {
+                columnCount: columnTracks.length,
+                cardCount: cards
+            };
         });
 
-        // With fixed columns, the number of columns should always be 4 on desktop
-        // regardless of content. auto-fit would vary based on available space.
-        const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-
-        // Key assertion: fixed layout means exactly 4 columns, not more or less
-        expect(columnTracks.length).toBe(4);
-    });
-
-    test('tablet breakpoint triggers at exactly 768px or below', async ({ page }) => {
-        // Test at exactly 769px (should be 4 columns - desktop)
-        await page.setViewportSize({ width: 769, height: 1024 });
-        let grid = page.locator('.projects-grid');
-        let computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-        let columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(4);
-
-        // Test at exactly 768px (should be 2 columns - tablet)
-        await page.setViewportSize({ width: 768, height: 1024 });
-        grid = page.locator('.projects-grid');
-        computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-        columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(2);
-    });
-
-    test('mobile breakpoint triggers at exactly 480px or below', async ({ page }) => {
-        // Test at exactly 481px (should be 2 columns - tablet)
-        await page.setViewportSize({ width: 481, height: 800 });
-        let grid = page.locator('.projects-grid');
-        let computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-        let columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(2);
-
-        // Test at exactly 480px (should be 1 column - mobile)
-        await page.setViewportSize({ width: 480, height: 800 });
-        grid = page.locator('.projects-grid');
-        computedStyle = await grid.evaluate((el) => {
-            return window.getComputedStyle(el).gridTemplateColumns;
-        });
-        columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(1);
+        expect(result.cardCount).toBe(2);
+        expect(result.columnCount).toBeLessThanOrEqual(result.cardCount);
     });
 });
 

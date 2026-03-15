@@ -107,8 +107,8 @@ export class ParticleNameSystem {
         offscreen.width = this.canvas.width;
         offscreen.height = this.canvas.height;
 
-        // Calculate position of the spacer relative to the canvas
-        const spacer = document.querySelector('.name-spacer');
+        // Calculate position from the visual anchor while keeping the semantic h1 hidden
+        const spacer = document.querySelector('.hero-name-anchor') || document.querySelector('.hero-name');
         const hero = document.querySelector('.hero');
 
         let textX = offscreen.width / 2;

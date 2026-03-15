@@ -96,6 +96,12 @@ export class CursorSystem {
     }
 
     update(delta) {
+        if (!CONFIG.enableCursorEffects) {
+            if (this.cursorGlow) this.cursorGlow.style.opacity = '0';
+            if (this.cursorWhisper) this.cursorWhisper.style.opacity = '0';
+            return;
+        }
+
         const scaledFactor = 1 - Math.pow(1 - this.lerpFactor, delta * 60);
         state.cursorX = this.lerp(state.cursorX, state.mouseX, scaledFactor);
         state.cursorY = this.lerp(state.cursorY, state.mouseY, scaledFactor);

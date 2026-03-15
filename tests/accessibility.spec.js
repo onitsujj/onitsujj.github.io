@@ -15,6 +15,41 @@ test.describe('Accessibility - Focus Visible', () => {
     });
 });
 
+test.describe('Accessibility - Hero Semantics', () => {
+    test('should expose a semantic page heading with the owner name', async ({ page }) => {
+        await page.goto('/');
+        await page.waitForLoadState('networkidle');
+
+        const heading = page.locator('h1').first();
+        await expect(heading).toContainText(/onitsujj/i);
+    });
+});
+
+test.describe('Accessibility - Project Visibility', () => {
+    test('should keep project links visible without hover', async ({ page }) => {
+        await page.goto('/');
+        await page.waitForLoadState('networkidle');
+
+        const projectLink = page.locator('.project-card .project-link').first();
+        await expect(projectLink).toBeVisible();
+
+        const styles = await projectLink.evaluate((el) => {
+            const computed = window.getComputedStyle(el);
+            return {
+                visibility: computed.visibility,
+                opacity: computed.opacity
+            };
+        });
+        const box = await projectLink.boundingBox();
+
+        expect(styles.visibility).not.toBe('hidden');
+        expect(parseFloat(styles.opacity)).toBeGreaterThan(0);
+        expect(box).not.toBeNull();
+        if (!box) return;
+        expect(box.height).toBeGreaterThan(0);
+    });
+});
+
 test.describe('CSS Duplicate Rules Removed', () => {
     test('should have single .copyright rule definition', async ({ page }) => {
         // Read CSS file directly using Node.js

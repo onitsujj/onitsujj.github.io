@@ -48,6 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set time greeting
     setTimeGreeting();
 
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const prefersReducedMotion = motionQuery.matches;
+    document.body.dataset.motion = prefersReducedMotion ? 'reduced' : 'full';
+    document.body.dataset.performanceTier = Performance.tier;
+
     // ========================================
     // INITIALIZE SYSTEMS
     // ========================================
@@ -67,8 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
     window.behaviorSystem = behaviorSystem;
     window.Performance = Performance;
     window.state = state;
+    window.motionSettings = {
+        prefersReducedMotion
+    };
 
     if (state.visitCount > 1) behaviorSystem.onReturn();
+
+    const applyPerformanceTier = () => {
+        document.body.dataset.performanceTier = Performance.tier;
+        particleSystem.createParticles();
+        neuralNetwork.createNetwork();
+    };
+    const unsubscribePerformance = Performance.subscribe(applyPerformanceTier);
+    applyPerformanceTier();
 
     // ========================================
     // MASTER ANIMATION LOOP (Delta Time + Frame Cap)
@@ -99,26 +115,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Start the master loop
-    requestAnimationFrame(masterLoop);
+    if (!prefersReducedMotion) {
+        requestAnimationFrame(masterLoop);
+    }
 
     // ========================================
     // MOUSE MOVEMENT HANDLER
     // ========================================
-    document.addEventListener('mousemove', (e) => {
-        state.mouseX = e.clientX;
-        state.mouseY = e.clientY;
-        state.hasInteracted = true;
+    if (!prefersReducedMotion) {
+        document.addEventListener('mousemove', (e) => {
+            state.mouseX = e.clientX;
+            state.mouseY = e.clientY;
+            state.hasInteracted = true;
 
-        particleSystem.setMouse(e.clientX, e.clientY);
-        cursorTrail.addPoint(e.clientX, e.clientY);
+            particleSystem.setMouse(e.clientX, e.clientY);
+            cursorTrail.addPoint(e.clientX, e.clientY);
 
-        clearTimeout(state.idleTimer);
-        state.isIdle = false;
-        state.idleTimer = setTimeout(() => {
-            state.isIdle = true;
-            behaviorSystem.onIdle();
-        }, CONFIG.idleTimeout);
-    });
+            clearTimeout(state.idleTimer);
+            state.isIdle = false;
+            state.idleTimer = setTimeout(() => {
+                state.isIdle = true;
+                behaviorSystem.onIdle();
+            }, CONFIG.idleTimeout);
+        });
+    }
 
     // Cursor whisper on interactive elements
     document.querySelectorAll('[data-cursor-text]').forEach(el => {
@@ -192,28 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Touch-friendly card expansion
-    if (isTouchDevice) {
-        cards.forEach((card) => {
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('.project-link')) return;
-                cards.forEach(c => { if (c !== card) c.classList.remove('expanded'); });
-                card.classList.toggle('expanded');
-            });
-        });
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.project-card')) {
-                cards.forEach(c => c.classList.remove('expanded'));
-            }
-        });
-    }
-
-    // Update whisper text for touch devices
-    if (isTouchDevice) {
-        const whisper = document.querySelector('.section-whisper');
-        if (whisper) whisper.textContent = 'tap to wake them';
-    }
-
     // ========================================
     // SCROLL REVEAL & NARRATIVES
     // ========================================
@@ -260,11 +258,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
                 const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
 
-                // Update narrative fragments
-                narrativeFragments.forEach(fragment => {
-                    const trigger = parseFloat(fragment.dataset.trigger);
-                    fragment.classList.toggle('visible', scrollProgress >= trigger && scrollProgress < trigger + 0.15);
-                });
+                if (!prefersReducedMotion) {
+                    // Update narrative fragments
+                    narrativeFragments.forEach(fragment => {
+                        const trigger = parseFloat(fragment.dataset.trigger);
+                        fragment.classList.toggle('visible', scrollProgress >= trigger && scrollProgress < trigger + 0.15);
+                    });
+                }
 
                 if (scrollProgress > 0.95 && lastScrollProgress <= 0.95) behaviorSystem.onScrollToBottom();
                 lastScrollProgress = scrollProgress;
@@ -282,7 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Batch write phase: apply all style changes
                 cardData.forEach(({ card, awakeness }) => {
                     const breathing = cardBreathingMap.get(card);
-                    if (breathing) breathing.style.opacity = 0.3 + (awakeness * 0.4);
+                    if (breathing) {
+                        breathing.style.opacity = prefersReducedMotion ? '0.3' : 0.3 + (awakeness * 0.4);
+                    }
                 });
 
             });
@@ -299,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!href) return;
             const target = document.querySelector(href);
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
             }
         });
     });
@@ -307,21 +309,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     // MAGNETIC BUTTONS
     // ========================================
-    document.querySelectorAll('.magnetic-btn').forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    if (!prefersReducedMotion) {
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0, 0)');
         });
-        btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0, 0)');
-    });
+    }
 
     // ========================================
     // HERO PARALLAX
     // ========================================
     const heroContent = document.querySelector('.hero-content');
-    if (heroContent) {
+    if (heroContent && !prefersReducedMotion) {
         document.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 15;
             const y = (e.clientY / window.innerHeight - 0.5) * 15;
@@ -367,10 +371,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         glitchTimerId = setTimeout(randomGlitch, Math.random() * 10000 + 5000);
     }
-    glitchTimerId = setTimeout(randomGlitch, 5000);
+    if (!prefersReducedMotion) {
+        glitchTimerId = setTimeout(randomGlitch, 5000);
+    }
 
     // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
+        unsubscribePerformance();
         if (glitchTimerId) clearTimeout(glitchTimerId);
         if (state.idleTimer) clearTimeout(state.idleTimer);
     });

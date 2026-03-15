@@ -70,144 +70,32 @@ test.describe('CTA Button Mobile', () => {
     });
 });
 
-test.describe('Mobile Card Expansion', () => {
+test.describe('Mobile Project Card Visibility', () => {
     test.use({ viewport: { width: 375, height: 667 }, hasTouch: true });
 
-    test('should expand card on tap (touch device)', async ({ page }) => {
+    test('should show project summaries without requiring tap expansion', async ({ page }) => {
         await page.goto('/');
         await page.waitForLoadState('networkidle');
 
         const card = page.locator('.project-card').first();
+        await expect(card.locator('.expanded-description')).toBeVisible();
+        await expect(card.locator('.project-link')).toBeVisible();
 
-        // Tap on card
-        await card.tap();
-        // Wait for card expansion transition to complete (check transform)
-        await page.waitForFunction(
-            (selector) => {
-                const el = document.querySelector(`${selector} .card-expanded`);
-                if (!el) return false;
-                const transform = window.getComputedStyle(el).transform;
-                if (transform === 'none') return true;
-                const match = transform.match(/matrix\(([^)]+)\)/);
-                if (!match) return false;
-                const values = match[1].split(',').map(v => parseFloat(v.trim()));
-                return Math.abs(values[5]) < 5; // translateY close to 0
-            },
-            '.project-card'
-        );
-
-        // Card should show expanded content on hover (via CSS :hover)
-        const cardExpanded = card.locator('.card-expanded');
-        await expect(cardExpanded).toBeVisible();
+        const summaryBox = await card.locator('.expanded-description').boundingBox();
+        expect(summaryBox).not.toBeNull();
+        if (!summaryBox) return;
+        expect(summaryBox.height).toBeGreaterThan(0);
     });
 
-    test('should collapse card when tapping same card again', async ({ page }) => {
+    test('should keep the live project link available on touch devices', async ({ page }) => {
         await page.goto('/');
         await page.waitForLoadState('networkidle');
 
-        const card = page.locator('.project-card').first();
+        const projectLink = page.locator('.project-card .project-link').first();
+        await expect(projectLink).toBeVisible();
 
-        // First tap to expand
-        await card.tap();
-        // Wait for card to get the 'expanded' class (JS toggle)
-        await page.waitForFunction(
-            (selector) => {
-                const card = document.querySelector(selector);
-                return card && card.classList.contains('expanded');
-            },
-            '.project-card'
-        );
-
-        // Tap again to collapse (behavior depends on implementation)
-        await card.tap();
-        // Wait for 'expanded' class to be removed (JS toggle)
-        await page.waitForFunction(
-            (selector) => {
-                const card = document.querySelector(selector);
-                return card && !card.classList.contains('expanded');
-            },
-            '.project-card'
-        );
-
-        // Verify card-expanded state (CSS hover behavior)
-        const cardExpanded = card.locator('.card-expanded');
-        const transform = await cardExpanded.evaluate((el) => {
-            return window.getComputedStyle(el).transform;
-        });
-
-        // Check if collapsed (transform should move it out of view)
-        // The default state is translateY(100%)
-        expect(transform).toBeDefined();
-    });
-
-    // Note: 'should collapse previous card when tapping different card' test removed
-    // - Page now has only 1 project card (replaced 6 mock cards with 1 real project)
-    // - Multi-card interaction test is no longer applicable
-
-    test('should collapse card when tapping outside', async ({ page }) => {
-        await page.goto('/');
-        await page.waitForLoadState('networkidle');
-
-        const card = page.locator('.project-card').first();
-
-        // Tap card to expand
-        await card.tap();
-        // Wait for card to get the 'expanded' class (JS toggle)
-        await page.waitForFunction(
-            (selector) => {
-                const card = document.querySelector(selector);
-                return card && card.classList.contains('expanded');
-            },
-            '.project-card'
-        );
-
-        // Tap outside the card (on the body/hero area)
-        await page.locator('.hero').tap();
-        // Wait for 'expanded' class to be removed (tap outside triggers collapse)
-        await page.waitForFunction(
-            (selector) => {
-                const card = document.querySelector(selector);
-                return card && !card.classList.contains('expanded');
-            },
-            '.project-card'
-        );
-
-        // Card should return to default state
-        const cardExpanded = card.locator('.card-expanded');
-        const transform = await cardExpanded.evaluate((el) => {
-            return window.getComputedStyle(el).transform;
-        });
-
-        // Default transform moves it off-screen
-        expect(transform).toBeDefined();
-    });
-
-    test('expanded card should show card-expanded element', async ({ page }) => {
-        await page.goto('/');
-        await page.waitForLoadState('networkidle');
-
-        const card = page.locator('.project-card').first();
-
-        // Hover to trigger expansion (for desktop-style testing)
-        await card.hover();
-        // Wait for card expansion transition to complete
-        await page.waitForFunction(
-            (selector) => {
-                const el = document.querySelector(`${selector} .card-expanded`);
-                if (!el) return false;
-                const transform = window.getComputedStyle(el).transform;
-                if (transform === 'none') return true;
-                const match = transform.match(/matrix\(([^)]+)\)/);
-                if (!match) return false;
-                const values = match[1].split(',').map(v => parseFloat(v.trim()));
-                return Math.abs(values[5]) < 5;
-            },
-            '.project-card'
-        );
-
-        // card-expanded should be visible
-        const cardExpanded = card.locator('.card-expanded');
-        await expect(cardExpanded).toBeVisible();
+        const href = await projectLink.getAttribute('href');
+        expect(href).toBeTruthy();
     });
 });
 
@@ -280,20 +168,16 @@ test.describe('Mobile Aurora Performance', () => {
 });
 
 test.describe('Mobile Whisper Text', () => {
-    test('should show "tap to wake them" on touch devices', async ({ page }) => {
+    test('should avoid hover-only instructions on touch devices', async ({ page }) => {
         await page.goto('/');
         await page.waitForLoadState('networkidle');
 
-        // Check section-whisper text
         const sectionWhisper = page.locator('.section-whisper');
         const text = await sectionWhisper.textContent();
 
-        // The text is "hover to wake them" by default
-        // On touch devices, this could be changed to "tap to wake them"
-        // Note: This may need JS implementation to detect touch devices
         expect(text).toBeDefined();
-        // Current implementation says "hover to wake them"
-        expect(text).toContain('wake them');
+        if (!text) return;
+        expect(text.toLowerCase()).not.toContain('hover');
     });
 });
 

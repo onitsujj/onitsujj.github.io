@@ -11,6 +11,7 @@ export const Performance = {
     frameCount: 0,
     lastFpsUpdate: performance.now(),
     samples: [],
+    listeners: new Set(),
 
     detect() {
         // Safe hardwareConcurrency fallback (defaults to 4 if undefined)
@@ -68,6 +69,15 @@ export const Performance = {
         }
     },
 
+    subscribe(listener) {
+        this.listeners.add(listener);
+        return () => this.listeners.delete(listener);
+    },
+
+    notify() {
+        this.listeners.forEach((listener) => listener(this.tier));
+    },
+
     applySettings() {
         // Update CONFIG based on tier
         switch (this.tier) {
@@ -77,6 +87,7 @@ export const Performance = {
                 CONFIG.neuralConnections = 30;
                 CONFIG.trailLength = 10;
                 CONFIG.enableCursorTrail = false;
+                CONFIG.enableCursorEffects = false;
                 break;
             case 'medium':
                 CONFIG.particleCount = 1000;
@@ -84,6 +95,7 @@ export const Performance = {
                 CONFIG.neuralConnections = 50;
                 CONFIG.trailLength = 15;
                 CONFIG.enableCursorTrail = true;
+                CONFIG.enableCursorEffects = true;
                 break;
             case 'high':
             default:
@@ -92,8 +104,11 @@ export const Performance = {
                 CONFIG.neuralConnections = 100;
                 CONFIG.trailLength = 25;
                 CONFIG.enableCursorTrail = true;
+                CONFIG.enableCursorEffects = true;
                 break;
         }
+
+        this.notify();
     }
 };
 
@@ -114,6 +129,7 @@ export const CONFIG = {
     fastScrollThreshold: 50,
     targetFps: 60,
     enableCursorTrail: true,
+    enableCursorEffects: true,
     // Behavior thresholds (extracted magic numbers)
     cardInterestNotice: 3,
     cardInterestHigh: 5,
