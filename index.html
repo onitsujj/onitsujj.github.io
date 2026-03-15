@@ -4,71 +4,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
     <title>Onitsujj | Building Intelligence</title>
 
-    <!-- Custom Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body data-visitor-state="new" data-time-period="day">
-    <!-- Neural Network Background Canvas -->
-    <canvas id="neural-bg" aria-hidden="true"></canvas>
+    <a href="#projects" class="skip-link">Skip to selected projects</a>
 
-    <!-- Cursor Trail Canvas -->
+    <canvas id="neural-bg" aria-hidden="true"></canvas>
     <canvas id="cursor-trail" aria-hidden="true"></canvas>
 
-    <!-- Cursor Elements -->
     <div class="cursor-glow" aria-hidden="true"></div>
     <div class="cursor-whisper" aria-hidden="true"></div>
-
-    <!-- Behavior Whisper - appears based on actions -->
     <div class="behavior-whisper" aria-hidden="true"></div>
 
-    <!-- Hero Section -->
     <header class="hero" id="hero">
-        <!-- Particle Canvas for Name -->
         <canvas id="particle-name" aria-hidden="true"></canvas>
 
         <div class="hero-content">
-            <p class="hero-whisper">
-                <span class="greeting-text">something is waking up...</span>
-            </p>
+            <div class="hero-copy">
+                <p class="hero-whisper">
+                    <span class="greeting-text">something is waking up...</span>
+                </p>
 
-            <h1 class="hero-name sr-only">Onitsujj</h1>
-            <div class="hero-name-anchor" aria-hidden="true"></div>
-            <p class="hero-role">Building AI-assisted products, experiments, and usable interfaces.</p>
+                <p class="hero-kicker">Independent builder for AI-assisted products, prototypes, and unusually thoughtful web interfaces.</p>
 
-            <p class="title">
-                <span class="glitch-text" data-text="Selected builds from an agentic coding practice">Selected builds from an agentic coding practice</span>
-            </p>
-            <p class="tagline">A focused portfolio of tools and product work shipped with AI in the loop.</p>
-            <a href="#projects" class="cta">
-                <span class="cta-text">View selected projects</span>
-                <span class="cta-arrow">↓</span>
-            </a>
+                <h1 class="hero-name sr-only">Onitsujj</h1>
+                <div class="hero-name-anchor" aria-hidden="true"></div>
+
+                <p class="hero-role">I translate rough ideas into interfaces that feel deliberate, useful, and ready to ship.</p>
+
+                <p class="title">
+                    <span class="glitch-text" data-text="Selected builds from an agentic coding practice">Selected builds from an agentic coding practice</span>
+                </p>
+
+                <p class="tagline">This portfolio is a focused record of product work shaped by design judgment, engineering discipline, and AI in the loop.</p>
+
+                <div class="hero-actions">
+                    <a href="#projects" class="cta" data-cursor-text="Explore">
+                        <span class="cta-text">View selected projects</span>
+                        <span class="cta-arrow">↓</span>
+                    </a>
+                    <a href="mailto:hello@onitsujj.com" class="hero-secondary magnetic-btn" data-cursor-text="Email">
+                        Start a conversation
+                    </a>
+                </div>
+            </div>
+
+            <aside class="hero-aside">
+                <p class="aside-label">Practice Snapshot</p>
+                <div class="signal-card">
+                    <div class="signal-row">
+                        <span>Focus</span>
+                        <strong>AI product interfaces</strong>
+                    </div>
+                    <div class="signal-row">
+                        <span>Mode</span>
+                        <strong>Design, code, refine</strong>
+                    </div>
+                    <div class="signal-row">
+                        <span>Value</span>
+                        <strong>Clarity under ambiguity</strong>
+                    </div>
+                </div>
+                <p class="hero-note">Small teams move faster when the concept, interface, and implementation quality are aligned from day one.</p>
+            </aside>
         </div>
+
+        <div class="hero-proof">
+            <div class="proof-item">
+                <span class="proof-label">Build Lens</span>
+                <strong>Product framing before decoration</strong>
+            </div>
+            <div class="proof-item">
+                <span class="proof-label">Delivery Style</span>
+                <strong>Fast iterations with testable outcomes</strong>
+            </div>
+            <div class="proof-item">
+                <span class="proof-label">Current Interests</span>
+                <strong>Agent workflows, portfolio systems, tool UX</strong>
+            </div>
+        </div>
+
         <div class="hero-ambient"></div>
     </header>
 
-    <!-- Scroll Narrative - fragments that appear as you scroll -->
     <div class="scroll-narrative" aria-hidden="true">
-        <span class="narrative-fragment" data-trigger="0.1">Every app starts with a question...</span>
-        <span class="narrative-fragment" data-trigger="0.25">What if building could feel like conversation?</span>
-        <span class="narrative-fragment" data-trigger="0.5">I built this to share the journey...</span>
-        <span class="narrative-fragment" data-trigger="0.75">The code keeps evolving...</span>
+        <span class="narrative-fragment" data-trigger="0.1">Signal over spectacle.</span>
+        <span class="narrative-fragment" data-trigger="0.25">Interfaces should explain themselves.</span>
+        <span class="narrative-fragment" data-trigger="0.5">AI is leverage, not an excuse.</span>
+        <span class="narrative-fragment" data-trigger="0.75">The work should still feel human.</span>
     </div>
 
-    <!-- Projects Section -->
     <main id="projects" class="projects-section">
         <div class="section-header">
-            <h2 class="section-title">Selected Works</h2>
-            <p class="section-whisper">Each card includes the context, stack, and live link.</p>
+            <div>
+                <h2 class="section-title">Selected Works</h2>
+                <p class="section-whisper">Each card includes the context, stack, and live link.</p>
+            </div>
+            <p class="section-intro">I gravitate toward compact products with strong information hierarchy, careful motion, and interfaces that earn trust quickly.</p>
         </div>
 
         <div class="projects-grid">
@@ -77,22 +119,34 @@
                     <div class="card-face card-front">
                         <div class="project-image">
                             <img src="assets/projects/max-particle-calculator.png"
-                                 alt="Max Particle Calculator - Retro styled Pokemon GO tool"
-                                 class="project-image-src"
-                                 loading="lazy" />
+                                alt="Max Particle Calculator interface showing a retro styled Pokemon GO utility"
+                                class="project-image-src"
+                                loading="lazy">
+                            <span class="image-badge">Utility Tool</span>
                         </div>
+
                         <div class="project-info">
+                            <p class="project-kicker">Decision support for players</p>
                             <h3 class="glitch-text" data-text="Max Particle Calculator">Max Particle Calculator</h3>
                             <p class="tech-stack">Next.js • TypeScript • Tailwind</p>
                         </div>
-                        <div class="card-glow"></div>
                     </div>
+
                     <div class="card-expanded">
                         <div class="expanded-content">
                             <span class="expanded-label">Pokemon GO Tool</span>
-                            <p class="expanded-description">A retro-styled calculator using BFS to find optimal MP sequences. Features offline support, history tracking, and full WCAG accessibility.</p>
-                            <a href="https://pogo-max-particle-calculator.vercel.app/" class="project-link" target="_blank" rel="noopener noreferrer">View live project →</a>
+                            <p class="expanded-description">A retro-styled calculator that uses BFS to map efficient MP sequences, with offline support, history tracking, and fully accessible interactions.</p>
+                            <ul class="project-notes" aria-label="Project highlights">
+                                <li>Optimized pathfinding</li>
+                                <li>Offline friendly</li>
+                                <li>WCAG-minded UI</li>
+                            </ul>
+                            <a href="https://pogo-max-particle-calculator.vercel.app/" class="project-link" target="_blank" rel="noopener noreferrer">
+                                View live project
+                                <span aria-hidden="true">↗</span>
+                            </a>
                         </div>
+                        <div class="card-glow"></div>
                     </div>
                 </div>
                 <div class="card-breathing"></div>
@@ -104,22 +158,34 @@
                     <div class="card-face card-front">
                         <div class="project-image">
                             <img src="assets/projects/christoppers.webp"
-                                 alt="Christoppers - Custom cake topper portfolio gallery"
-                                 class="project-image-src"
-                                 loading="lazy" />
+                                alt="Christoppers homepage featuring custom cake topper portfolio photography"
+                                class="project-image-src"
+                                loading="lazy">
+                            <span class="image-badge">Client Portfolio</span>
                         </div>
+
                         <div class="project-info">
+                            <p class="project-kicker">Family brand, elevated online</p>
                             <h3 class="glitch-text" data-text="Christoppers">Christoppers</h3>
                             <p class="tech-stack">Next.js • React • Supabase</p>
                         </div>
-                        <div class="card-glow"></div>
                     </div>
+
                     <div class="card-expanded">
                         <div class="expanded-content">
                             <span class="expanded-label">Portfolio Gallery</span>
-                            <p class="expanded-description">A playful portfolio showcasing custom cake toppers for family celebrations. Features a curated gallery of 3D-printed designs with a dark neon aesthetic.</p>
-                            <a href="https://christoppers.com/" class="project-link" target="_blank" rel="noopener noreferrer">View live project →</a>
+                            <p class="expanded-description">A playful showcase for custom cake toppers, built to feel personal and polished while keeping the gallery browsing experience simple.</p>
+                            <ul class="project-notes" aria-label="Project highlights">
+                                <li>Custom product storytelling</li>
+                                <li>Gallery-led layout</li>
+                                <li>Warm visual identity</li>
+                            </ul>
+                            <a href="https://christoppers.com/" class="project-link" target="_blank" rel="noopener noreferrer">
+                                View live project
+                                <span aria-hidden="true">↗</span>
+                            </a>
                         </div>
+                        <div class="card-glow"></div>
                     </div>
                 </div>
                 <div class="card-breathing"></div>
@@ -128,39 +194,45 @@
         </div>
     </main>
 
-    <!-- About Section -->
-    <section class="about-section">
+    <section class="about-section" id="about">
         <div class="about-content">
-            <p class="about-whisper">the developer on the journey</p>
-            <p class="about-text">
-                I'm exploring what's possible when AI becomes part of the development process. These projects are milestones on that journey — each one taught me something new about building with agentic tools.
-                <span class="highlight">Curious minds</span> welcome.
-            </p>
+            <div class="about-copy">
+                <p class="about-whisper">Working Style</p>
+                <p class="about-text">
+                    I work between product thinking, visual systems, and implementation detail. <span class="highlight">The goal is software that feels considered, not merely functional.</span>
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <article class="about-panel">
+                    <h3>How I build</h3>
+                    <p>Start with the core task, reduce friction, then add character only where it improves comprehension or trust.</p>
+                </article>
+                <article class="about-panel">
+                    <h3>What matters</h3>
+                    <p>Strong hierarchy, calm interaction patterns, mobile resilience, and interfaces that can survive real use instead of just screenshots.</p>
+                </article>
+            </div>
         </div>
     </section>
 
-    <!-- NEW: Scanline Overlay -->
     <div class="holo-scanline"></div>
 
-    <!-- NEW: Ambient Auroras -->
     <div class="ambient-aura aura-1"></div>
     <div class="ambient-aura aura-2"></div>
     <div class="ambient-aura aura-3"></div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <p class="footer-cta">
-                <span class="glitch-text" data-text="Let's build something together">Let's build something
-                    together</span>
+                <span class="glitch-text" data-text="Let's build something together">Let's build something together</span>
             </p>
+            <p class="footer-note">Available for selected product, portfolio, and interface work.</p>
             <nav class="footer-links">
-                <a href="https://github.com/onitsujj" target="_blank" rel="noopener" class="footer-link magnetic-btn"
-                    data-cursor-text="Code">
+                <a href="https://github.com/onitsujj" target="_blank" rel="noopener" class="footer-link magnetic-btn" data-cursor-text="Code">
                     <span>GitHub</span>
                 </a>
-                <a href="https://linkedin.com/in/onitsujj" target="_blank" rel="noopener"
-                    class="footer-link magnetic-btn" data-cursor-text="Connect">
+                <a href="https://linkedin.com/in/onitsujj" target="_blank" rel="noopener" class="footer-link magnetic-btn" data-cursor-text="Connect">
                     <span>LinkedIn</span>
                 </a>
                 <a href="mailto:hello@onitsujj.com" class="footer-link magnetic-btn" data-cursor-text="Say Hi">
@@ -168,40 +240,42 @@
                 </a>
             </nav>
         </div>
-        <p class="copyright">© 2026 Onitsujj · Crafted with curiosity</p>
-        <p class="made-with">• Made with ❤️ by OniMu Designs •</p>
-        <p class="signature">This portfolio is watching you. In a friendly way.</p>
+        <p class="copyright">© 2026 Onitsujj. Built in Kuala Lumpur.</p>
+        <p class="made-with">Made with HTML, CSS, JavaScript, and a rigorous feedback loop.</p>
+        <p class="signature">Human taste, machine leverage, steady iteration.</p>
     </footer>
 
-    <!-- NEW: Floating Command Dock -->
-    <nav class="command-dock">
+    <nav class="command-dock" aria-label="Quick navigation">
         <div class="dock-glass">
             <a href="#hero" class="dock-item active" aria-label="Home" data-cursor-text="Home">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
+                <span class="dock-label">Home</span>
             </a>
             <a href="#projects" class="dock-item" aria-label="Projects" data-cursor-text="Works">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
+                <span class="dock-label">Projects</span>
             </a>
             <div class="dock-divider"></div>
-            <a href="https://github.com/onitsujj" target="_blank" class="dock-item" aria-label="GitHub"
-                data-cursor-text="Code">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <a href="https://github.com/onitsujj" target="_blank" class="dock-item" aria-label="GitHub" data-cursor-text="Code">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path
                         d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
                     </path>
                 </svg>
+                <span class="dock-label">GitHub</span>
             </a>
             <a href="mailto:hello@onitsujj.com" class="dock-item" aria-label="Contact" data-cursor-text="Contact">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
+                <span class="dock-label">Email</span>
             </a>
         </div>
     </nav>
