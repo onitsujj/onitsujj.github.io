@@ -34,9 +34,9 @@ test.describe('Project Cards - Black Box', () => {
         expect(href).toBe('https://pogo-max-particle-calculator.vercel.app/');
     });
 
-    test('two project cards exist', async ({ page }) => {
+    test('three project cards exist', async ({ page }) => {
         const projectCards = page.locator('.project-card');
-        await expect(projectCards).toHaveCount(2);
+        await expect(projectCards).toHaveCount(3);
     });
 
     test('card link is accessible via keyboard without revealing hidden content', async ({ page }) => {
@@ -161,11 +161,8 @@ test.describe('Project Cards - White Box', () => {
 });
 
 // ============================================================================
-// TDD RED PHASE: Feature 1 - Project Card Screenshot Image
+// Feature: Project Card Screenshot Image
 // ============================================================================
-// These tests are designed to FAIL initially because the feature doesn't exist yet.
-// Current state: Card has `.placeholder-visual` with project number
-// Target state: Card will have `<img class="project-image-src" src="assets/projects/max-particle-calculator.png" alt="..." loading="lazy">`
 
 test.describe('Feature: Project Card Screenshot Image - Black Box', () => {
     test.beforeEach(async ({ page }) => {
@@ -253,13 +250,13 @@ test.describe('Feature: Project Card Screenshot Image - White Box', () => {
     });
 });
 
-test.describe('Feature: Adaptive Grid Layout For Two Projects', () => {
+test.describe('Feature: Adaptive Grid Layout For Three Projects', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
         await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
     });
 
-    test('displays 2 columns on desktop viewport (1200px)', async ({ page }) => {
+    test('displays 3 columns on desktop viewport (1200px)', async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
 
         const grid = page.locator('.projects-grid');
@@ -268,7 +265,7 @@ test.describe('Feature: Adaptive Grid Layout For Two Projects', () => {
         });
 
         const columnTracks = computedStyle.split(/\s+/).filter(v => v && v !== '0px');
-        expect(columnTracks.length).toBe(2);
+        expect(columnTracks.length).toBe(3);
     });
 
     test('displays 2 columns on tablet viewport (768px)', async ({ page }) => {
@@ -324,7 +321,7 @@ test.describe('Feature: Adaptive Grid Layout For Two Projects', () => {
             };
         });
 
-        expect(result.cardCount).toBe(2);
+        expect(result.cardCount).toBe(3);
         expect(result.columnCount).toBeLessThanOrEqual(result.cardCount);
     });
 });
@@ -435,6 +432,122 @@ test.describe('Christoppers Project Card - White Box', () => {
 
     test('card structure contains all required elements', async ({ page }) => {
         const card = page.locator(CHRISTOPPERS_CARD_SELECTOR);
+
+        await expect(card.locator('.card-inner')).toHaveCount(1);
+        await expect(card.locator('.card-face.card-front')).toHaveCount(1);
+        await expect(card.locator('.project-image')).toHaveCount(1);
+        await expect(card.locator('.project-info')).toHaveCount(1);
+        await expect(card.locator('.glitch-text')).toHaveCount(1);
+        await expect(card.locator('.tech-stack')).toHaveCount(1);
+        await expect(card.locator('.card-expanded')).toHaveCount(1);
+        await expect(card.locator('.expanded-content')).toHaveCount(1);
+        await expect(card.locator('.expanded-label')).toHaveCount(1);
+        await expect(card.locator('.expanded-description')).toHaveCount(1);
+        await expect(card.locator('.project-link')).toHaveCount(1);
+        await expect(card.locator('.card-glow')).toHaveCount(1);
+    });
+});
+
+const GROWTHTRACK_CARD_SELECTOR = '.project-card[data-project-id="3"]';
+
+test.describe('GrowthTrack Project Card - Black Box', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+        await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
+    });
+
+    test('displays GrowthTrack project title', async ({ page }) => {
+        const projectTitle = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .glitch-text`);
+        await expect(projectTitle).toHaveText('GrowthTrack');
+    });
+
+    test('shows correct tech stack', async ({ page }) => {
+        const techStack = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .tech-stack`);
+        await expect(techStack).toHaveText('Next.js 16 • Better Auth • Drizzle');
+    });
+
+    test('project link navigates to correct URL', async ({ page }) => {
+        const projectLink = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-link`);
+        const href = await projectLink.getAttribute('href');
+
+        expect(href).toBe('https://growth-tracker-iota.vercel.app/');
+    });
+
+    test('category label shows Probation Management Platform', async ({ page }) => {
+        const categoryLabel = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .expanded-label`);
+        await expect(categoryLabel).toHaveText('Probation Management Platform');
+    });
+
+    test('project image loads successfully and is visible', async ({ page }) => {
+        const projectImage = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-image-src`);
+
+        await expect(projectImage).toBeVisible();
+
+        const isLoaded = await projectImage.evaluate((img) => {
+            return img.complete && img.naturalWidth > 0;
+        });
+        expect(isLoaded).toBe(true);
+    });
+});
+
+test.describe('GrowthTrack Project Card - White Box', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+        await page.waitForFunction(() => window.particleSystem !== undefined, { timeout: 5000 });
+    });
+
+    test('card has correct data-project-id attribute', async ({ page }) => {
+        const card = page.locator(GROWTHTRACK_CARD_SELECTOR);
+        const projectId = await card.getAttribute('data-project-id');
+
+        expect(projectId).toBe('3');
+    });
+
+    test('glitch text has matching data-text attribute', async ({ page }) => {
+        const glitchText = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .glitch-text`);
+        const dataText = await glitchText.getAttribute('data-text');
+        const innerText = await glitchText.textContent();
+
+        expect(dataText).toBe(innerText);
+    });
+
+    test('.project-image-src element exists with correct src attribute', async ({ page }) => {
+        const projectImage = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-image-src`);
+
+        await expect(projectImage).toHaveCount(1);
+
+        const src = await projectImage.getAttribute('src');
+        expect(src).toBe('assets/projects/growthtrack.jpg');
+    });
+
+    test('.project-image-src has alt attribute for accessibility', async ({ page }) => {
+        const projectImage = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-image-src`);
+
+        const alt = await projectImage.getAttribute('alt');
+        expect(alt).toBeDefined();
+        expect(alt).not.toBe('');
+        expect(alt.toLowerCase()).toContain('growthtrack');
+    });
+
+    test('.project-image-src has loading="lazy" for performance', async ({ page }) => {
+        const projectImage = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-image-src`);
+
+        const loading = await projectImage.getAttribute('loading');
+        expect(loading).toBe('lazy');
+    });
+
+    test('link has security attributes for external URL', async ({ page }) => {
+        const projectLink = page.locator(`${GROWTHTRACK_CARD_SELECTOR} .project-link`);
+
+        const target = await projectLink.getAttribute('target');
+        const rel = await projectLink.getAttribute('rel');
+
+        expect(target).toBe('_blank');
+        expect(rel).toMatch(/noopener|noreferrer/);
+    });
+
+    test('card structure contains all required elements', async ({ page }) => {
+        const card = page.locator(GROWTHTRACK_CARD_SELECTOR);
 
         await expect(card.locator('.card-inner')).toHaveCount(1);
         await expect(card.locator('.card-face.card-front')).toHaveCount(1);
