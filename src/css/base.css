@@ -113,7 +113,8 @@ ul {
 @media (prefers-reduced-motion: no-preference) {
   html.js:not(.reveal-fallback) [data-reveal],
   html.js:not(.reveal-fallback) [data-reveal-lines],
-  html.js:not(.reveal-fallback) [data-reveal-badge] {
+  html.js:not(.reveal-fallback) [data-reveal-badge],
+  html.js:not(.reveal-fallback) [data-reveal-close] {
     opacity: 0;
   }
 }

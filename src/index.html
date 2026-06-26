@@ -89,6 +89,10 @@
       <a href="#connect" data-index="connect">04</a>
     </nav>
 
+    <!-- ScrollSmoother wraps the scrollable content; the fixed nav, progress
+         bar and section index above stay OUTSIDE so they don't get transformed -->
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
     <main id="top">
       <!-- ===================== HERO ===================== -->
       <section class="hero" id="hero" aria-label="Intro">
@@ -195,46 +199,58 @@
         </div>
       </section>
 
-      <!-- ===================== APPROACH (POV) ===================== -->
+      <!-- ===================== APPROACH (POV) — pinned keynote scene ===================== -->
       <section class="section approach" id="approach" aria-labelledby="approach-h">
-        <div class="grid-12 container">
-          <div class="approach__head">
-            <p class="section-head" data-reveal>
-              <span class="section-num">02</span>
-              <span class="section-label">Approach</span>
-            </p>
-            <h2 class="approach__h2" id="approach-h" data-reveal>
-              AI doesn't replace your experts — it magnifies them. Adoption is teaching a
-              team to steer it, not fear it.
-            </h2>
-          </div>
-
-          <div class="beliefs">
-            <div class="belief" data-reveal>
-              <p class="belief__text">
-                Magnify, don't replace. AI is a multiplier for people who know their domain —
-                the expert, not the tool, judges if the output is right.
-              </p>
-            </div>
-            <div class="belief" data-reveal>
-              <p class="belief__text">
-                Meet people where they are. Keep coding by hand if you like — we still use AI
-                for the docs, the gaps we overlooked, the brainstorm before the build.
-              </p>
-            </div>
-            <div class="belief" data-reveal>
-              <p class="belief__text">
-                Experience is the steering wheel. Small tasks, clear intent, challenge its
-                reasoning — that's what keeps AI from hallucinating into your codebase.
-              </p>
-            </div>
-          </div>
-
-          <p class="approach__note" data-reveal>
-            And it's not all magic. AI is only as good as the context it's given — point it at
-            a messy, undocumented codebase and it struggles like anyone would. Knowing that
-            limit is part of using it well.
+        <div class="approach__stage">
+          <p class="section-head approach__tag">
+            <span class="section-num">02</span>
+            <span class="section-label">Approach</span>
           </p>
+
+          <div class="approach__thesis">
+            <p class="approach__eyebrow">My take</p>
+            <h2 class="approach__h2" id="approach-h">
+              <span class="ln">AI doesn't replace your experts —</span>
+              <span class="ln">it <em>magnifies</em> them.</span>
+            </h2>
+            <p class="approach__lead">
+              <span class="ln">Adoption is teaching a team to steer it, not fear it.</span>
+            </p>
+          </div>
+
+          <div class="approach__rail" aria-label="What I believe about adopting AI">
+            <div class="approach__track">
+              <article class="belief">
+                <span class="belief__key">Magnify</span>
+                <p class="belief__text">
+                  <b>Magnify, don't replace.</b> AI is a multiplier for people who know their
+                  domain — the expert, not the tool, judges if the output is right.
+                </p>
+              </article>
+              <article class="belief">
+                <span class="belief__key">Meet them there</span>
+                <p class="belief__text">
+                  <b>Meet people where they are.</b> Keep coding by hand if you like — we still
+                  use AI for the docs, the gaps we overlooked, the brainstorm before the build.
+                </p>
+              </article>
+              <article class="belief">
+                <span class="belief__key">Steering</span>
+                <p class="belief__text">
+                  <b>Experience is the steering wheel.</b> Small tasks, clear intent, challenge
+                  its reasoning — that's what keeps AI from hallucinating into your codebase.
+                </p>
+              </article>
+              <article class="belief belief--note">
+                <span class="belief__key">And — not all magic</span>
+                <p class="belief__text">
+                  AI is only as good as the context it's given — point it at a messy,
+                  undocumented codebase and it struggles like anyone would. Knowing that limit
+                  is part of using it well.
+                </p>
+              </article>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -308,10 +324,10 @@
               <span class="section-num">04</span>
               <span class="section-label">Connect</span>
             </p>
-            <h2 class="connect__h2" id="connect-h" data-reveal>
+            <h2 class="connect__h2" id="connect-h" data-reveal-close>
               If any of this resonates, follow along.
             </h2>
-            <div class="connect__actions" data-reveal>
+            <div class="connect__actions" data-reveal-close>
               <a class="btn btn--primary" href="https://www.linkedin.com/in/jose-j-g-17100774/">
                 Follow on LinkedIn <span class="btn__arrow" aria-hidden="true">→</span>
               </a>
@@ -328,6 +344,9 @@
         <a class="nav__link" href="#top">Back to top ↑</a>
       </div>
     </footer>
+      </div>
+    </div>
+    <!-- /smooth-content /smooth-wrapper -->
 
     <!-- structured data -->
     <script type="application/ld+json">

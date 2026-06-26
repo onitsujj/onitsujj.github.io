@@ -1,10 +1,97 @@
+import gsap from "gsap";
+import { CustomEase } from "gsap/CustomEase";
+
+// A faint S-curve for the scroll-progress bar: softens the very start/end so it
+// reads as a designed pacing aid rather than a flat loading bar, while staying
+// near-linear (honest about scroll position) through the middle.
+gsap.registerPlugin(CustomEase);
+CustomEase.create("progress", "M0,0 C0.2,0.08 0.8,0.92 1,1");
+
 // Scroll-driven choreography. Reveals + counters use an IntersectionObserver
 // (fires reliably for elements already in view on load — e.g. landing on a
 // shared "/#connect" link — which ScrollTrigger.batch misses). Continuous
 // effects (progress, parallax) and range state (scroll-spy, nav) use
 // ScrollTrigger. `reduced` keeps passive utilities but drops entrance/parallax.
+// The Approach section reads as a normal block on no-JS, reduced-motion, and
+// narrow screens. On desktop with motion it becomes a pinned "keynote" scene:
+// scrolling assembles the thesis, then the beliefs slide in from the right —
+// paced by the scroll wheel so it can be narrated live. Its own matchMedia
+// builds (and reverts) it only for desktop + no-preference, so crossing the
+// breakpoint or toggling reduced-motion cleans up automatically.
+function buildApproachScene({ gsap }) {
+  const mm = gsap.matchMedia();
+  mm.add("(min-width: 821px) and (prefers-reduced-motion: no-preference)", () => {
+    const stage = document.querySelector(".approach__stage");
+    const track = document.querySelector(".approach__track");
+    if (!stage || !track) return;
+
+    const thesis = document.querySelector(".approach__thesis");
+    const rail = document.querySelector(".approach__rail");
+    const eyebrow = document.querySelector(".approach__eyebrow");
+    const lines = gsap.utils.toArray(".approach__thesis .ln");
+
+    // switch on the pinned layout (CSS keys off this class), then hide the
+    // pieces the timeline will bring in.
+    document.documentElement.classList.add("approach-live");
+    gsap.set([eyebrow, ...lines], { autoAlpha: 0, y: 42 });
+    gsap.set(rail, { autoAlpha: 0 });
+
+    const tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: ".approach",
+        start: "top top",
+        end: () => "+=" + Math.round(window.innerHeight * 3.4),
+        pin: ".approach__stage",
+        anticipatePin: 1,
+        scrub: 1,
+        invalidateOnRefresh: true,
+        // promote the sliding track to its own layer only while the scene is
+        // active, instead of a standing will-change that holds a GPU layer for
+        // an off-screen section the whole session.
+        onToggle: (self) => {
+          track.style.willChange = self.isActive ? "transform" : "auto";
+        },
+      },
+    });
+
+    // phase 1 — the thesis assembles
+    tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0)
+      .to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0.2)
+      .to({}, { duration: 0.9 }) // hold — room to land the line live
+      // phase 2 — the thesis lifts away first, THEN every belief parades in from
+      // off-screen right (so nothing overlaps the thesis mid-hand-off). ease
+      // "none" locks the horizontal travel 1:1 to the scroll wheel.
+      .to(thesis, { autoAlpha: 0, y: -70, duration: 1, ease: "power2.in" }, ">")
+      .to(rail, { autoAlpha: 1, duration: 0.6 }, ">-0.3")
+      .fromTo(
+        track,
+        { x: () => stage.clientWidth },
+        {
+          x: () => -(track.scrollWidth - stage.clientWidth + 40),
+          duration: 6,
+          ease: "none",
+          immediateRender: false,
+        },
+        "<"
+      )
+      // dwell on the closing "not all magic" note before the pin releases, so
+      // the section doesn't snap to Talks the instant it appears
+      .to({}, { duration: 1.5 });
+
+    return () => document.documentElement.classList.remove("approach-live");
+  });
+  return mm;
+}
+
 export function setupScroll({ gsap, ScrollTrigger, reduced }) {
   let io = null;
+
+  // Pinned Approach scene first: it adds pin-spacing, so it must be created
+  // before the triggers below (progress bar, scroll-spy) read page positions.
+  // (The fonts.ready refresh is owned by motion.js now, so the scene's pin
+  // spacing settles in one ordered pass before any deep-link scroll.)
+  const sceneMM = reduced ? null : buildApproachScene({ gsap });
 
   // ---- scroll-progress bar
   const bar = document.querySelector(".progress-bar");
@@ -14,7 +101,7 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
       { scaleX: 0 },
       {
         scaleX: 1,
-        ease: "none",
+        ease: "progress",
         scrollTrigger: { trigger: document.documentElement, start: "top top", end: "bottom bottom", scrub: 0.3 },
       }
     );
@@ -22,35 +109,47 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
 
   // ---- section reveals + stat counters (IntersectionObserver = jump-safe)
   const revealEls = gsap.utils.toArray("[data-reveal]").filter((el) => !el.closest(".hero"));
+  const closeEls = gsap.utils.toArray("[data-reveal-close]"); // the Connect close
   const counters = gsap.utils.toArray("[data-count]");
-  const countTo = (el) => {
+  const countTo = (el, delay = 0) => {
     const end = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
     if (reduced) { el.textContent = end + suffix; return; }
     const obj = { v: 0 };
-    gsap.to(obj, { v: end, duration: 1.4, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; } });
+    gsap.to(obj, { v: end, duration: 1.4, delay, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; } });
   };
 
   if (reduced) {
-    gsap.set(revealEls, { opacity: 1, y: 0 });
-    counters.forEach(countTo);
+    gsap.set([...revealEls, ...closeEls], { opacity: 1, y: 0 });
+    counters.forEach((el) => countTo(el));
   } else {
     gsap.set(revealEls, { opacity: 0, y: 26 });
+    gsap.set(closeEls, { opacity: 0, y: 34 });
+    // hold each number at 0 so it doesn't flash its final value during the fade
+    counters.forEach((el) => { el.textContent = "0" + (el.dataset.suffix || ""); });
     io = new IntersectionObserver(
       (entries) => {
         const shown = entries.filter((e) => e.isIntersecting).map((e) => e.target);
         const reveals = shown.filter((el) => el.hasAttribute("data-reveal"));
+        const closes = shown.filter((el) => el.hasAttribute("data-reveal-close"));
         if (reveals.length) {
           gsap.to(reveals, { opacity: 1, y: 0, duration: 0.8, stagger: 0.09, ease: "power3.out", overwrite: true });
         }
+        if (closes.length) {
+          // the closing CTA arrives slower + gentler — a deliberate exhale to end on
+          gsap.to(closes, { opacity: 1, y: 0, duration: 1.1, stagger: 0.16, ease: "power2.out", overwrite: true });
+        }
         shown.forEach((el) => {
-          if (el.hasAttribute("data-count")) countTo(el);
+          // counters start AFTER their block has faded in, so "10+ years" lands as
+          // earned proof rather than racing the reveal
+          if (el.hasAttribute("data-count")) countTo(el, 0.7);
           io.unobserve(el);
         });
       },
       { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
     );
     revealEls.forEach((el) => io.observe(el));
+    closeEls.forEach((el) => io.observe(el));
     counters.forEach((el) => io.observe(el));
   }
 
@@ -92,5 +191,8 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
     });
   }
 
-  return () => { if (io) io.disconnect(); };
+  return () => {
+    if (io) io.disconnect();
+    if (sceneMM) sceneMM.revert();
+  };
 }
