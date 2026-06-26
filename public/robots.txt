@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://onitsujj.github.io/sitemap.xml
