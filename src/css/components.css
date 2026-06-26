@@ -24,7 +24,7 @@
 }
 .btn--primary {
   background: var(--accent);
-  color: #1a1306;
+  color: #04222a;
 }
 .btn--primary:hover {
   background: var(--accent-press);

@@ -1,6 +1,6 @@
 /* ============================================================
-   Design tokens — Obsidian + Amber
-   Near-black canvas, one warm amber signal, warm-white type.
+   Design tokens — Obsidian + Cyan
+   Near-black canvas, one bright cyan signal, warm-white type.
    ============================================================ */
 :root {
   /* ---- color ---- */
@@ -15,10 +15,10 @@
   --text-1: #c9c5bc;        /* body */
   --muted: #9a958c;         /* eyebrows / captions (clears WCAG AA on --bg) */
 
-  --accent: #f2a93b;        /* the one signal */
-  --accent-press: #d9912a;
-  --accent-soft: rgba(242, 169, 59, 0.14);
-  --accent-line: rgba(242, 169, 59, 0.32);
+  --accent: #1cbdd4;        /* the one signal */
+  --accent-press: #179bae;
+  --accent-soft: rgba(28, 189, 212, 0.14);
+  --accent-line: rgba(28, 189, 212, 0.32);
 
   /* badge */
   --badge-card: #1a1a1e;

@@ -1,6 +1,6 @@
 // Draggable 3D lanyard badge — React Three Fiber + rapier rope physics.
 // Ported from the original esm.sh build to npm-vendored deps so it bundles
-// locally and works everywhere (incl. Brave). Recolored to Obsidian + Amber.
+// locally and works everywhere (incl. Brave). Recolored to Obsidian + Cyan.
 import React, { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import * as THREE from "three";
@@ -87,7 +87,7 @@ function updateStrap(geo, pts, twist) {
   geo.computeBoundingSphere();
 }
 
-/* ---------- card texture compositing (Obsidian + Amber back) ---------- */
+/* ---------- card texture compositing (Obsidian + Cyan back) ---------- */
 function buildCardTexture(imageSrc, cardColor) {
   return new Promise((resolve) => {
     const res = 1024;
@@ -107,7 +107,7 @@ function buildCardTexture(imageSrc, cardColor) {
       ctx.strokeStyle = "rgba(244,241,234,0.16)";
       ctx.lineWidth = 3;
       ctx.strokeRect(x0 + 46, 46, res / 2 - 92, res - 92);
-      // centered ring emblem — outer warm-white, inner amber
+      // centered ring emblem — outer warm-white, inner cyan
       const cx = x0 + res / 4;
       const cy = res / 2;
       ctx.strokeStyle = "rgba(244,241,234,0.85)";
@@ -117,7 +117,7 @@ function buildCardTexture(imageSrc, cardColor) {
       ctx.stroke();
       ctx.beginPath();
       ctx.arc(cx, cy, 70, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(242,169,59,0.55)";
+      ctx.strokeStyle = "rgba(28,189,212,0.55)";
       ctx.lineWidth = 3;
       ctx.stroke();
     };

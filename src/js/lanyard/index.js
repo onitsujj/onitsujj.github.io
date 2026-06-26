@@ -38,7 +38,7 @@ export function initLanyard({ onReady } = {}) {
           image: profileUrl,
           cardColor: "#1a1a1e",
           clipColor: "#8a8a82",
-          strapColor: "#f2a93b",
+          strapColor: "#1cbdd4",
           onReady: () => {
             if (hero) hero.classList.add("is-3d");
             onReady && onReady();
