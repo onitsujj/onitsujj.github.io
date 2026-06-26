@@ -94,8 +94,17 @@
   font-size: var(--fs-display);
   line-height: 0.95;
   letter-spacing: -0.035em;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55), 0 0 1px rgba(0, 0, 0, 0.85);
+}
+.hero__sub {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--fs-h3);
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  margin-bottom: 22px;
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
 }
 .hero__lead {
   max-width: 32ch;
@@ -272,15 +281,6 @@
   margin-top: 8px;
   max-width: 18ch;
 }
-.focus-line {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: var(--space-4);
-}
-.focus-line .accent {
-  color: var(--accent);
-}
 
 /* ============================================================
    APPROACH — POV beliefs + horizontal capability strip
@@ -300,23 +300,16 @@
   gap: var(--gutter);
   margin-bottom: var(--space-6);
 }
-.belief__num {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--accent);
-}
 .belief__text {
   font-size: var(--fs-h3);
   font-family: var(--font-display);
   font-weight: 500;
   color: var(--text);
   line-height: 1.25;
-  margin-top: 12px;
 }
 .approach__note {
   grid-column: 1 / span 12;
   max-width: 64ch;
-  margin-bottom: var(--space-6);
   padding-left: var(--space-3);
   border-left: 2px solid var(--accent-line);
   color: var(--text-1);
@@ -324,47 +317,15 @@
   line-height: 1.6;
 }
 
-/* capability strip — becomes a horizontal scrub row in M3 */
-.capabilities {
-  grid-column: 1 / span 12;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gutter);
-}
-.cap {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: var(--space-3);
-  transition: border-color 0.25s var(--ease-out), transform 0.25s var(--ease-out);
-}
-.cap:hover {
-  border-color: var(--accent-line);
-  transform: translateY(-4px);
-}
-.cap__num {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--muted);
-}
-.cap__title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-h3);
-  color: var(--text);
-  margin-top: 24px;
-}
-.cap__desc {
-  font-size: 14px;
-  color: var(--text-1);
-  margin-top: 10px;
-}
-
 /* ============================================================
    TALKS + WORK — card lists
    ============================================================ */
 .list-head {
   grid-column: 1 / span 12;
+}
+.list-head .lead {
+  max-width: 46ch;
+  margin-top: var(--space-2);
 }
 .card-list {
   grid-column: 1 / span 12;
@@ -439,6 +400,9 @@
   text-align: center;
   margin-inline: auto;
 }
+.connect__inner .section-head {
+  justify-content: center;
+}
 .connect__h2 {
   font-size: var(--fs-h2);
   max-width: 26ch;
@@ -466,6 +430,7 @@
   }
   .hero__text { max-width: none; }
   .hero__title,
+  .hero__sub,
   .hero__lead { text-shadow: none; }
   .hero__static-badge {
     position: static;
@@ -480,7 +445,6 @@
   .about__body { grid-column: 1 / span 12; }
   .about__body { margin-top: var(--space-4); }
   .beliefs { grid-template-columns: 1fr; gap: var(--space-4); }
-  .capabilities { grid-template-columns: 1fr 1fr; }
   .row-card {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -490,6 +454,5 @@
 }
 
 @media (max-width: 520px) {
-  .capabilities { grid-template-columns: 1fr; }
   .stats { gap: var(--space-4); }
 }

@@ -35,7 +35,7 @@
 .section-num {
   font-family: var(--font-mono);
   font-size: var(--fs-label);
-  color: var(--accent);
+  color: var(--muted);
   letter-spacing: 0.1em;
 }
 .section-label {
@@ -72,9 +72,6 @@
 
 .accent {
   color: var(--accent);
-}
-.mono {
-  font-family: var(--font-mono);
 }
 
 /* ============================================================

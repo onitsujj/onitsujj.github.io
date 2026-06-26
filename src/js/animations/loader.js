@@ -4,7 +4,7 @@
 // it appears even if WebGL is slow/absent.
 export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
   // hidden start states (CSS already hid these pre-paint to avoid a flash)
-  gsap.set([".hero__eyebrow", ".hero__lead", ".hero__actions"], { opacity: 0, y: 24 });
+  gsap.set([".hero__eyebrow", ".hero__sub", ".hero__lead", ".hero__actions"], { opacity: 0, y: 24 });
   gsap.set(".hero__static-badge", { opacity: 0, y: -24 });
   gsap.set("#lanyard-mount", { opacity: 0 });
 
@@ -30,6 +30,7 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
       content.to(h1, { opacity: 1, y: 0, duration: 0.8 }, 0.05);
     }
     content
+      .to(".hero__sub", { opacity: 1, y: 0, duration: 0.6 }, 0.32)
       .to(".hero__lead", { opacity: 1, y: 0, duration: 0.7 }, 0.45)
       .to(".hero__actions", { opacity: 1, y: 0, duration: 0.7 }, 0.6);
 
