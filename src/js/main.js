@@ -9,7 +9,6 @@ import "@fontsource/space-mono/700.css";
 import { initNav } from "./nav.js";
 import { initLanyard } from "./lanyard/index.js";
 import { initMotion } from "./animations/motion.js";
-import { initGallery } from "./animations/gallery.js";
 
 initNav();
 
@@ -26,5 +25,10 @@ const lanyardReady = reduceMotion ? Promise.resolve(false) : initLanyard({});
 initMotion({ lanyardReady });
 
 // Talks photo strip: Flip lightbox, stagger reveal, glide nav, draggable strip.
-// Decided once at load (like the lanyard) from the reduced-motion preference.
-initGallery({ reduced: reduceMotion });
+// Its GSAP plugins (Flip/Draggable/Inertia, ~24KB gzip) lazy-load off the
+// critical path — the strip sits far below the fold and is only needed once a
+// thumbnail is clicked or dragged. Reduced-motion decided once at load.
+const loadGallery = () =>
+  import("./animations/gallery.js").then((m) => m.initGallery({ reduced: reduceMotion }));
+if ("requestIdleCallback" in window) requestIdleCallback(loadGallery);
+else setTimeout(loadGallery, 1200);
