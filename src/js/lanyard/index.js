@@ -1,4 +1,6 @@
 import profileUrl from "../../assets/profile.jpg?url";
+import strapUrl from "../../assets/logo-band.png?url";
+import logoMarkUrl from "../../assets/logo-mark.png?url";
 
 // Whether to mount the live WebGL badge. Phones / narrow / no-WebGL get the
 // static card instead. (Vendoring the libs locally means Brave desktop now
@@ -36,6 +38,8 @@ export function initLanyard({ onReady } = {}) {
       return new Promise((resolve) => {
         mount(mountEl, {
           image: profileUrl,
+          strapImage: strapUrl,
+          backLogo: logoMarkUrl,
           cardColor: "#1a1a1e",
           clipColor: "#8a8a82",
           strapColor: "#1cbdd4",
@@ -43,6 +47,10 @@ export function initLanyard({ onReady } = {}) {
             if (hero) hero.classList.add("is-3d");
             onReady && onReady();
             resolve(true);
+          },
+          // the badge does its intro turn first; only then reveal the drag hint
+          onSpinDone: () => {
+            if (hero) hero.classList.add("is-live");
           },
         });
       });

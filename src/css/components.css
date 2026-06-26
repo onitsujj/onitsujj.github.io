@@ -90,6 +90,17 @@
 .hero__eyebrow {
   margin-bottom: 28px;
 }
+.hero__eyebrow a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.hero__eyebrow a:hover,
+.hero__eyebrow a:focus-visible {
+  color: var(--accent);
+}
 .hero__title {
   font-size: var(--fs-display);
   line-height: 0.95;
@@ -145,7 +156,8 @@
   opacity: 0;
   transition: opacity 0.5s var(--ease-out);
 }
-.hero.is-3d .drag-hint {
+/* hint waits for the intro turn to finish (hero gets .is-live) before showing */
+.hero.is-live .drag-hint {
   opacity: 1;
 }
 

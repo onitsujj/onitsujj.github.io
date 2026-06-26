@@ -29,6 +29,18 @@ const STRAP_WIDTH = 0.187;
 const STRAP_THICK = 0.05;
 const STRAP_SEG = 32;
 const STRAP_TWIST_GAIN = 1.7;
+const STRAP_REPEAT = 7; // how many times the logo tile repeats down the band
+
+/* ---------- intro spin ----------
+   After the badge falls in and settles, it winds around to show its back
+   (the logo) then unwinds back to front — the card turn and the ribbon twist
+   are the same value, so they stay physically consistent. Hands back to physics. */
+const INTRO_MIN_FALL = 3.0;      // s — don't start spinning mid-fall
+const INTRO_MAX_WAIT = 3.5;      // s — start anyway if it never fully settles
+const INTRO_SETTLE_VEL = 3.0;    // linear speed below which it's "settled"
+const INTRO_SETTLE_FRAMES = 6;   // consecutive settled frames before spinning
+const INTRO_SPIN_DUR = 7.0;      // s — time for the whole turn-to-back-and-return
+const INTRO_TURN = Math.PI;      // rad — peak rotation; π faces the card's full back at the midpoint
 const STRAP_ZREF = new THREE.Vector3(0, 0, 1);
 const _sW = new THREE.Vector3(), _sN = new THREE.Vector3();
 const _sTi = new THREE.Vector3(), _sq = new THREE.Quaternion(), _sPrev = new THREE.Vector3();
@@ -44,6 +56,20 @@ function makeStrapGeometry(M) {
     for (const [p, q] of edges) idx.push(a + p, a + q, b + q, a + p, b + q, b + p);
   }
   geo.setIndex(idx);
+  // UVs: U runs across the strap (0→1 over the two wide faces, slivers on the
+  // thin edges), V runs along its length so a logo tile tiles down the band.
+  const uvs = new Float32Array(M * 4 * 2);
+  for (let i = 0; i < M; i++) {
+    const v = i / (M - 1);
+    const o = i * 4 * 2;
+    // U is flipped (0 at +width) so the logo reads correctly on the front
+    // face that meets the camera at rest — not mirrored.
+    uvs[o + 0] = 0; uvs[o + 1] = v; // corner 0: +width, +thick
+    uvs[o + 2] = 1; uvs[o + 3] = v; // corner 1: -width, +thick
+    uvs[o + 4] = 1; uvs[o + 5] = v; // corner 2: -width, -thick
+    uvs[o + 6] = 0; uvs[o + 7] = v; // corner 3: +width, -thick
+  }
+  geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
   return geo;
 }
 
@@ -87,8 +113,8 @@ function updateStrap(geo, pts, twist) {
   geo.computeBoundingSphere();
 }
 
-/* ---------- card texture compositing (Obsidian + Cyan back) ---------- */
-function buildCardTexture(imageSrc, cardColor) {
+/* ---------- card texture compositing (photo front, logo back) ---------- */
+function buildCardTexture(imageSrc, logoSrc, cardColor) {
   return new Promise((resolve) => {
     const res = 1024;
     const canvas = document.createElement("canvas");
@@ -97,33 +123,18 @@ function buildCardTexture(imageSrc, cardColor) {
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = cardColor || "#1a1a1e";
     ctx.fillRect(0, 0, res, res);
+    const x0 = res / 2;
 
-    const drawBack = () => {
-      const x0 = res / 2;
-      // obsidian back panel
+    // obsidian back panel + inset hairline frame
+    const drawBackPanel = () => {
       ctx.fillStyle = "#141417";
       ctx.fillRect(x0, 0, res / 2, res);
-      // inset hairline frame
       ctx.strokeStyle = "rgba(244,241,234,0.16)";
       ctx.lineWidth = 3;
       ctx.strokeRect(x0 + 46, 46, res / 2 - 92, res - 92);
-      // centered ring emblem — outer warm-white, inner cyan
-      const cx = x0 + res / 4;
-      const cy = res / 2;
-      ctx.strokeStyle = "rgba(244,241,234,0.85)";
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 96, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, cy, 70, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(28,189,212,0.55)";
-      ctx.lineWidth = 3;
-      ctx.stroke();
     };
 
     const finish = () => {
-      drawBack();
       // flip vertically (GLB UVs are flipped)
       const t = document.createElement("canvas");
       t.width = res;
@@ -135,38 +146,66 @@ function buildCardTexture(imageSrc, cardColor) {
       resolve(t.toDataURL());
     };
 
-    if (!imageSrc) { finish(); return; }
-    const img = new Image();
-    img.onload = () => {
-      // COVER the card front (left half), cropping overflow — no margin.
-      const tw = res / 2, th = res;
-      const ar = img.width / img.height;
-      const tar = tw / th;
-      let w, hh;
-      if (ar > tar) { hh = th; w = th * ar; }
-      else { w = tw; hh = tw / ar; }
-      const x = (tw - w) / 2;
-      const y = (th - hh) / 2;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, res / 2, res);
-      ctx.clip();
-      ctx.drawImage(img, x, y, w, hh);
-      ctx.restore();
-      finish();
+    // back panel, then the centered company logo (white mark on obsidian)
+    const drawBack = (done) => {
+      drawBackPanel();
+      if (!logoSrc) { done(); return; }
+      const logo = new Image();
+      logo.onload = () => {
+        const box = 300; // contain within a centered square on the back
+        const ar = logo.width / logo.height;
+        let w = box, hh = box;
+        if (ar >= 1) hh = box / ar; else w = box * ar;
+        ctx.drawImage(logo, x0 + res / 4 - w / 2, res / 2 - hh / 2, w, hh);
+        done();
+      };
+      logo.onerror = done;
+      logo.src = logoSrc;
     };
-    img.onerror = finish;
-    img.src = imageSrc;
+
+    // photo COVERs the card front (left half), cropping overflow — no margin.
+    const drawFront = (done) => {
+      if (!imageSrc) { done(); return; }
+      const img = new Image();
+      img.onload = () => {
+        const tw = res / 2, th = res;
+        const ar = img.width / img.height;
+        const tar = tw / th;
+        let w, hh;
+        if (ar > tar) { hh = th; w = th * ar; }
+        else { w = tw; hh = tw / ar; }
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, res / 2, res);
+        ctx.clip();
+        ctx.drawImage(img, (tw - w) / 2, (th - hh) / 2, w, hh);
+        ctx.restore();
+        done();
+      };
+      img.onerror = done;
+      img.src = imageSrc;
+    };
+
+    drawFront(() => drawBack(finish));
   });
 }
 
 /* ---------- physics band ---------- */
-function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 0 }) {
+function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone, maxSpeed = 50, minSpeed = 0 }) {
   const fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
+  const iq = new THREE.Quaternion(), ieul = new THREE.Euler(0, 0, 0, "YXZ"), ioff = new THREE.Vector3(), lv = new THREE.Vector3();
+  // intro spin: "fall" → "spin" → "done"
+  const phaseRef = useRef("fall");
+  const startClockRef = useRef(null);
+  const settleRef = useRef(0);
+  const spinStartRef = useRef(0);
+  const clipAnchorRef = useRef(new THREE.Vector3());
+  const [spinning, setSpinning] = useState(false);
   const segmentProps = { type: "dynamic", canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
   const { nodes, materials } = useGLTF(cardGlbUrl);
   const cardTexture = useTexture(cardImageSrc);
+  const strapTexture = useTexture(strapImageSrc);
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
   const M = STRAP_SEG + 1;
   const [geo] = useState(() => makeStrapGeometry(M));
@@ -195,7 +234,21 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
     }
   }, [cardTexture]);
 
+  useEffect(() => {
+    if (strapTexture) {
+      strapTexture.wrapS = THREE.ClampToEdgeWrapping; // across the band
+      strapTexture.wrapT = THREE.RepeatWrapping;      // tile down its length
+      strapTexture.repeat.set(1, STRAP_REPEAT);
+      strapTexture.anisotropy = 16;
+      strapTexture.colorSpace = THREE.SRGBColorSpace;
+      strapTexture.needsUpdate = true;
+    }
+  }, [strapTexture]);
+
   useFrame((state, delta) => {
+    if (startClockRef.current == null) startClockRef.current = state.clock.getElapsedTime();
+    const t = state.clock.getElapsedTime() - startClockRef.current;
+
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -203,6 +256,45 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
       [card, j1, j2, j3, fixed].forEach((r) => r.current?.wakeUp());
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
     }
+
+    // ---- intro: wait for the fall to settle, then start the scripted turn ----
+    if (phaseRef.current === "fall" && !dragged && card.current) {
+      const v = card.current.linvel();
+      const settled = lv.set(v.x, v.y, v.z).length() < INTRO_SETTLE_VEL;
+      settleRef.current = settled ? settleRef.current + 1 : 0;
+      if (t > INTRO_MAX_WAIT || (t > INTRO_MIN_FALL && settleRef.current >= INTRO_SETTLE_FRAMES)) {
+        const p = card.current.translation();
+        clipAnchorRef.current.set(p.x, p.y + 1.5, p.z); // hold the clip, swivel below it
+        spinStartRef.current = state.clock.getElapsedTime();
+        phaseRef.current = "spin";
+        setSpinning(true);
+      }
+    }
+
+    // ---- intro: drive the eased turn (card is kinematic while spinning) ----
+    let spinTwist = null;
+    if (phaseRef.current === "spin" && card.current) {
+      const sp = Math.min(1, (state.clock.getElapsedTime() - spinStartRef.current) / INTRO_SPIN_DUR);
+      // shared eased wind-then-unwind: 0 → INTRO_TURN → 0, with zero speed at the
+      // start, the back-facing midpoint, and the end. Card turn === ribbon twist,
+      // so the badge spins back the other way as the strap unwinds.
+      const turn = ((1 - Math.cos(2 * Math.PI * sp)) / 2) * INTRO_TURN;
+      iq.setFromEuler(ieul.set(0, turn, 0));
+      ioff.set(0, 1.5, 0).applyQuaternion(iq);
+      card.current.setNextKinematicRotation({ x: iq.x, y: iq.y, z: iq.z, w: iq.w });
+      card.current.setNextKinematicTranslation({
+        x: clipAnchorRef.current.x - ioff.x,
+        y: clipAnchorRef.current.y - ioff.y,
+        z: clipAnchorRef.current.z - ioff.z,
+      });
+      spinTwist = turn;
+      if (sp >= 1) {
+        phaseRef.current = "done";
+        setSpinning(false);
+        onSpinDone && onSpinDone();
+      }
+    }
+
     if (fixed.current) {
       [j1, j2, j3].forEach((ref) => {
         if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
@@ -213,13 +305,21 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
       curve.points[1].copy(j2.current.lerped);
       curve.points[2].copy(j1.current.lerped);
       curve.points[3].copy(fixed.current.translation());
-      const cardRot = card.current.rotation();
-      cq.set(cardRot.x, cardRot.y, cardRot.z, cardRot.w);
-      eul.setFromQuaternion(cq);
-      updateStrap(geo, curve.getPoints(STRAP_SEG), eul.y * STRAP_TWIST_GAIN);
-      ang.copy(card.current.angvel());
-      rot.copy(card.current.rotation());
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+      let twist;
+      if (spinTwist !== null) {
+        twist = spinTwist;
+      } else {
+        const cardRot = card.current.rotation();
+        cq.set(cardRot.x, cardRot.y, cardRot.z, cardRot.w);
+        eul.setFromQuaternion(cq);
+        twist = eul.y * STRAP_TWIST_GAIN;
+      }
+      updateStrap(geo, curve.getPoints(STRAP_SEG), twist);
+      if (phaseRef.current !== "spin") {
+        ang.copy(card.current.angvel());
+        rot.copy(card.current.rotation());
+        card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+      }
     }
   });
 
@@ -231,7 +331,7 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
       h(RigidBody, { position: [0.5, 0, 0], ref: j1, ...segmentProps }, h(BallCollider, { args: [0.1] })),
       h(RigidBody, { position: [1, 0, 0], ref: j2, ...segmentProps }, h(BallCollider, { args: [0.1] })),
       h(RigidBody, { position: [1.5, 0, 0], ref: j3, ...segmentProps }, h(BallCollider, { args: [0.1] })),
-      h(RigidBody, { position: [2, 0, 0], ref: card, ...segmentProps, type: dragged ? "kinematicPosition" : "dynamic" },
+      h(RigidBody, { position: [2, 0, 0], ref: card, ...segmentProps, type: dragged || spinning ? "kinematicPosition" : "dynamic" },
         h(CuboidCollider, { args: [0.8, 1.125, 0.01] }),
         h("group", {
           scale: 2.25,
@@ -241,6 +341,12 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
           onPointerUp: (e) => { e.target.releasePointerCapture(e.pointerId); setDragged(false); },
           onPointerDown: (e) => {
             e.target.setPointerCapture(e.pointerId);
+            // grabbing it cancels the intro turn and reveals the drag hint
+            if (phaseRef.current !== "done") {
+              phaseRef.current = "done";
+              setSpinning(false);
+              onSpinDone && onSpinDone();
+            }
             if (card.current) setDragged(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
           },
         },
@@ -254,19 +360,19 @@ function Band({ cardImageSrc, clipColor, stringColor, maxSpeed = 50, minSpeed = 
       )
     ),
     h("mesh", { geometry: geo },
-      h("meshStandardMaterial", { color: stringColor, emissive: stringColor, emissiveIntensity: 0.22, side: THREE.DoubleSide, roughness: 0.62, metalness: 0.0, envMapIntensity: 0.5 })
+      h("meshStandardMaterial", { map: strapTexture, color: "#ffffff", side: THREE.DoubleSide, roughness: 0.7, metalness: 0.0, envMapIntensity: 0.4 })
     )
   );
 }
 
 /* ---------- app ---------- */
-function LanyardApp({ image, cardColor, clipColor, strapColor, onReady }) {
+function LanyardApp({ image, strapImage, backLogo, cardColor, clipColor, strapColor, onReady, onSpinDone }) {
   const [tex, setTex] = useState(null);
   useEffect(() => {
     let cancelled = false;
-    buildCardTexture(image, cardColor).then((u) => { if (!cancelled) setTex(u); });
+    buildCardTexture(image, backLogo, cardColor).then((u) => { if (!cancelled) setTex(u); });
     return () => { cancelled = true; };
-  }, [image, cardColor]);
+  }, [image, backLogo, cardColor]);
 
   // signal readiness ~2 frames after the card texture is built, so the
   // host can cross-fade out the static badge with content already on screen.
@@ -289,7 +395,7 @@ function LanyardApp({ image, cardColor, clipColor, strapColor, onReady }) {
       h("ambientLight", { intensity: 1.1 }),
       h(Physics, { gravity: [0, -40, 0], timeStep: 1 / 60 },
         tex && h(React.Suspense, { fallback: null },
-          h(Band, { cardImageSrc: tex, clipColor, stringColor: strapColor }))
+          h(Band, { cardImageSrc: tex, strapImageSrc: strapImage, clipColor, stringColor: strapColor, onSpinDone }))
       ),
       h(Environment, { blur: 0.75 },
         h(Lightformer, { intensity: 2, color: "white", position: [0, -1, 5], rotation: [0, 0, Math.PI / 3], scale: [100, 0.1, 1] }),
