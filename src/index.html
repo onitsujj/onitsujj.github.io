@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0b0d" />
+
+    <title>Jose Gayondato — AI Adoption Lead &amp; Java Technical Lead</title>
+    <meta
+      name="description"
+      content="Jose Gayondato is an AI Adoption Lead and Java technical lead with 10+ years building high-performance enterprise systems, now leading teams to build with AI in how they design, review, and decide."
+    />
+    <link rel="canonical" href="https://onitsujj.github.io/" />
+
+    <!-- Open Graph (LinkedIn, Slack, Facebook, WhatsApp) -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="Jose Gayondato — AI Adoption Lead & Java Technical Lead" />
+    <meta
+      property="og:description"
+      content="AI Adoption Lead and Java technical lead. 10+ years shipping enterprise systems; now leading teams to build with AI, not around it."
+    />
+    <meta property="og:url" content="https://onitsujj.github.io/" />
+    <meta property="og:image" content="https://onitsujj.github.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="profile:first_name" content="Jose" />
+    <meta property="profile:last_name" content="Gayondato" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jose Gayondato — AI Adoption Lead & Java Technical Lead" />
+    <meta
+      name="twitter:description"
+      content="AI Adoption Lead and Java technical lead. 10+ years shipping enterprise systems; now leading teams to build with AI, not around it."
+    />
+    <meta name="twitter:image" content="https://onitsujj.github.io/og-image.png" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <!-- mark JS available before paint so reveal animations never flash content;
+         failsafe reveals everything if the motion script never runs -->
+    <script>
+      document.documentElement.classList.add("js");
+      window.__revealFallback = setTimeout(function () {
+        document.documentElement.classList.add("reveal-fallback");
+      }, 2600);
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#about">Skip to content</a>
+    <div class="progress-bar" aria-hidden="true"></div>
+
+    <!-- ===================== NAV ===================== -->
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="#top" aria-label="Jose Gayondato — home">
+          <span class="brand-mark" aria-hidden="true">JG</span>
+          <span class="brand-name">Jose&nbsp;Gayondato</span>
+        </a>
+
+        <button
+          class="nav__toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav__links" id="nav-links" aria-label="Sections">
+          <a class="nav__link" href="#about">About</a>
+          <a class="nav__link" href="#approach">Approach</a>
+          <a class="nav__link" href="#talks">Talks</a>
+          <a class="nav__link" href="#work">Work</a>
+          <a class="nav__link btn btn--primary" href="#connect">Follow</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- right-edge section index -->
+    <nav class="section-index" aria-label="Section index">
+      <a href="#about" data-index="about">01</a>
+      <a href="#approach" data-index="approach">02</a>
+      <a href="#talks" data-index="talks">03</a>
+      <a href="#work" data-index="work">04</a>
+      <a href="#connect" data-index="connect">05</a>
+    </nav>
+
+    <main id="top">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero" id="hero" aria-label="Intro">
+        <!-- full-bleed draggable stage: the whole hero is the lanyard canvas -->
+        <div id="lanyard-mount" aria-hidden="true"></div>
+
+        <div class="hero__inner container">
+          <!-- static badge: crawlers, no-JS, Brave, mobile see this. On mobile
+               it leads the hero; on desktop it hangs right (the live 3D badge
+               replaces it when WebGL is available). -->
+          <figure class="badge hero__static-badge" data-reveal-badge>
+            <span class="badge__strap" aria-hidden="true"></span>
+            <span class="badge__clip" aria-hidden="true"></span>
+            <div class="badge__card">
+              <img
+                class="badge__photo"
+                src="/assets/profile.jpg"
+                width="232"
+                height="232"
+                alt="Jose Gayondato"
+              />
+              <div class="badge__name">Jose Gayondato</div>
+              <div class="badge__role">AI Adoption Lead</div>
+            </div>
+          </figure>
+
+          <div class="hero__text">
+            <p class="eyebrow hero__eyebrow" data-reveal>AI Adoption Lead · Java Technical Lead</p>
+            <h1 class="hero__title" data-reveal-lines>
+              Part-time explorer,<br />
+              part-time researcher,<br />
+              <span class="accent">full-time implementer.</span>
+            </h1>
+            <p class="lead hero__lead" data-reveal>
+              I'm Jose — an AI Adoption Lead and Java technical lead. Ten years turning
+              tangled enterprise requirements into systems that ship; now I lead the teams
+              building <em>with</em> AI, not around it.
+            </p>
+            <div class="hero__actions" data-reveal>
+              <a class="btn btn--primary" href="#connect">
+                Follow on LinkedIn <span class="btn__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="btn btn--ghost" href="#approach">Read my take</a>
+            </div>
+          </div>
+        </div>
+
+        <span class="drag-hint" aria-hidden="true">↕ Drag the badge</span>
+        <span class="scroll-cue" aria-hidden="true">
+          <span class="scroll-cue__line"></span> Scroll
+        </span>
+      </section>
+
+      <!-- ===================== ABOUT ===================== -->
+      <section class="section about" id="about" aria-labelledby="about-h">
+        <div class="about__grid grid-12 container">
+          <div class="about__head">
+            <p class="section-head" data-reveal>
+              <span class="section-num">01</span>
+              <span class="section-label">About</span>
+            </p>
+            <h2 class="about__h2" id="about-h" data-reveal>
+              I'm the person you put on the requirement nobody can pin down.
+            </h2>
+          </div>
+          <div class="about__body">
+            <p class="lead" data-reveal>
+              Most of my work starts where the spec runs out — the requirement everyone
+              agrees matters and no one can quite describe.
+            </p>
+            <p data-reveal>
+              For ten years I've built high-performance Java systems for enterprise: web
+              platforms, data integrations, the unglamorous plumbing that has to be right.
+              For the last five I've led the teams that build them — owning the plan, putting
+              the right people on the right problems, and keeping quality non-negotiable when
+              timelines aren't.
+            </p>
+            <p data-reveal>
+              What I care about is judgment: choosing the technology a problem actually needs,
+              not the one that's familiar. That's also why AI adoption is the work I lead now.
+              Used well, it changes how a team designs, reviews, and decides. Used carelessly,
+              it just adds noise — I help teams tell the difference.
+            </p>
+
+            <div class="stats" data-reveal>
+              <div class="stat">
+                <div class="stat__num" data-count="10" data-suffix="+">10+</div>
+                <div class="stat__label">Years building enterprise software</div>
+              </div>
+              <div class="stat">
+                <div class="stat__num" data-count="5">5</div>
+                <div class="stat__label">Years leading teams to delivery</div>
+              </div>
+            </div>
+            <p class="focus-line" data-reveal>
+              Focus — <span class="accent">Java enterprise</span> · team delivery ·
+              <span class="accent">AI adoption</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== APPROACH (POV) ===================== -->
+      <section class="section approach" id="approach" aria-labelledby="approach-h">
+        <div class="grid-12 container">
+          <div class="approach__head">
+            <p class="section-head" data-reveal>
+              <span class="section-num">02</span>
+              <span class="section-label">Approach</span>
+            </p>
+            <h2 class="approach__h2" id="approach-h" data-reveal>
+              Adopting AI is a shift in how a team thinks — not a tool you roll out.
+            </h2>
+          </div>
+
+          <div class="beliefs">
+            <div class="belief" data-reveal>
+              <div class="belief__num">01</div>
+              <p class="belief__text">
+                Discipline first. AI should sharpen how a team already designs and reviews —
+                not replace the judgment that made it good.
+              </p>
+            </div>
+            <div class="belief" data-reveal>
+              <div class="belief__num">02</div>
+              <p class="belief__text">
+                Ship, then trust. I'd rather show one system working than promise ten.
+                Adoption follows proof, not slides.
+              </p>
+            </div>
+            <div class="belief" data-reveal>
+              <div class="belief__num">03</div>
+              <p class="belief__text">
+                The right tool, honestly. Sometimes the answer is AI. Sometimes it's a boring,
+                reliable pattern. Knowing which is the whole job.
+              </p>
+            </div>
+          </div>
+
+          <div class="capabilities">
+            <div class="cap" data-reveal>
+              <div class="cap__num">01</div>
+              <h3 class="cap__title">Enterprise Java</h3>
+              <p class="cap__desc">
+                High-performance applications, web platforms, and data integrations built to
+                last.
+              </p>
+            </div>
+            <div class="cap" data-reveal>
+              <div class="cap__num">02</div>
+              <h3 class="cap__title">Team &amp; delivery</h3>
+              <p class="cap__desc">
+                Leading teams to delivery: planning, code quality, and stakeholder
+                expectations.
+              </p>
+            </div>
+            <div class="cap" data-reveal>
+              <div class="cap__num">03</div>
+              <h3 class="cap__title">Systems integration</h3>
+              <p class="cap__desc">
+                Making separate systems talk — cleanly, and without surprises later.
+              </p>
+            </div>
+            <div class="cap" data-reveal>
+              <div class="cap__num">04</div>
+              <h3 class="cap__title">AI adoption</h3>
+              <p class="cap__desc">
+                Helping teams build with AI in how they design, review, and decide.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TALKS ===================== -->
+      <section class="section talks" id="talks" aria-labelledby="talks-h">
+        <div class="grid-12 container">
+          <div class="list-head">
+            <p class="section-head" data-reveal>
+              <span class="section-num">03</span>
+              <span class="section-label">Talks &amp; workshops</span>
+            </p>
+            <h2 id="talks-h" data-reveal>Sessions I run for teams</h2>
+            <p class="lead" data-reveal style="max-width: 46ch; margin-top: 16px">
+              On shipping software well, and adopting AI with discipline.
+            </p>
+          </div>
+
+          <!-- TODO(jose): replace these with your real talks/workshops -->
+          <div class="card-list">
+            <article class="row-card" data-reveal>
+              <div class="row-card__meta">[ Workshop · year ]</div>
+              <div>
+                <span class="todo-tag">Add your talk</span>
+                <h3 class="row-card__title">[ Talk or workshop title ]</h3>
+                <p class="row-card__desc">
+                  One line on what the session covered and who it was for.
+                </p>
+              </div>
+              <a class="row-card__link" href="#">Slides →</a>
+            </article>
+            <article class="row-card" data-reveal>
+              <div class="row-card__meta">[ Brownbag · year ]</div>
+              <div>
+                <span class="todo-tag">Add your talk</span>
+                <h3 class="row-card__title">[ Talk or workshop title ]</h3>
+                <p class="row-card__desc">
+                  One line on what the session covered and who it was for.
+                </p>
+              </div>
+              <a class="row-card__link" href="#">Watch →</a>
+            </article>
+            <article class="row-card" data-reveal>
+              <div class="row-card__meta">[ Meetup · year ]</div>
+              <div>
+                <span class="todo-tag">Add your talk</span>
+                <h3 class="row-card__title">[ Talk or workshop title ]</h3>
+                <p class="row-card__desc">
+                  One line on what the session covered and who it was for.
+                </p>
+              </div>
+              <a class="row-card__link" href="#">Notes →</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== WORK ===================== -->
+      <section class="section work" id="work" aria-labelledby="work-h">
+        <div class="grid-12 container">
+          <div class="list-head">
+            <p class="section-head" data-reveal>
+              <span class="section-num">04</span>
+              <span class="section-label">Selected work</span>
+            </p>
+            <h2 id="work-h" data-reveal>A few problems worth describing</h2>
+            <p class="lead" data-reveal style="max-width: 46ch; margin-top: 16px">
+              Details anonymised where they need to be.
+            </p>
+          </div>
+
+          <!-- TODO(jose): 2-3 real projects — problem → what you owned → the number that moved -->
+          <div class="card-list">
+            <article class="row-card" data-reveal>
+              <div class="row-card__meta">[ Context · year ]</div>
+              <div>
+                <span class="todo-tag">Add a project + one metric</span>
+                <h3 class="row-card__title">[ The system, in a phrase ]</h3>
+                <p class="row-card__desc">
+                  Problem in one line → what you owned → the number that changed.
+                </p>
+              </div>
+              <span class="row-card__link" aria-hidden="true"></span>
+            </article>
+            <article class="row-card" data-reveal>
+              <div class="row-card__meta">[ Context · year ]</div>
+              <div>
+                <span class="todo-tag">Add a project + one metric</span>
+                <h3 class="row-card__title">[ The system, in a phrase ]</h3>
+                <p class="row-card__desc">
+                  Problem in one line → what you owned → the number that changed.
+                </p>
+              </div>
+              <span class="row-card__link" aria-hidden="true"></span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONNECT ===================== -->
+      <section class="section connect" id="connect" aria-labelledby="connect-h">
+        <div class="grid-12 container">
+          <div class="connect__inner">
+            <p class="section-head" style="justify-content: center" data-reveal>
+              <span class="section-num">05</span>
+              <span class="section-label">Connect</span>
+            </p>
+            <h2 class="connect__h2" id="connect-h" data-reveal>
+              If any of this resonates, follow along.
+            </h2>
+            <div class="connect__actions" data-reveal>
+              <!-- TODO(jose): confirm LinkedIn URL + public email -->
+              <a class="btn btn--primary" href="#" data-todo="linkedin">
+                Follow on LinkedIn <span class="btn__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="btn btn--ghost" href="mailto:hello@example.com" data-todo="email">Email me</a>
+              <a class="btn btn--ghost" href="https://github.com/onitsujj">GitHub</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <span>© 2026 Jose Gayondato</span>
+        <a class="nav__link" href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+    <!-- structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Jose Gayondato",
+        "url": "https://onitsujj.github.io/",
+        "jobTitle": "AI Adoption Lead",
+        "description": "AI Adoption Lead and Java technical lead with 10+ years building enterprise systems, now leading teams to build with AI in how they design, review, and decide.",
+        "knowsAbout": [
+          "Java",
+          "Enterprise Software",
+          "Technical Leadership",
+          "AI Adoption",
+          "Software Architecture",
+          "Systems Integration"
+        ],
+        "sameAs": ["https://github.com/onitsujj"]
+      }
+    </script>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,481 @@
+/* ============================================================
+   Components
+   ============================================================ */
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 14px 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), background 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn__arrow {
+  transition: transform 0.25s var(--ease-out);
+}
+.btn:hover .btn__arrow {
+  transform: translateX(4px);
+}
+.btn--primary {
+  background: var(--accent);
+  color: #1a1306;
+}
+.btn--primary:hover {
+  background: var(--accent-press);
+}
+.btn--ghost {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ============================================================
+   HERO — true split: text left, badge right (no overlap)
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 66% 44%, var(--accent-soft), transparent 50%);
+  pointer-events: none;
+}
+
+/* full-bleed draggable lanyard stage — 130% wide like the original so the
+   badge hangs right-of-center; the whole visible hero is grabbable. */
+#lanyard-mount {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 130%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* text overlay: pointer-events fall THROUGH to the canvas so you can drag the
+   badge anywhere — except on the actual links/buttons, which stay clickable. */
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: var(--nav-h);
+  pointer-events: none;
+}
+.hero__text {
+  max-width: 560px;
+}
+.hero__text a,
+.hero__text .btn {
+  pointer-events: auto;
+}
+.hero__eyebrow {
+  margin-bottom: 28px;
+}
+.hero__title {
+  font-size: var(--fs-display);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin-bottom: 28px;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55), 0 0 1px rgba(0, 0, 0, 0.85);
+}
+.hero__lead {
+  max-width: 32ch;
+  margin-bottom: var(--space-4);
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* static fallback badge — hangs right; hidden when the live 3D badge mounts */
+.hero__static-badge {
+  position: absolute;
+  right: 12%;
+  top: 50%;
+  transform: translateY(-44%);
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-out);
+}
+.hero.is-3d .hero__static-badge {
+  opacity: 0;
+}
+
+.drag-hint {
+  position: absolute;
+  right: 13%;
+  bottom: 56px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out);
+}
+.hero.is-3d .drag-hint {
+  opacity: 1;
+}
+
+.scroll-cue {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 32px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.scroll-cue__line {
+  display: block;
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(var(--accent), transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue__line {
+    animation: cuepulse 2.4s var(--ease-in-out) infinite;
+  }
+}
+@keyframes cuepulse {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.5; transform-origin: top; }
+  50% { transform: scaleY(1); opacity: 1; transform-origin: top; }
+}
+
+/* ============================================================
+   STATIC BADGE — always present (crawlers / no-JS / Brave / mobile).
+   The live 3D scene mounts into #lanyard-mount on capable browsers.
+   ============================================================ */
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+}
+.badge__strap {
+  width: 12px;
+  height: 78px;
+  background: var(--badge-strap);
+  border-left: 1px solid var(--accent-line);
+  position: relative;
+}
+.badge__clip {
+  width: 38px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--badge-clip);
+  margin-top: -3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.badge__card {
+  margin-top: 10px;
+  width: 232px;
+  background: var(--badge-card);
+  border-radius: var(--radius);
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  padding: 14px 14px 18px;
+}
+.badge__photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 10px;
+}
+.badge__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text);
+  margin-top: 14px;
+}
+.badge__role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+/* ============================================================
+   ABOUT — one lead paragraph + body, then two real numbers
+   ============================================================ */
+.about__grid {
+  align-items: start;
+}
+.about__head {
+  grid-column: 1 / span 5;
+}
+.about__body {
+  grid-column: 7 / span 6;
+}
+.about__h2 {
+  font-size: var(--fs-h2);
+}
+.about__body p + p {
+  margin-top: var(--space-3);
+}
+.about__body .lead {
+  margin-bottom: var(--space-3);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.stat__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-stat);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1;
+}
+.stat__label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  max-width: 18ch;
+}
+.focus-line {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: var(--space-4);
+}
+.focus-line .accent {
+  color: var(--accent);
+}
+
+/* ============================================================
+   APPROACH — POV beliefs + horizontal capability strip
+   ============================================================ */
+.approach__head {
+  grid-column: 1 / span 12;
+  max-width: 22ch;
+  margin-bottom: var(--space-5);
+}
+.approach__h2 {
+  font-size: var(--fs-h2);
+}
+.beliefs {
+  grid-column: 1 / span 12;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gutter);
+  margin-bottom: var(--space-6);
+}
+.belief__num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--accent);
+}
+.belief__text {
+  font-size: var(--fs-h3);
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.25;
+  margin-top: 12px;
+}
+
+/* capability strip — becomes a horizontal scrub row in M3 */
+.capabilities {
+  grid-column: 1 / span 12;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gutter);
+}
+.cap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  transition: border-color 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+}
+.cap:hover {
+  border-color: var(--accent-line);
+  transform: translateY(-4px);
+}
+.cap__num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--muted);
+}
+.cap__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-h3);
+  color: var(--text);
+  margin-top: 24px;
+}
+.cap__desc {
+  font-size: 14px;
+  color: var(--text-1);
+  margin-top: 10px;
+}
+
+/* ============================================================
+   TALKS + WORK — card lists
+   ============================================================ */
+.list-head {
+  grid-column: 1 / span 12;
+}
+.card-list {
+  grid-column: 1 / span 12;
+  display: flex;
+  flex-direction: column;
+}
+.row-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: var(--gutter);
+  align-items: center;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--line);
+  transition: padding-left 0.3s var(--ease-out);
+}
+.row-card:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.row-card:hover {
+  padding-left: 14px;
+}
+.row-card__meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.row-card__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-h3);
+  color: var(--text);
+}
+.row-card__desc {
+  font-size: 14px;
+  color: var(--text-1);
+  margin-top: 6px;
+}
+.row-card__link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* placeholder marker for content Jose still needs to supply */
+.todo {
+  outline: 1px dashed var(--accent-line);
+  outline-offset: 6px;
+}
+.todo-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* ============================================================
+   CONNECT
+   ============================================================ */
+.connect__inner {
+  grid-column: 1 / span 12;
+  text-align: center;
+  max-width: 24ch;
+  margin-inline: auto;
+}
+.connect__h2 {
+  font-size: var(--fs-h2);
+  margin-bottom: var(--space-4);
+}
+.connect__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  /* no WebGL stage on phones; badge leads the hero, then the copy */
+  #lanyard-mount { display: none; }
+  .drag-hint { display: none; }
+  .hero__inner {
+    flex-direction: column;
+    justify-content: center;
+    pointer-events: auto;
+  }
+  .hero__text { max-width: none; }
+  .hero__title,
+  .hero__lead { text-shadow: none; }
+  .hero__static-badge {
+    position: static;
+    order: -1;
+    transform: none;
+    margin: 0 0 var(--space-4);
+    pointer-events: auto;
+    opacity: 1 !important;
+    align-self: flex-start;
+  }
+  .about__head,
+  .about__body { grid-column: 1 / span 12; }
+  .about__body { margin-top: var(--space-4); }
+  .beliefs { grid-template-columns: 1fr; gap: var(--space-4); }
+  .capabilities { grid-template-columns: 1fr 1fr; }
+  .row-card {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+  .row-card__link { justify-self: start; }
+}
+
+@media (max-width: 520px) {
+  .capabilities { grid-template-columns: 1fr; }
+  .stats { gap: var(--space-4); }
+}
