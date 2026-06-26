@@ -287,11 +287,11 @@
    ============================================================ */
 .approach__head {
   grid-column: 1 / span 12;
-  max-width: 22ch;
   margin-bottom: var(--space-5);
 }
 .approach__h2 {
   font-size: var(--fs-h2);
+  max-width: 30ch;
 }
 .beliefs {
   grid-column: 1 / span 12;
@@ -427,11 +427,12 @@
 .connect__inner {
   grid-column: 1 / span 12;
   text-align: center;
-  max-width: 24ch;
   margin-inline: auto;
 }
 .connect__h2 {
   font-size: var(--fs-h2);
+  max-width: 26ch;
+  margin-inline: auto;
   margin-bottom: var(--space-4);
 }
 .connect__actions {
