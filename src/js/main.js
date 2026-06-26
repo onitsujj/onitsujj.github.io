@@ -9,6 +9,7 @@ import "@fontsource/space-mono/700.css";
 import { initNav } from "./nav.js";
 import { initLanyard } from "./lanyard/index.js";
 import { initMotion } from "./animations/motion.js";
+import { initGallery } from "./animations/gallery.js";
 
 initNav();
 
@@ -23,3 +24,7 @@ const reduceMotion =
 const lanyardReady = reduceMotion ? Promise.resolve(false) : initLanyard({});
 
 initMotion({ lanyardReady });
+
+// Talks photo strip: Flip lightbox, stagger reveal, glide nav, draggable strip.
+// Decided once at load (like the lanyard) from the reduced-motion preference.
+initGallery({ reduced: reduceMotion });
