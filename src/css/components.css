@@ -313,6 +313,16 @@
   line-height: 1.25;
   margin-top: 12px;
 }
+.approach__note {
+  grid-column: 1 / span 12;
+  max-width: 64ch;
+  margin-bottom: var(--space-6);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent-line);
+  color: var(--text-1);
+  font-size: 15px;
+  line-height: 1.6;
+}
 
 /* capability strip — becomes a horizontal scrub row in M3 */
 .capabilities {
