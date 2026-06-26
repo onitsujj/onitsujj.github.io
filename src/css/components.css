@@ -421,6 +421,9 @@
 /* ============================================================
    CONNECT
    ============================================================ */
+.connect {
+  padding-block: clamp(72px, 9vh, 120px);
+}
 .connect__inner {
   grid-column: 1 / span 12;
   text-align: center;
