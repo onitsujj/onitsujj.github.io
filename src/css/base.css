@@ -137,9 +137,8 @@ ul {
   }
 }
 
-.split-line {
-  will-change: transform;
-}
+/* .split-line gets will-change:transform transiently from loader.js during the
+   one-shot headline entrance, then releases it — no standing GPU layer. */
 
 /* reduced-motion backstop for anything not owned by GSAP */
 @media (prefers-reduced-motion: reduce) {

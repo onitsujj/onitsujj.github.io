@@ -3,6 +3,9 @@
 // hero copy cascades. Content NEVER waits on the 3D libs: a timeout guarantees
 // it appears even if WebGL is slow/absent.
 export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
+  // the headline line-split, kept so a mid-session reduced-motion switch can
+  // revert it (restoring the plain <h1>) instead of leaking the split DOM.
+  let splitInstance = null;
   // hidden start states (CSS already hid these pre-paint to avoid a flash)
   gsap.set([".hero__eyebrow", ".hero__sub", ".hero__lead", ".hero__actions"], { opacity: 0, y: 24 });
   gsap.set(".hero__static-badge", { opacity: 0, y: -24 });
@@ -14,8 +17,8 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
     const h1 = document.querySelector("[data-reveal-lines]");
     let lines = [];
     if (h1 && SplitText) {
-      const split = new SplitText(h1, { type: "lines", mask: "lines", linesClass: "split-line" });
-      lines = split.lines;
+      splitInstance = new SplitText(h1, { type: "lines", mask: "lines", linesClass: "split-line" });
+      lines = splitInstance.lines;
       gsap.set(h1, { opacity: 1 });
       // start each line risen + slightly loose, so it resolves INTO its final
       // tracking as it rises — type "settling into confidence", not just sliding.
@@ -28,7 +31,17 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
     content
       .to(".hero__eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0);
     if (lines.length) {
-      content.to(lines, { yPercent: 0, letterSpacing: "-0.035em", duration: 0.9, stagger: 0.12, ease: "jg" }, 0.05);
+      content.to(lines, {
+        yPercent: 0,
+        letterSpacing: "-0.035em",
+        duration: 0.9,
+        stagger: 0.12,
+        ease: "jg",
+        // promote the lines only for this one-shot entrance, then release the
+        // layer (replaces a standing will-change in CSS that held it all session).
+        onStart: () => gsap.set(lines, { willChange: "transform" }),
+        onComplete: () => gsap.set(lines, { willChange: "auto" }),
+      }, 0.05);
     } else if (h1) {
       content.to(h1, { opacity: 1, y: 0, duration: 0.8 }, 0.05);
     }
@@ -63,4 +76,8 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
   } else {
     buildAndStart();
   }
+
+  return () => {
+    if (splitInstance) splitInstance.revert();
+  };
 }
