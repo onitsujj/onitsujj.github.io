@@ -34,6 +34,23 @@ body {
   overflow-x: hidden;
 }
 
+/* Atmospheric film grain — a static, faint SVG-noise layer over the whole
+   frame to take the digital sterility off the obsidian flats. It never moves
+   (safe for reduced-motion) and lets pointer events fall through. Sits above
+   the page + nav but below the lightbox (z 1000) so enlarged photos stay clean.
+   Knob: opacity (heavier = more grain). */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
 h1,
 h2,
 h3 {
