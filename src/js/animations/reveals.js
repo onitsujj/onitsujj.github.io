@@ -79,7 +79,12 @@ function buildApproachScene({ gsap }) {
         end: () => "+=" + Math.round(window.innerHeight * 4.5),
         pin: ".approach__stage",
         anticipatePin: 1,
-        scrub: 1,
+        // 0.8 keeps the catch-up close to ScrollSmoother's own 0.8 lag so the two
+        // don't compound into a long render tail; fastScrollEnd jumps to the end
+        // state on a hard flick (above narration speed) instead of rendering every
+        // intermediate scrub frame.
+        scrub: 0.8,
+        fastScrollEnd: true,
         invalidateOnRefresh: true,
         // promote the sliding beliefs to their own layer only while the scene is
         // active, instead of a standing will-change that holds GPU layers for an
