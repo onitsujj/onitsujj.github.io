@@ -7,6 +7,7 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
   gsap.set([".hero__eyebrow", ".hero__sub", ".hero__lead", ".hero__actions"], { opacity: 0, y: 24 });
   gsap.set(".hero__static-badge", { opacity: 0, y: -24 });
   gsap.set("#lanyard-mount", { opacity: 0 });
+  gsap.set(".hero__title .accent", { filter: "blur(3px)" });
 
   const buildAndStart = () => {
     // split the headline into masked lines (the <br>s define the 3 lines)
@@ -16,19 +17,24 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
       const split = new SplitText(h1, { type: "lines", mask: "lines", linesClass: "split-line" });
       lines = split.lines;
       gsap.set(h1, { opacity: 1 });
-      gsap.set(lines, { yPercent: 115 });
+      // start each line risen + slightly loose, so it resolves INTO its final
+      // tracking as it rises — type "settling into confidence", not just sliding.
+      gsap.set(lines, { yPercent: 115, letterSpacing: "0.04em" });
     } else if (h1) {
       gsap.set(h1, { opacity: 0, y: 24 });
     }
 
-    const content = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+    const content = gsap.timeline({ paused: true, defaults: { ease: "jg" } });
     content
       .to(".hero__eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0);
     if (lines.length) {
-      content.to(lines, { yPercent: 0, duration: 0.9, stagger: 0.12, ease: "power4.out" }, 0.05);
+      content.to(lines, { yPercent: 0, letterSpacing: "-0.035em", duration: 0.9, stagger: 0.12, ease: "jg" }, 0.05);
     } else if (h1) {
       content.to(h1, { opacity: 1, y: 0, duration: 0.8 }, 0.05);
     }
+    // the cyan signal phrase resolves from a soft blur into focus as the
+    // headline sets — a quiet focus-pull on the words that carry the line.
+    content.to(".hero__title .accent", { filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.25);
     content
       .to(".hero__sub", { opacity: 1, y: 0, duration: 0.6 }, 0.32)
       .to(".hero__lead", { opacity: 1, y: 0, duration: 0.7 }, 0.45)
