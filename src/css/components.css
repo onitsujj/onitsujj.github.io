@@ -494,13 +494,17 @@
   align-items: center;
   padding: var(--space-4) 0;
   border-top: 1px solid var(--line);
-  transition: padding-left 0.3s var(--ease-out);
 }
 .row-card:last-child {
   border-bottom: 1px solid var(--line);
 }
-.row-card:hover {
-  padding-left: 14px;
+/* hover nudge: step the content in via transform (composited) so the row's
+   divider hairlines stay put — the gallery row is excluded so it doesn't jog. */
+.row-card > :not(.row-card__gallery) {
+  transition: transform 0.3s var(--ease-out);
+}
+.row-card:hover > :not(.row-card__gallery) {
+  transform: translateX(14px);
 }
 .row-card__meta {
   font-family: var(--font-mono);
