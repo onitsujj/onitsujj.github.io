@@ -22,7 +22,7 @@ export function createLightbox({ slides, thumbs, reduced = false }) {
     <button type="button" class="lightbox__nav lightbox__nav--next" aria-label="Next photo">&#8250;</button>
     <figure class="lightbox__stage">
       <img class="lightbox__img" alt="" />
-      <figcaption class="lightbox__caption"></figcaption>
+      <figcaption class="lightbox__caption" aria-live="polite"></figcaption>
     </figure>
     <div class="lightbox__counter" aria-hidden="true"></div>`;
   document.body.appendChild(lb);

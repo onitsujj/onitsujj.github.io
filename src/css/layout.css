@@ -153,10 +153,10 @@
   transition: transform 0.3s var(--ease-out);
 }
 .nav__link:hover,
-.nav__link[aria-current="true"] {
+.nav__link[aria-current] {
   color: var(--text);
 }
-.nav__link[aria-current="true"]::after {
+.nav__link[aria-current]::after {
   transform: scaleX(1);
 }
 .nav__toggle {
@@ -203,12 +203,10 @@
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--muted);
-  opacity: 0.5;
-  transition: color 0.2s, opacity 0.2s;
+  transition: color 0.2s;
 }
-.section-index a[aria-current="true"] {
+.section-index a[aria-current] {
   color: var(--accent);
-  opacity: 1;
 }
 
 /* ============================================================

@@ -179,14 +179,16 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
   const setSpy = (id, active) => {
     document
       .querySelectorAll(`.nav__link[href="#${id}"], .section-index a[href="#${id}"]`)
-      .forEach((a) => a.setAttribute("aria-current", active));
+      .forEach((a) =>
+        active ? a.setAttribute("aria-current", "location") : a.removeAttribute("aria-current")
+      );
   };
   gsap.utils.toArray("main section[id]").forEach((sec) => {
     ScrollTrigger.create({
       trigger: sec,
       start: "top 55%",
       end: "bottom 55%",
-      onToggle: (self) => setSpy(sec.id, self.isActive ? "true" : "false"),
+      onToggle: (self) => setSpy(sec.id, self.isActive),
     });
   });
 
