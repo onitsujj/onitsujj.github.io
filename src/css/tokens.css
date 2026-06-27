@@ -55,6 +55,13 @@
   /* ---- motion ---- */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* the "signature" ease — a confident settle with a whisper of overshoot,
+     mirroring the JS "jg" curve. Reserved for translate-based hovers where the
+     overshoot reads as spring (arrow, row cards) — NOT scaleX hairlines. */
+  --ease-signature: cubic-bezier(0.16, 0.84, 0.3, 1.06);
+  /* film-grain opacity — drifts on the motion branch (motion.js) for a faint
+     "lit" feel; the static default is the reduced-motion value. */
+  --grain-o: 0.05;
   --radius: 14px;
   --radius-sm: 8px;
 

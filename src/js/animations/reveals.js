@@ -1,11 +1,18 @@
 import gsap from "gsap";
 import { CustomEase } from "gsap/CustomEase";
+import { SplitText } from "gsap/SplitText";
 
 // A faint S-curve for the scroll-progress bar: softens the very start/end so it
 // reads as a designed pacing aid rather than a flat loading bar, while staying
 // near-linear (honest about scroll position) through the middle.
-gsap.registerPlugin(CustomEase);
+gsap.registerPlugin(CustomEase, SplitText);
 CustomEase.create("progress", "M0,0 C0.2,0.08 0.8,0.92 1,1");
+// The site's "signature" ease — a confident arrival with a whisper of overshoot
+// (~6%). Shared by the loader cascade, the section reveals, the held-breath
+// thesis word, and the CTA press release, so every entrance feels like the
+// site's own rather than a borrowed default curve. (CSS mirrors it in
+// --ease-signature for translate-based hovers.)
+CustomEase.create("jg", "M0,0 C0.16,0.84 0.3,1.06 1,1");
 
 // Scroll-driven choreography. Reveals + counters use an IntersectionObserver
 // (fires reliably for elements already in view on load — e.g. landing on a
@@ -27,15 +34,34 @@ function buildApproachScene({ gsap }) {
 
     const thesis = document.querySelector(".approach__thesis");
     const rail = document.querySelector(".approach__rail");
+    const progress = document.querySelector(".approach__progress");
+    const ticks = gsap.utils.toArray(".approach__tick i");
     const eyebrow = document.querySelector(".approach__eyebrow");
     const lines = gsap.utils.toArray(".approach__thesis .ln");
+    const em = document.querySelector(".approach__h2 em");
     const beliefs = gsap.utils.toArray(".approach__track .belief");
+
+    // Char-mask the bold lead clause of each belief so the key phrase "writes
+    // itself in" word-by-word as the card lands (the closing note has no <b> —
+    // it just slides). Reverted in the scene cleanup so a breakpoint/motion
+    // toggle restores the plain markup.
+    const beliefSplits = [];
+    const beliefWords = beliefs.map((b) => {
+      const bold = b.querySelector(".belief__text b");
+      if (!bold) return null;
+      const s = new SplitText(bold, { type: "words", mask: "words" });
+      beliefSplits.push(s);
+      return s.words;
+    });
 
     // switch on the pinned layout (CSS keys off this class), then hide the
     // pieces the timeline will bring in.
     document.documentElement.classList.add("approach-live");
     gsap.set([eyebrow, ...lines], { autoAlpha: 0, y: 42 });
-    gsap.set(rail, { autoAlpha: 0 });
+    if (em) gsap.set(em, { autoAlpha: 0, yPercent: 20 });
+    gsap.set([rail, progress], { autoAlpha: 0 });
+    gsap.set(ticks, { scaleY: 0, transformOrigin: "top" });
+    beliefWords.forEach((words) => words && gsap.set(words, { yPercent: 110 }));
     // beliefs are stacked + centred by CSS; park each one hidden, off to the
     // right, ready to slide through the centre one at a time.
     gsap.set(beliefs, {
@@ -67,18 +93,26 @@ function buildApproachScene({ gsap }) {
 
     // phase 1 — the thesis assembles
     tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0)
-      .to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0.2)
-      .to({}, { duration: 0.9 }) // hold — room to land the line live
+      .to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0.2);
+    // the payoff word lands a half-beat after its line — like a speaker pausing
+    // before the word that carries the whole thesis.
+    if (em) tl.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: "jg" }, ">-0.3");
+    tl.to({}, { duration: 0.9 }) // hold — room to land the line live
       // phase 2 — the thesis lifts away, then each belief slides in from the
       // right, dwells centre-stage on its own, and slides off left before the
       // next arrives. One belief per "page" of scroll so each point can be
       // narrated on its own beat.
       .to(thesis, { autoAlpha: 0, y: -70, duration: 0.8, ease: "power2.in" }, ">")
-      .to(rail, { autoAlpha: 1, duration: 0.3 }, "<");
+      .to([rail, progress], { autoAlpha: 1, duration: 0.3 }, "<");
 
     beliefs.forEach((belief, i) => {
-      tl.to(belief, { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" })
-        .to({}, { duration: 1.1 }); // dwell centre-stage
+      tl.to(belief, { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" });
+      // the progress rail fills one tick per belief — a "you are N of 4" spine
+      // so the deliberate one-per-page pacing reads as structure, not length.
+      if (ticks[i]) tl.to(ticks[i], { scaleY: 1, duration: 0.4, ease: "power2.out" }, "<");
+      // the bold clause writes itself in as the card settles
+      if (beliefWords[i]) tl.to(beliefWords[i], { yPercent: 0, duration: 0.5, stagger: 0.04, ease: "jg" }, "<0.15");
+      tl.to({}, { duration: 1.1 }); // dwell centre-stage
       if (i < beliefs.length - 1) {
         tl.to(belief, { autoAlpha: 0, x: () => -stage.clientWidth * 0.5, duration: 0.9, ease: "power2.in" });
       }
@@ -88,7 +122,10 @@ function buildApproachScene({ gsap }) {
     // section doesn't snap to Talks the instant it appears
     tl.to({}, { duration: 1.2 });
 
-    return () => document.documentElement.classList.remove("approach-live");
+    return () => {
+      document.documentElement.classList.remove("approach-live");
+      beliefSplits.forEach((s) => s.revert());
+    };
   });
   return mm;
 }
@@ -123,9 +160,25 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
   const countTo = (el, delay = 0) => {
     const end = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
-    if (reduced) { el.textContent = end + suffix; return; }
+    // a hairline under each number fills in lockstep with the count — the digits
+    // accrue and you can see them accrue, both braking to a stop together.
+    const bar = el.closest(".stat")?.querySelector(".stat__bar");
+    if (reduced) {
+      el.textContent = end + suffix;
+      if (bar) gsap.set(bar, { scaleX: 1 });
+      return;
+    }
     const obj = { v: 0 };
-    gsap.to(obj, { v: end, duration: 1.4, delay, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; } });
+    gsap.to(obj, {
+      v: end,
+      duration: 1.4,
+      delay,
+      ease: "power2.out",
+      onUpdate: () => {
+        el.textContent = Math.round(obj.v) + suffix;
+        if (bar) gsap.set(bar, { scaleX: obj.v / end });
+      },
+    });
   };
 
   if (reduced) {
@@ -142,7 +195,7 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
         const reveals = shown.filter((el) => el.hasAttribute("data-reveal"));
         const closes = shown.filter((el) => el.hasAttribute("data-reveal-close"));
         if (reveals.length) {
-          gsap.to(reveals, { opacity: 1, y: 0, duration: 0.8, stagger: 0.09, ease: "power3.out", overwrite: true });
+          gsap.to(reveals, { opacity: 1, y: 0, duration: 0.8, stagger: 0.09, ease: "jg", overwrite: true });
         }
         if (closes.length) {
           // the closing CTA arrives slower + gentler — a deliberate exhale to end on
@@ -175,13 +228,47 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
     });
   }
 
-  // ---- scroll-spy: highlight the active section in nav + right-edge index
+  // ---- scroll-spy: highlight the active section in nav + right-edge index.
+  // The active right-edge number also "settles": its tracking tightens + it
+  // brightens, and (once the small plugin lazy-loads) the digits scramble into
+  // place — a precision-instrument read for the wayfinding numerals.
+  const indexNums = {};
+  gsap.utils
+    .toArray(".section-index a")
+    .forEach((a) => (indexNums[a.getAttribute("href").slice(1)] = a.textContent.trim()));
+  let scrambleReady = false;
+  if (!reduced) {
+    import("gsap/ScrambleTextPlugin")
+      .then((m) => {
+        gsap.registerPlugin(m.ScrambleTextPlugin);
+        scrambleReady = true;
+      })
+      .catch(() => {});
+  }
+  const settleIndex = (id) => {
+    const a = document.querySelector(`.section-index a[href="#${id}"]`);
+    if (!a) return;
+    gsap.fromTo(
+      a,
+      { letterSpacing: "0.26em", opacity: 0.5 },
+      { letterSpacing: "0.04em", opacity: 1, duration: 0.45, ease: "power2.out", overwrite: "auto" }
+    );
+    if (scrambleReady) {
+      gsap.to(a, {
+        duration: 0.5,
+        ease: "none",
+        scrambleText: { text: indexNums[id], chars: "0123456789", speed: 0.6 },
+      });
+    }
+  };
+
   const setSpy = (id, active) => {
     document
       .querySelectorAll(`.nav__link[href="#${id}"], .section-index a[href="#${id}"]`)
       .forEach((a) =>
         active ? a.setAttribute("aria-current", "location") : a.removeAttribute("aria-current")
       );
+    if (active && !reduced) settleIndex(id);
   };
   gsap.utils.toArray("main section[id]").forEach((sec) => {
     ScrollTrigger.create({

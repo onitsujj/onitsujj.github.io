@@ -17,7 +17,7 @@
   transition: transform 0.2s var(--ease-out), background 0.2s, border-color 0.2s, color 0.2s;
 }
 .btn__arrow {
-  transition: transform 0.25s var(--ease-out);
+  transition: transform 0.3s var(--ease-signature);
 }
 .btn:hover .btn__arrow {
   transform: translateX(4px);
@@ -294,6 +294,16 @@
   color: var(--text);
   line-height: 1;
 }
+/* a measured hairline that fills in lockstep with the count (driven in
+   reveals.js) so the number reads as a gauge finishing, not a label */
+.stat__bar {
+  height: 2px;
+  width: clamp(56px, 6vw, 88px);
+  margin-top: 12px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
 .stat__label {
   font-size: 13px;
   color: var(--muted);
@@ -342,6 +352,7 @@
 .approach__h2 em {
   font-style: normal;
   color: var(--accent);
+  display: inline-block; /* lets the "held-breath" word transform (yPercent) */
 }
 .approach__lead {
   font-size: var(--fs-lead);
@@ -392,6 +403,28 @@
   font-size: 15px;
   line-height: 1.6;
   color: var(--text-1);
+}
+
+/* progress rail — only rendered inside the live keynote scene (positioned in
+   the .approach-live block below). Each tick is a dim track with a cyan fill
+   (the <i>) that scaleY-fills as its belief reaches centre. */
+.approach__progress {
+  display: none;
+}
+.approach__tick {
+  display: block;
+  width: 2px;
+  height: 30px;
+  background: var(--line-strong);
+  overflow: hidden;
+}
+.approach__tick i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
 }
 
 /* ---- Desktop + motion: the pinned keynote scene ---- */
@@ -471,6 +504,16 @@
   max-width: none;
   border-left: 2px solid var(--accent-line);
 }
+.approach-live .approach__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: absolute;
+  left: var(--gutter); /* left edge — clear of the right-edge section index */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
 
 /* ============================================================
    TALKS + WORK — card lists
@@ -501,7 +544,7 @@
 /* hover nudge: step the content in via transform (composited) so the row's
    divider hairlines stay put — the gallery row is excluded so it doesn't jog. */
 .row-card > :not(.row-card__gallery) {
-  transition: transform 0.3s var(--ease-out);
+  transition: transform 0.3s var(--ease-signature);
 }
 .row-card:hover > :not(.row-card__gallery) {
   transform: translateX(14px);
@@ -562,7 +605,7 @@
   outline-offset: 3px;
 }
 .gallery__thumb img {
-  height: 104px;
+  height: 130px;
   width: auto;
   object-fit: cover;
   border-radius: 6px;
