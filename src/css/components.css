@@ -442,28 +442,20 @@
 .approach-live .approach__rail {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
   overflow: hidden;
 }
+/* beliefs are stacked on top of each other and shown one at a time; the JS
+   centres each (xPercent/yPercent -50) and slides it through on scroll. */
 .approach-live .approach__track {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: max-content;
-  gap: clamp(80px, 14vw, 220px);
-  padding-inline: var(--gutter);
+  position: absolute;
+  inset: 0;
 }
 .approach-live .belief {
-  flex: 0 0 auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: clamp(320px, 40vw, 480px);
-  min-height: 54vh;
-  justify-content: center;
   gap: 18px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: clamp(28px, 4vh, 48px);
 }
 .approach-live .belief__text {
   font-size: clamp(20px, 2vw, 28px);
@@ -472,10 +464,7 @@
 .approach-live .belief--note {
   width: clamp(300px, 36vw, 440px);
   max-width: none;
-  background: transparent;
-  border: 0;
   border-left: 2px solid var(--accent-line);
-  border-radius: 0;
 }
 
 /* ============================================================

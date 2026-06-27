@@ -29,28 +29,38 @@ function buildApproachScene({ gsap }) {
     const rail = document.querySelector(".approach__rail");
     const eyebrow = document.querySelector(".approach__eyebrow");
     const lines = gsap.utils.toArray(".approach__thesis .ln");
+    const beliefs = gsap.utils.toArray(".approach__track .belief");
 
     // switch on the pinned layout (CSS keys off this class), then hide the
     // pieces the timeline will bring in.
     document.documentElement.classList.add("approach-live");
     gsap.set([eyebrow, ...lines], { autoAlpha: 0, y: 42 });
     gsap.set(rail, { autoAlpha: 0 });
+    // beliefs are stacked + centred by CSS; park each one hidden, off to the
+    // right, ready to slide through the centre one at a time.
+    gsap.set(beliefs, {
+      autoAlpha: 0,
+      xPercent: -50,
+      yPercent: -50,
+      x: () => stage.clientWidth * 0.5,
+    });
 
     const tl = gsap.timeline({
       defaults: { ease: "none" },
       scrollTrigger: {
         trigger: ".approach",
         start: "top top",
-        end: () => "+=" + Math.round(window.innerHeight * 3.4),
+        end: () => "+=" + Math.round(window.innerHeight * 4.5),
         pin: ".approach__stage",
         anticipatePin: 1,
         scrub: 1,
         invalidateOnRefresh: true,
-        // promote the sliding track to its own layer only while the scene is
-        // active, instead of a standing will-change that holds a GPU layer for
-        // an off-screen section the whole session.
+        // promote the sliding beliefs to their own layer only while the scene is
+        // active, instead of a standing will-change that holds GPU layers for an
+        // off-screen section the whole session.
         onToggle: (self) => {
-          track.style.willChange = self.isActive ? "transform" : "auto";
+          const hint = self.isActive ? "transform" : "auto";
+          beliefs.forEach((b) => (b.style.willChange = hint));
         },
       },
     });
@@ -59,25 +69,24 @@ function buildApproachScene({ gsap }) {
     tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0)
       .to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0.2)
       .to({}, { duration: 0.9 }) // hold — room to land the line live
-      // phase 2 — the thesis lifts away first, THEN every belief parades in from
-      // off-screen right (so nothing overlaps the thesis mid-hand-off). ease
-      // "none" locks the horizontal travel 1:1 to the scroll wheel.
-      .to(thesis, { autoAlpha: 0, y: -70, duration: 1, ease: "power2.in" }, ">")
-      .to(rail, { autoAlpha: 1, duration: 0.6 }, ">-0.3")
-      .fromTo(
-        track,
-        { x: () => stage.clientWidth },
-        {
-          x: () => -(track.scrollWidth - stage.clientWidth + 40),
-          duration: 6,
-          ease: "none",
-          immediateRender: false,
-        },
-        "<"
-      )
-      // dwell on the closing "not all magic" note before the pin releases, so
-      // the section doesn't snap to Talks the instant it appears
-      .to({}, { duration: 1.5 });
+      // phase 2 — the thesis lifts away, then each belief slides in from the
+      // right, dwells centre-stage on its own, and slides off left before the
+      // next arrives. One belief per "page" of scroll so each point can be
+      // narrated on its own beat.
+      .to(thesis, { autoAlpha: 0, y: -70, duration: 0.8, ease: "power2.in" }, ">")
+      .to(rail, { autoAlpha: 1, duration: 0.3 }, "<");
+
+    beliefs.forEach((belief, i) => {
+      tl.to(belief, { autoAlpha: 1, x: 0, duration: 1, ease: "power3.out" })
+        .to({}, { duration: 1.1 }); // dwell centre-stage
+      if (i < beliefs.length - 1) {
+        tl.to(belief, { autoAlpha: 0, x: () => -stage.clientWidth * 0.5, duration: 0.9, ease: "power2.in" });
+      }
+    });
+
+    // dwell on the closing "not all magic" note before the pin releases, so the
+    // section doesn't snap to Talks the instant it appears
+    tl.to({}, { duration: 1.2 });
 
     return () => document.documentElement.classList.remove("approach-live");
   });
