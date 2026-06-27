@@ -670,24 +670,6 @@
   .lightbox__nav--next { right: 28%; }
 }
 
-/* placeholder marker for content Jose still needs to supply */
-.todo {
-  outline: 1px dashed var(--accent-line);
-  outline-offset: 6px;
-}
-.todo-tag {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
 /* ============================================================
    CONNECT
    ============================================================ */
