@@ -22,7 +22,7 @@ export function initMotion({ lanyardReady } = {}) {
       if (ctx.conditions.motion) {
         // GSAP now owns the reveals — cancel the no-JS failsafe so sections
         // stay hidden until they scroll into view.
-        clearTimeout(window.__revealFallback);
+        window.__cancelRevealFallback && window.__cancelRevealFallback();
         // Page-wide momentum scroll (gsap.com-style glide). Created before the
         // scene/scroll triggers so ScrollTrigger wires into it automatically.
         // The fixed nav/progress/section-index sit OUTSIDE #smooth-content, and

@@ -49,12 +49,19 @@
 
     <link rel="stylesheet" href="/css/main.css" />
     <!-- mark JS available before paint so reveal animations never flash content;
-         failsafe reveals everything if the motion script never runs -->
+         failsafe reveals everything if the motion script never runs. The motion
+         layer cancels the failsafe via __cancelRevealFallback once it owns the
+         reveals — a named handoff rather than a bare timer-id global. -->
     <script>
       document.documentElement.classList.add("js");
-      window.__revealFallback = setTimeout(function () {
-        document.documentElement.classList.add("reveal-fallback");
-      }, 2600);
+      (function () {
+        var t = setTimeout(function () {
+          document.documentElement.classList.add("reveal-fallback");
+        }, 2600);
+        window.__cancelRevealFallback = function () {
+          clearTimeout(t);
+        };
+      })();
     </script>
   </head>
 
