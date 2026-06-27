@@ -56,20 +56,26 @@ export function initMotion({ lanyardReady } = {}) {
         };
         document.addEventListener("click", onAnchorClick);
 
-        buildLoadReveal({ gsap, SplitText, lanyardReady });
+        const loadCleanup = buildLoadReveal({ gsap, SplitText, lanyardReady });
         const cleanup = setupScroll({ gsap, ScrollTrigger, reduced: false });
-        setupMicro({ gsap });
+        const microCleanup = setupMicro({ gsap });
 
         // a barely-there drift on the film grain so the obsidian field reads as
         // lit, not flat. Created inside this matchMedia context, so it auto-
         // reverts to the static 0.05 if the user switches to reduced motion.
-        gsap.to(document.documentElement, {
+        const grain = gsap.to(document.documentElement, {
           "--grain-o": 0.075,
           duration: 4,
           ease: "sine.inOut",
           repeat: -1,
           yoyo: true,
         });
+        // the grain layer is a fixed, full-viewport mix-blend overlay, so each
+        // frame of this drift re-composites the whole screen. Pause it while the
+        // tab is hidden or the presenter is screen-sharing another window — no
+        // point repainting grain nobody can see.
+        const onVisibility = () => (document.hidden ? grain.pause() : grain.resume());
+        document.addEventListener("visibilitychange", onVisibility);
 
         // One ordered settle after fonts load: refresh so the scene's pin-spacing
         // is measured, THEN (next frame, once positions are final) restore any
@@ -87,7 +93,11 @@ export function initMotion({ lanyardReady } = {}) {
 
         return () => {
           if (cleanup) cleanup(); // disconnect the IntersectionObserver
+          if (microCleanup) microCleanup(); // unbind magnetic/press listeners
+          if (loadCleanup) loadCleanup(); // revert the headline line-split
           document.removeEventListener("click", onAnchorClick);
+          document.removeEventListener("visibilitychange", onVisibility);
+          grain.kill();
           smoother.kill();
           document.documentElement.style.scrollBehavior = "";
         };
