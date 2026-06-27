@@ -60,6 +60,17 @@ export function initMotion({ lanyardReady } = {}) {
         const cleanup = setupScroll({ gsap, ScrollTrigger, reduced: false });
         setupMicro({ gsap });
 
+        // a barely-there drift on the film grain so the obsidian field reads as
+        // lit, not flat. Created inside this matchMedia context, so it auto-
+        // reverts to the static 0.05 if the user switches to reduced motion.
+        gsap.to(document.documentElement, {
+          "--grain-o": 0.075,
+          duration: 4,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+
         // One ordered settle after fonts load: refresh so the scene's pin-spacing
         // is measured, THEN (next frame, once positions are final) restore any
         // deep link. ScrollSmoother resets scroll to 0 on creation, so landing on
