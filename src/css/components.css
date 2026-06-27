@@ -262,6 +262,9 @@
 }
 .about__body {
   grid-column: 7 / span 6;
+  /* drop the body so its lead aligns with the headline rather than the
+     "01 / About" kicker above it (kicker line + the head's space-4 gap) */
+  margin-top: calc(var(--fs-label) * 1.7 + var(--space-4));
 }
 .about__h2 {
   font-size: var(--fs-h2);
@@ -721,7 +724,7 @@
   .drag-hint { display: none; }
   .hero__inner {
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     pointer-events: auto;
   }
   .hero__text { max-width: none; }
