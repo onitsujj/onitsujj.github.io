@@ -411,7 +411,11 @@ function LanyardApp({ image, strapImage, backLogo, cardColor, clipColor, strapCo
 let root = null;
 
 export function mount(el, props) {
-  if (root) return;
+  if (root) {
+    // already mounted — surface the misuse instead of silently dropping props
+    console.warn("lanyard: mount() called twice; ignoring the second call");
+    return;
+  }
   root = createRoot(el);
   root.render(h(LanyardApp, props));
 }
