@@ -36,6 +36,8 @@
   --fs-h3: clamp(20px, 1.6vw, 26px);
   --fs-lead: clamp(19px, 1.5vw, 22px);
   --fs-body: 17px;
+  --fs-sm: 14px;     /* small body: card copy, captions */
+  --fs-meta: 13px;   /* dense meta: stat labels, lightbox caption */
   --fs-label: 12px;
   --fs-stat: clamp(40px, 4vw, 64px);
 

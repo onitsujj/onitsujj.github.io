@@ -90,7 +90,7 @@
   pointer-events: auto;
 }
 .hero__eyebrow {
-  margin-bottom: 28px;
+  margin-bottom: var(--space-3);
 }
 .hero__eyebrow a {
   color: inherit;
@@ -107,7 +107,7 @@
   font-size: var(--fs-display);
   line-height: 0.95;
   letter-spacing: -0.035em;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-3);
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55), 0 0 1px rgba(0, 0, 0, 0.85);
 }
 .hero__sub {
@@ -116,7 +116,7 @@
   font-size: var(--fs-h3);
   color: var(--text-1);
   letter-spacing: -0.01em;
-  margin-bottom: 22px;
+  margin-bottom: var(--space-3);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
 }
 .hero__lead {
@@ -127,7 +127,7 @@
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: var(--space-2);
 }
 
 /* static fallback badge — hangs right; hidden when the live 3D badge mounts */
@@ -293,6 +293,7 @@
   letter-spacing: -0.02em;
   color: var(--text);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 /* a measured hairline that fills in lockstep with the count (driven in
    reveals.js) so the number reads as a gauge finishing, not a label */
@@ -305,7 +306,7 @@
   transform-origin: left;
 }
 .stat__label {
-  font-size: 13px;
+  font-size: var(--fs-meta);
   color: var(--muted);
   margin-top: 8px;
   max-width: 18ch;
@@ -400,7 +401,7 @@
 .belief--note .belief__text {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   color: var(--text-1);
 }
@@ -554,6 +555,7 @@
   font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
 }
 .row-card__title {
   font-family: var(--font-display);
@@ -562,7 +564,7 @@
   color: var(--text);
 }
 .row-card__desc {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--text-1);
   margin-top: 6px;
 }
@@ -665,7 +667,7 @@
   will-change: transform;
 }
 .lightbox__caption {
-  font-size: 13px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
   color: var(--text-1);
   text-align: center;
@@ -679,6 +681,7 @@
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 .lightbox__close,
 .lightbox__nav {
