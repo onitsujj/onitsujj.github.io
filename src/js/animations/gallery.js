@@ -9,12 +9,13 @@ import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { createLightbox } from "./lightbox.js";
 import { createDraggableStrip } from "./gallery-strip.js";
+import { GALLERY_THUMB } from "../dom.js";
 
 export function initGallery({ reduced = false } = {}) {
   const gallery = document.querySelector(".row-card__gallery");
   if (!gallery) return;
   const track = gallery.querySelector(".gallery__track") || gallery;
-  const thumbs = gsap.utils.toArray(".gallery__thumb", gallery);
+  const thumbs = gsap.utils.toArray(GALLERY_THUMB, gallery);
   if (!thumbs.length) return;
 
   const slides = thumbs.map((btn) => {

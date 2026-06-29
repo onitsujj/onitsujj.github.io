@@ -1,6 +1,7 @@
 import profileUrl from "../../assets/profile.jpg?url";
 import strapUrl from "../../assets/logo-band.png?url";
 import logoMarkUrl from "../../assets/logo-mark.png?url";
+import { LANYARD_MOUNT, HERO } from "../dom.js";
 
 // Whether to mount the live WebGL badge. Phones / narrow / no-WebGL get the
 // static card instead. (Vendoring the libs locally means Brave desktop now
@@ -29,8 +30,8 @@ export function canUse3D() {
 // live badge is on screen, false if 3D isn't used or fails — the load
 // choreography (M3) awaits this with its own timeout race.
 export function initLanyard({ onReady } = {}) {
-  const mountEl = document.getElementById("lanyard-mount");
-  const hero = document.querySelector(".hero");
+  const mountEl = document.querySelector(LANYARD_MOUNT);
+  const hero = document.querySelector(HERO);
   if (!mountEl || !canUse3D()) return Promise.resolve(false);
 
   return import("./LanyardBadge.js")
