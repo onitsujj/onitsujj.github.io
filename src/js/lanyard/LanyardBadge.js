@@ -1,7 +1,7 @@
 // Draggable 3D lanyard badge — React Three Fiber + rapier rope physics.
 // Ported from the original esm.sh build to npm-vendored deps so it bundles
 // locally and works everywhere (incl. Brave). Recolored to Obsidian + Cyan.
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -191,7 +191,7 @@ function buildCardTexture(imageSrc, logoSrc, cardColor) {
 }
 
 /* ---------- physics band ---------- */
-function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone, maxSpeed = 50, minSpeed = 0 }) {
+function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone, setRunning, maxSpeed = 50, minSpeed = 0 }) {
   const fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const iq = new THREE.Quaternion(), ieul = new THREE.Euler(0, 0, 0, "YXZ"), ioff = new THREE.Vector3(), lv = new THREE.Vector3();
@@ -199,6 +199,7 @@ function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone,
   const phaseRef = useRef("fall");
   const startClockRef = useRef(null);
   const settleRef = useRef(0);
+  const restRef = useRef(0);
   const spinStartRef = useRef(0);
   const clipAnchorRef = useRef(new THREE.Vector3());
   const [spinning, setSpinning] = useState(false);
@@ -320,6 +321,15 @@ function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone,
         rot.copy(card.current.rotation());
         card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
       }
+      // Once the intro is over and the badge has come to rest facing front,
+      // let the render loop idle (host switches it to on-demand) so it stops
+      // stepping physics every frame forever. Pointer interaction revives it.
+      if (setRunning && phaseRef.current === "done" && !dragged) {
+        const v = card.current.linvel();
+        const atRest = lv.set(v.x, v.y, v.z).length() + ang.length() < 0.08 && Math.abs(rot.y) < 0.02;
+        restRef.current = atRest ? restRef.current + 1 : 0;
+        if (restRef.current >= 20) setRunning(false);
+      }
     }
   });
 
@@ -341,6 +351,8 @@ function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone,
           onPointerUp: (e) => { e.target.releasePointerCapture(e.pointerId); setDragged(false); },
           onPointerDown: (e) => {
             e.target.setPointerCapture(e.pointerId);
+            setRunning && setRunning(true); // wake the loop for the drag
+            restRef.current = 0;
             // grabbing it cancels the intro turn and reveals the drag hint
             if (phaseRef.current !== "done") {
               phaseRef.current = "done";
@@ -383,11 +395,46 @@ function LanyardApp({ image, strapImage, backLogo, cardColor, clipColor, strapCo
     return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
   }, [tex, onReady]);
 
-  return h("div", { style: { width: "100%", height: "100%" } },
+  // ---- render-loop gating ----
+  // The lanyard runs a continuous physics + render loop; left unchecked it
+  // never lets the main thread idle, which tanks the perf score on slower
+  // hardware. Gate it: "always" while it's animating, "demand" once it has
+  // settled (revives on pointer interaction), "never" when off-screen or the
+  // tab is hidden. On-screen behaviour is unchanged.
+  const wrapRef = useRef(null);
+  const [frameloop, setFrameloop] = useState("always");
+  const runningRef = useRef(true);
+  const onScreenRef = useRef(true);
+  const tabVisibleRef = useRef(true);
+  const syncFrameloop = useCallback(() => {
+    const visible = onScreenRef.current && tabVisibleRef.current;
+    setFrameloop(!visible ? "never" : runningRef.current ? "always" : "demand");
+  }, []);
+  const setRunning = useCallback((v) => {
+    if (runningRef.current === v) return;
+    runningRef.current = v;
+    syncFrameloop();
+  }, [syncFrameloop]);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    tabVisibleRef.current = !document.hidden;
+    const io = new IntersectionObserver(([entry]) => {
+      onScreenRef.current = entry.isIntersecting;
+      syncFrameloop();
+    }, { threshold: 0.01 });
+    io.observe(el);
+    const onVisibility = () => { tabVisibleRef.current = !document.hidden; syncFrameloop(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { io.disconnect(); document.removeEventListener("visibilitychange", onVisibility); };
+  }, [syncFrameloop]);
+
+  return h("div", { ref: wrapRef, style: { width: "100%", height: "100%" } },
     h(Canvas, {
       camera: { position: [0, 0, 9.5], fov: 25 },
       gl: { alpha: true, preserveDrawingBuffer: true },
       dpr: [1, 2],
+      frameloop,
       resize: { debounce: 0, scroll: false },
       onCreated: ({ gl }) => gl.setClearColor(new THREE.Color(0), 0),
       style: { width: "100%", height: "100%", touchAction: "none" },
@@ -395,7 +442,7 @@ function LanyardApp({ image, strapImage, backLogo, cardColor, clipColor, strapCo
       h("ambientLight", { intensity: 1.1 }),
       h(Physics, { gravity: [0, -40, 0], timeStep: 1 / 60 },
         tex && h(React.Suspense, { fallback: null },
-          h(Band, { cardImageSrc: tex, strapImageSrc: strapImage, clipColor, stringColor: strapColor, onSpinDone }))
+          h(Band, { cardImageSrc: tex, strapImageSrc: strapImage, clipColor, stringColor: strapColor, onSpinDone, setRunning }))
       ),
       h(Environment, { blur: 0.75 },
         h(Lightformer, { intensity: 2, color: "white", position: [0, -1, 5], rotation: [0, 0, Math.PI / 3], scale: [100, 0.1, 1] }),
