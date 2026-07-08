@@ -26,7 +26,7 @@
   --badge-clip: #8a8a82;
 
   /* ---- type families ---- */
-  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif; /* impeccable-disable overused-font -- Space Grotesk is a taste-bar brand lock, not slop */
   --font-body: "Libre Franklin", system-ui, -apple-system, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SF Mono", monospace;
 
