@@ -406,7 +406,7 @@
   grid-column: 1 / -1;
   max-width: 64ch;
   padding-left: var(--space-3);
-  border-left: 2px solid var(--accent-line);
+  border-left: 2px solid var(--line-strong);
 }
 .belief--note .belief__text {
   font-family: var(--font-body);
@@ -513,7 +513,7 @@
 .approach-live .belief--note {
   width: clamp(300px, 36vw, 440px);
   max-width: none;
-  border-left: 2px solid var(--accent-line);
+  border-left: 2px solid var(--line-strong);
 }
 .approach-live .approach__progress {
   display: flex;
