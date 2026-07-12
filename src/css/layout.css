@@ -25,19 +25,12 @@
   gap: var(--gutter);
 }
 
-/* ---- section heading block (number + label) ---- */
+/* ---- section heading block (label kicker) ---- */
 .section-head {
   display: flex;
   align-items: baseline;
   gap: 14px;
   margin-bottom: var(--space-4);
-}
-.section-num {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  font-variant-numeric: tabular-nums;
 }
 .section-label {
   font-family: var(--font-mono);
@@ -189,7 +182,10 @@
   z-index: 101;
 }
 
-/* right-edge vertical section index */
+/* right-edge vertical section index — a stack of hairline ticks (echoing the
+   .eyebrow / .stat__bar hairline motif) rather than numerals. The active tick
+   lengthens + takes the accent; its label reveals alongside. Hover/focus does
+   the same for any tick, so it reads as a precision wayfinding gauge. */
 .section-index {
   position: fixed;
   right: 22px;
@@ -198,16 +194,59 @@
   z-index: 90;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: flex-end;
+  gap: 16px;
 }
 .section-index a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 12px;
+  color: var(--muted);
+}
+.section-index__tick {
+  display: block;
+  width: 34px; /* full (active) length; scaled down at rest — animate transform,
+                  not width, so it can't thrash layout (matches .stat__bar) */
+  height: 2px;
+  background: currentColor;
+  opacity: 0.55;
+  transform: scaleX(0.5);
+  transform-origin: right center;
+  transition: transform 0.4s var(--ease-out), opacity 0.3s, background-color 0.3s;
+}
+.section-index__label {
+  position: absolute;
+  right: 26px;
   font-family: var(--font-mono);
   font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--muted);
-  transition: color 0.2s;
-  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  pointer-events: none;
 }
-.section-index a[aria-current] {
+.section-index a:hover .section-index__tick,
+.section-index a:focus-visible .section-index__tick {
+  transform: scaleX(0.82);
+  opacity: 1;
+}
+.section-index a:hover .section-index__label,
+.section-index a:focus-visible .section-index__label {
+  opacity: 1;
+  transform: none;
+}
+.section-index a[aria-current] .section-index__tick {
+  transform: scaleX(1);
+  opacity: 1;
+  background: var(--accent);
+}
+.section-index a[aria-current] .section-index__label {
+  opacity: 1;
+  transform: none;
   color: var(--accent);
 }
 

@@ -88,7 +88,7 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
           gsap.to(closes, { opacity: 1, y: 0, duration: 1.1, stagger: 0.16, ease: "power2.out", overwrite: true });
         }
         shown.forEach((el) => {
-          // counters start AFTER their block has faded in, so "10+ years" lands as
+          // counters start AFTER their block has faded in, so the stat lands as
           // earned proof rather than racing the reveal
           if (el.hasAttribute("data-count")) countTo(el, 0.7);
           io.unobserve(el);
@@ -115,46 +115,15 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
   }
 
   // ---- scroll-spy: highlight the active section in nav + right-edge index.
-  // The active right-edge number also "settles": its tracking tightens + it
-  // brightens, and (once the small plugin lazy-loads) the digits scramble into
-  // place — a precision-instrument read for the wayfinding numerals.
-  const indexNums = {};
-  gsap.utils
-    .toArray(".section-index a")
-    .forEach((a) => (indexNums[a.getAttribute("href").slice(1)] = a.textContent.trim()));
-  let scrambleReady = false;
-  if (!reduced) {
-    import("gsap/ScrambleTextPlugin")
-      .then((m) => {
-        gsap.registerPlugin(m.ScrambleTextPlugin);
-        scrambleReady = true;
-      })
-      .catch(() => {});
-  }
-  const settleIndex = (id) => {
-    const a = document.querySelector(`.section-index a[href="#${id}"]`);
-    if (!a) return;
-    gsap.fromTo(
-      a,
-      { letterSpacing: "0.26em", opacity: 0.5 },
-      { letterSpacing: "0.04em", opacity: 1, duration: 0.45, ease: "power2.out", overwrite: "auto" }
-    );
-    if (scrambleReady) {
-      gsap.to(a, {
-        duration: 0.5,
-        ease: "none",
-        scrambleText: { text: indexNums[id], chars: "0123456789", speed: 0.6 },
-      });
-    }
-  };
-
+  // The active right-edge tick "settles" — it lengthens + takes the accent —
+  // driven purely by the CSS width/color transition on [aria-current], so the
+  // wayfinding gauge reads without any per-frame JS.
   const setSpy = (id, active) => {
     document
       .querySelectorAll(`.nav__link[href="#${id}"], .section-index a[href="#${id}"]`)
       .forEach((a) =>
         active ? a.setAttribute("aria-current", "location") : a.removeAttribute("aria-current")
       );
-    if (active && !reduced) settleIndex(id);
   };
   gsap.utils.toArray("main section[id]").forEach((sec) => {
     ScrollTrigger.create({
