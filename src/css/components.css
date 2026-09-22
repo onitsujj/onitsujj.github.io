@@ -578,6 +578,14 @@
   color: var(--text-1);
   margin-top: 6px;
 }
+/* right rail: the year sits hard-right on every row so the list can be scanned
+   down one edge; the recap link stacks under it when a row has one. */
+.row-card__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
 .row-card__link {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -793,7 +801,12 @@
     gap: 8px;
     align-items: start;
   }
-  .row-card__link { justify-self: start; }
+  /* one column on phones: the rail collapses to an inline left-aligned row */
+  .row-card__rail {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
 }
 
 @media (max-width: 520px) {
