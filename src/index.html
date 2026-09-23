@@ -77,21 +77,34 @@
           <span class="brand-name">Jose&nbsp;Gayondato</span>
         </a>
 
-        <button
-          class="nav__toggle"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          aria-controls="nav-links"
-        >
-          <span></span><span></span><span></span>
-        </button>
+        <div class="nav__right">
+          <button
+            class="nav__toggle"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            aria-controls="nav-links"
+          >
+            <span></span><span></span><span></span>
+          </button>
 
-        <nav class="nav__links" id="nav-links" aria-label="Sections">
-          <a class="nav__link" href="#about">About</a>
-          <a class="nav__link" href="#approach">Approach</a>
-          <a class="nav__link" href="#talks">Talks</a>
-          <a class="nav__link btn btn--primary" href="#connect">Follow</a>
-        </nav>
+          <nav class="nav__links" id="nav-links" aria-label="Sections">
+            <a class="nav__link" href="#about">About</a>
+            <a class="nav__link" href="#approach">Approach</a>
+            <a class="nav__link" href="#talks">Talks</a>
+          </nav>
+
+          <!-- the one ask, straight to LinkedIn; outside the drawer so it stays
+               in the bar on mobile. On narrow bars only "Follow" shows; the
+               full label stays in the accessible name. -->
+          <a
+            class="nav__follow btn btn--primary"
+            aria-label="Follow on LinkedIn"
+            href="https://www.linkedin.com/in/jose-j-g-17100774/"
+            target="_blank"
+            rel="noopener"
+            >Follow<span class="nav__follow-where"> on LinkedIn</span></a
+          >
+        </div>
       </div>
     </header>
 
@@ -143,15 +156,16 @@
               <span class="accent">with AI</span>, not around it.
             </h1>
             <p class="hero__sub" data-reveal>
-              Part-time explorer, part-time researcher, full-time implementer.
+              <span>Part-time explorer,</span> <span>part-time researcher,</span>
+              <span>full-time implementer.</span>
             </p>
             <p class="lead hero__lead" data-reveal>
               I'm Jose. Ten years building enterprise systems taught me how good
               software actually ships. That's the groundwork for steering AI well.
             </p>
             <div class="hero__actions" data-reveal>
-              <a class="btn btn--primary" href="#connect">
-                Let's connect <span class="btn__arrow" aria-hidden="true">↓</span>
+              <a class="btn btn--primary" href="https://www.linkedin.com/in/jose-j-g-17100774/" target="_blank" rel="noopener">
+                Follow on LinkedIn <span class="btn__arrow" aria-hidden="true">→</span>
               </a>
               <a class="btn btn--ghost" href="#approach">Read my take</a>
             </div>
@@ -193,13 +207,13 @@
               Used well, it changes how a team designs, reviews, and decides. Used carelessly,
               it just adds noise. I help teams tell the difference.
             </p>
+          </div>
 
-            <div class="stats" data-reveal>
-              <div class="stat">
-                <div class="stat__num" data-count="5">5</div>
-                <div class="stat__bar" aria-hidden="true"></div>
-                <div class="stat__label">Years leading teams to delivery</div>
-              </div>
+          <div class="stats about__stats" data-reveal>
+            <div class="stat">
+              <div class="stat__num" data-count="5">5</div>
+              <div class="stat__bar" aria-hidden="true"></div>
+              <div class="stat__label">Years leading teams to delivery</div>
             </div>
           </div>
         </div>
@@ -213,7 +227,6 @@
           </p>
 
           <div class="approach__thesis">
-            <p class="approach__eyebrow">My take</p>
             <h2 class="approach__h2" id="approach-h">
               <span class="ln">AI doesn't replace your experts.</span>
               <span class="ln">It <em>magnifies</em> them.</span>
@@ -226,28 +239,24 @@
           <div class="approach__rail" aria-label="What I believe about adopting AI">
             <div class="approach__track">
               <article class="belief">
-                <span class="belief__key">Magnify</span>
                 <p class="belief__text">
                   <b>Magnify, don't replace.</b> AI is a multiplier for people who know their
                   domain. The expert, not the tool, judges if the output is right.
                 </p>
               </article>
               <article class="belief">
-                <span class="belief__key">Meet them there</span>
                 <p class="belief__text">
                   <b>Meet people where they are.</b> Keep coding by hand if you like. We still
                   use AI for the docs, the gaps we overlooked, the brainstorm before the build.
                 </p>
               </article>
               <article class="belief">
-                <span class="belief__key">Steering</span>
                 <p class="belief__text">
                   <b>Experience is the steering wheel.</b> Small tasks, clear intent, challenge
                   its reasoning. That's what keeps AI from hallucinating into your codebase.
                 </p>
               </article>
               <article class="belief belief--note">
-                <span class="belief__key">And not all magic</span>
                 <p class="belief__text">
                   AI is only as good as the context it's given. Point it at a messy,
                   undocumented codebase and it struggles like anyone would. Knowing that limit
@@ -307,11 +316,11 @@
               </div>
               <div class="row-card__gallery" aria-label="Photos from the Swinburne Week 5.0 session">
                 <div class="gallery__track">
+                <button type="button" class="gallery__thumb gallery__thumb--large" data-lightbox aria-label="Enlarge photo: packed auditorium with the Swinburne Week 5.0 title screen">
+                  <img src="/assets/talk-swinburne-audience.webp" srcset="/assets/talk-swinburne-audience-thumb.webp 360w, /assets/talk-swinburne-audience.webp 800w" sizes="(max-width: 600px) 320px, 530px" width="800" height="411" loading="lazy" decoding="async" alt="Packed auditorium with the Swinburne Week 5.0 title screen" />
+                </button>
                 <button type="button" class="gallery__thumb" data-lightbox aria-label="Enlarge photo: Jose presenting on stage">
                   <img src="/assets/talk-swinburne-stage.webp" srcset="/assets/talk-swinburne-stage-thumb.webp 360w, /assets/talk-swinburne-stage.webp 1080w" sizes="(max-width: 600px) 45vw, 160px" width="1080" height="810" loading="lazy" decoding="async" alt="Jose presenting on stage at INTI Subang, the 'Writing Code → Orchestrating AI' slide on screen" />
-                </button>
-                <button type="button" class="gallery__thumb" data-lightbox aria-label="Enlarge photo: packed auditorium with the Swinburne Week 5.0 title screen">
-                  <img src="/assets/talk-swinburne-audience.webp" srcset="/assets/talk-swinburne-audience-thumb.webp 360w, /assets/talk-swinburne-audience.webp 800w" sizes="(max-width: 600px) 45vw, 160px" width="800" height="411" loading="lazy" decoding="async" alt="Packed auditorium with the Swinburne Week 5.0 title screen" />
                 </button>
                 <button type="button" class="gallery__thumb" data-lightbox aria-label="Enlarge photo: wide view of the full audience">
                   <img src="/assets/talk-swinburne-hall.webp" srcset="/assets/talk-swinburne-hall-thumb.webp 360w, /assets/talk-swinburne-hall.webp 1080w" sizes="(max-width: 600px) 45vw, 160px" width="1080" height="810" loading="lazy" decoding="async" alt="Wide view of the full audience during the session" />
@@ -322,10 +331,15 @@
                 <button type="button" class="gallery__thumb" data-lightbox aria-label="Enlarge photo: audience watching the mistakes slide">
                   <img src="/assets/talk-swinburne-mistakes.webp" srcset="/assets/talk-swinburne-mistakes-thumb.webp 360w, /assets/talk-swinburne-mistakes.webp 800w" sizes="(max-width: 600px) 45vw, 160px" width="800" height="450" loading="lazy" decoding="async" alt="Audience watching the 'Don'ts: mistakes we've seen' slide" />
                 </button>
-                <button type="button" class="gallery__thumb" data-lightbox aria-label="Enlarge photo: collage of the session">
-                  <img src="/assets/talk-swinburne-collage.webp" srcset="/assets/talk-swinburne-collage-thumb.webp 360w, /assets/talk-swinburne-collage.webp 800w" sizes="(max-width: 600px) 45vw, 160px" width="800" height="450" loading="lazy" decoding="async" alt="Collage of the group photo, the talk, and the seated crowd" />
+                <button type="button" class="gallery__thumb gallery__thumb--large" data-lightbox aria-label="Enlarge photo: collage of the session">
+                  <img src="/assets/talk-swinburne-collage.webp" srcset="/assets/talk-swinburne-collage-thumb.webp 360w, /assets/talk-swinburne-collage.webp 800w" sizes="(max-width: 600px) 290px, 480px" width="800" height="450" loading="lazy" decoding="async" alt="Collage of the group photo, the talk, and the seated crowd" />
                 </button>
                 </div>
+              </div>
+              <div class="gallery__cue" aria-hidden="true">
+                <span>6 photos</span>
+                <span class="gallery__meter"><span class="gallery__meter-fill"></span></span>
+                <span class="gallery__verb">Scroll →</span>
               </div>
             </article>
           </div>
