@@ -67,6 +67,18 @@
   width: 130%;
   height: 100%;
   z-index: 1;
+  /* fade the strap out as it rises under the fixed nav: the nav's gradient is
+     near-clear, so the bright strap would otherwise wash over the nav links */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent calc(var(--nav-h) - 12px),
+    #000 calc(var(--nav-h) + 36px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent calc(var(--nav-h) - 12px),
+    #000 calc(var(--nav-h) + 36px)
+  );
 }
 
 /* text overlay: pointer-events fall THROUGH to the canvas so you can drag the
@@ -93,11 +105,18 @@
   margin-bottom: var(--space-3);
 }
 .hero__eyebrow a {
+  position: relative;
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   transition: color 0.2s ease;
+}
+/* invisible 44px-tall hit area around the 17px-tall link */
+.hero__eyebrow a::before {
+  content: "";
+  position: absolute;
+  inset: -14px 0;
 }
 .hero__eyebrow a:hover,
 .hero__eyebrow a:focus-visible {
@@ -114,10 +133,15 @@
   font-family: var(--font-display);
   font-weight: 500;
   font-size: var(--fs-h3);
+  line-height: 1.3;
   color: var(--text-1);
   letter-spacing: -0.01em;
   margin-bottom: var(--space-3);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
+}
+/* each phrase holds together, so lines break between phrases, never at "full-" */
+.hero__sub span {
+  white-space: nowrap;
 }
 .hero__lead {
   max-width: 32ch;
@@ -774,6 +798,7 @@
   /* no WebGL stage on phones; badge leads the hero, then the copy */
   #lanyard-mount { display: none; }
   .drag-hint { display: none; }
+  .scroll-cue { display: none; } /* collides with the stacked CTAs */
   .hero__inner {
     flex-direction: column;
     justify-content: flex-start;
@@ -791,6 +816,16 @@
     pointer-events: auto;
     opacity: 1 !important;
     align-self: flex-start;
+  }
+  /* compact badge so the headline makes the first screen (390x844); same
+     parts at ~0.55 via explicit sizes (the sway animation owns transform) */
+  .badge__strap { width: 17px; height: 40px; }
+  .badge__clip { width: 20px; height: 12px; margin-top: -2px; border-radius: 4px; }
+  .badge__clip::after { top: 4px; width: 7px; height: 4px; border-radius: 2px; }
+  .badge__card {
+    width: 128px;
+    margin-top: 5px;
+    filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6));
   }
   .about__head,
   .about__body { grid-column: 1 / span 12; }
