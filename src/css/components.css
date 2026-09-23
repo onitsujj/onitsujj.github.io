@@ -105,11 +105,18 @@
   margin-bottom: var(--space-3);
 }
 .hero__eyebrow a {
+  position: relative;
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   transition: color 0.2s ease;
+}
+/* invisible 44px-tall hit area around the 17px-tall link */
+.hero__eyebrow a::before {
+  content: "";
+  position: absolute;
+  inset: -14px 0;
 }
 .hero__eyebrow a:hover,
 .hero__eyebrow a:focus-visible {
