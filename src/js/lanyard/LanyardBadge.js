@@ -32,13 +32,16 @@ const STRAP_TWIST_GAIN = 1.7;
 const STRAP_REPEAT = 7; // how many times the logo tile repeats down the band
 
 /* ---------- intro spin ----------
-   After the badge falls in and settles, it winds around to show its back
-   (the logo) then unwinds back to front — the card turn and the ribbon twist
-   are the same value, so they stay physically consistent. Hands back to physics. */
+   After the badge falls in and settles, it holds face-front while the visitor
+   reads the headline, then winds around to show its back (the logo) and
+   unwinds back to front — the card turn and the ribbon twist are the same
+   value, so they stay physically consistent. Hovering the badge during the
+   hold starts the turn early. Hands back to physics. */
 const INTRO_MIN_FALL = 3.0;      // s — don't start spinning mid-fall
 const INTRO_MAX_WAIT = 3.5;      // s — start anyway if it never fully settles
 const INTRO_SETTLE_VEL = 3.0;    // linear speed below which it's "settled"
 const INTRO_SETTLE_FRAMES = 6;   // consecutive settled frames before spinning
+const INTRO_HOLD = 4.0;          // s — face-front hold after settling, before the turn
 const INTRO_SPIN_DUR = 7.0;      // s — time for the whole turn-to-back-and-return
 const INTRO_TURN = Math.PI;      // rad — peak rotation; π faces the card's full back at the midpoint
 const STRAP_ZREF = new THREE.Vector3(0, 0, 1);
@@ -195,12 +198,13 @@ function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone,
   const fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const iq = new THREE.Quaternion(), ieul = new THREE.Euler(0, 0, 0, "YXZ"), ioff = new THREE.Vector3(), lv = new THREE.Vector3();
-  // intro spin: "fall" → "spin" → "done"
+  // intro spin: "fall" → "hold" → "spin" → "done"
   const phaseRef = useRef("fall");
   const startClockRef = useRef(null);
   const settleRef = useRef(0);
   const restRef = useRef(0);
   const spinStartRef = useRef(0);
+  const holdStartRef = useRef(0);
   const clipAnchorRef = useRef(new THREE.Vector3());
   const [spinning, setSpinning] = useState(false);
   const segmentProps = { type: "dynamic", canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
@@ -258,12 +262,23 @@ function Band({ cardImageSrc, strapImageSrc, clipColor, stringColor, onSpinDone,
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
     }
 
-    // ---- intro: wait for the fall to settle, then start the scripted turn ----
+    // ---- intro: wait for the fall to settle, then hold the face front ----
     if (phaseRef.current === "fall" && !dragged && card.current) {
       const v = card.current.linvel();
       const settled = lv.set(v.x, v.y, v.z).length() < INTRO_SETTLE_VEL;
       settleRef.current = settled ? settleRef.current + 1 : 0;
       if (t > INTRO_MAX_WAIT || (t > INTRO_MIN_FALL && settleRef.current >= INTRO_SETTLE_FRAMES)) {
+        holdStartRef.current = t;
+        phaseRef.current = "hold";
+      }
+    }
+
+    // ---- intro: after the hold (or on hover), start the scripted turn ----
+    if (phaseRef.current === "hold" && !dragged && card.current) {
+      if (hovered || t - holdStartRef.current > INTRO_HOLD) {
+        // the card can fall asleep during the hold, and a sleeping body
+        // ignores the kinematic turn below — wake the chain first.
+        [card, j1, j2, j3].forEach((r) => r.current?.wakeUp());
         const p = card.current.translation();
         clipAnchorRef.current.set(p.x, p.y + 1.5, p.z); // hold the clip, swivel below it
         spinStartRef.current = state.clock.getElapsedTime();

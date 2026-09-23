@@ -7,6 +7,7 @@ import { SplitText } from "gsap/SplitText";
 import { buildLoadReveal } from "./loader.js";
 import { setupScroll } from "./reveals.js";
 import { setupMicro } from "./micro.js";
+import { approachLanding } from "./approach-scene.js";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
@@ -42,7 +43,9 @@ export function initMotion({ lanyardReady } = {}) {
         // Route in-page anchor clicks (nav, section index, CTAs, back-to-top)
         // through the smoother. A native #hash jump desyncs ScrollSmoother's
         // internal position and breaks scrolling afterwards; scrollTo glides
-        // correctly and keeps the two in sync.
+        // correctly and keeps the two in sync. #approach lands on the built
+        // thesis when the pinned scene is live, not on its empty first frame.
+        const scrollTarget = (id, el) => (id === "#approach" && approachLanding()) || el;
         const onAnchorClick = (e) => {
           const link = e.target.closest('a[href^="#"]');
           if (!link) return;
@@ -51,7 +54,7 @@ export function initMotion({ lanyardReady } = {}) {
           const el = document.querySelector(id);
           if (!el) return;
           e.preventDefault();
-          smoother.scrollTo(el, true);
+          smoother.scrollTo(scrollTarget(id, el), true);
           history.pushState(null, "", id);
         };
         document.addEventListener("click", onAnchorClick);
@@ -87,7 +90,7 @@ export function initMotion({ lanyardReady } = {}) {
           ScrollTrigger.refresh();
           if (hash.length > 1) {
             const el = document.querySelector(hash);
-            if (el) smoother.scrollTo(el, false);
+            if (el) smoother.scrollTo(scrollTarget(hash, el), false);
           }
         });
 

@@ -139,10 +139,6 @@
   margin-bottom: var(--space-3);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
 }
-/* each phrase holds together, so lines break between phrases, never at "full-" */
-.hero__sub span {
-  white-space: nowrap;
-}
 .hero__lead {
   max-width: 32ch;
   margin-bottom: var(--space-4);
@@ -577,9 +573,8 @@
   padding: var(--space-4) 0;
   border-top: 1px solid var(--line);
 }
-.row-card:last-child {
-  border-bottom: 1px solid var(--line);
-}
+/* no closing rule on the last row: the next section's top hairline closes
+   the list, so the page never shows two hairlines a section-gap apart. */
 /* hover nudge: step the content in via transform (composited) so the row's
    divider hairlines stay put — the gallery row is excluded so it doesn't jog,
    and the year rail holds the right edge so it can't push past the column. */
