@@ -114,10 +114,15 @@
   font-family: var(--font-display);
   font-weight: 500;
   font-size: var(--fs-h3);
+  line-height: 1.3;
   color: var(--text-1);
   letter-spacing: -0.01em;
   margin-bottom: var(--space-3);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
+}
+/* each phrase holds together, so lines break between phrases, never at "full-" */
+.hero__sub span {
+  white-space: nowrap;
 }
 .hero__lead {
   max-width: 32ch;
