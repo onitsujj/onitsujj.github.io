@@ -228,7 +228,7 @@
   position: absolute;
   right: 46px; /* clears the full-length 34px tick with a 12px gap */
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -259,6 +259,15 @@
   color: var(--accent);
 }
 
+/* the index lives in the right margin, and its active label needs ~140px of it:
+   below 1380px the margin is narrower than that and the ticks sit on the copy.
+   The nav's active underline still carries wayfinding there. */
+@media (max-width: 1379px) {
+  .section-index {
+    display: none;
+  }
+}
+
 /* ============================================================
    FOOTER
    ============================================================ */
@@ -276,8 +285,14 @@
   margin-inline: auto;
   padding-inline: var(--gutter);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--muted);
+}
+/* "Back to top" renders 22px tall; pad it to a 44px tap target without moving
+   the baseline (the negative margin gives the padding back to the layout) */
+.footer__inner .nav__link {
+  padding-block: 11px;
+  margin-block: -11px;
 }
 
 /* ============================================================
