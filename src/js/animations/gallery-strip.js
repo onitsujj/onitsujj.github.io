@@ -49,12 +49,24 @@ export function createDraggableStrip({ gallery, track, cue = null, reduced = fal
     });
 
     const minX = () => Math.min(0, gallery.clientWidth - track.scrollWidth);
+    // Any native scroll of the clipped viewport (the browser does this when a
+    // wholly hidden thumb takes focus) is handed over to the transform, so
+    // Draggable's x stays the single source of truth.
+    const absorbNativeScroll = () => {
+      const s = gallery.scrollLeft;
+      if (!s) return;
+      gallery.scrollLeft = 0;
+      gsap.set(track, { x: gsap.utils.clamp(minX(), 0, drag.x - s) });
+      drag.update();
+      updateCue();
+    };
+    gallery.addEventListener("scroll", absorbNativeScroll);
     // Keyboard: bring a focused thumb fully into view by moving the strip
-    // (the browser only scrolls a clipped viewport when the thumb is wholly
-    // hidden, and even then it would desync Draggable's x).
+    // (the browser leaves a partly visible thumb where it is).
     gallery.addEventListener("focusin", (e) => {
       const thumb = e.target.closest(".gallery__thumb");
       if (!thumb) return;
+      absorbNativeScroll(); // measure against the real strip position
       const g = gallery.getBoundingClientRect();
       const t = thumb.getBoundingClientRect();
       const pad = 8; // room for the focus ring
@@ -69,16 +81,6 @@ export function createDraggableStrip({ gallery, track, cue = null, reduced = fal
         overwrite: true,
         onUpdate() { drag.update(); updateCue(); },
       });
-    });
-    // any native scroll the browser still does on focus (thumb wholly hidden)
-    // is handed back to the transform so Draggable's x stays the truth
-    gallery.addEventListener("scroll", () => {
-      const s = gallery.scrollLeft;
-      if (!s) return;
-      gallery.scrollLeft = 0;
-      gsap.set(track, { x: gsap.utils.clamp(minX(), 0, drag.x - s) });
-      drag.update();
-      updateCue();
     });
   } else {
     gallery.addEventListener("scroll", updateCue, { passive: true });

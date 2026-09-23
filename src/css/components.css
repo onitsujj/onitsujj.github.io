@@ -687,7 +687,8 @@ html:not(.js) .gallery__meter { visibility: hidden; }
 }
 .gallery__thumb:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  /* inset: the strip's viewport clips anything drawn outside a thumb */
+  outline-offset: -2px;
 }
 .gallery__thumb--large {
   grid-row: span 2;
