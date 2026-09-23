@@ -13,6 +13,17 @@ import { SIGNATURE_EASE } from "./motion-tokens.js";
 // dimmed text above 3:1 on the raised stage).
 const DIMMED = 0.45;
 
+// The live scene's timeline, so an anchor jump to #approach can land on the
+// built thesis instead of the scene's first frame, where every line is still
+// hidden and the stage reads as an empty room. Null when the scene is off.
+let sceneTl = null;
+
+// Scroll position of the "thesis" label (the frame where "magnifies" has
+// landed), or null when the scene isn't running and #approach is a plain block.
+export function approachLanding() {
+  return sceneTl?.scrollTrigger ? sceneTl.scrollTrigger.labelToScroll("thesis") : null;
+}
+
 export function buildApproachScene({ gsap }) {
   const mm = gsap.matchMedia();
   mm.add("(min-width: 821px) and (prefers-reduced-motion: no-preference)", () => {
@@ -90,6 +101,8 @@ export function buildApproachScene({ gsap }) {
     // the payoff word lands a half-beat after its line — like a speaker pausing
     // before the word that carries the whole thesis.
     if (em) tl.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: SIGNATURE_EASE }, ">-0.3");
+    // an anchor jump lands here: thesis built, payoff word in place
+    tl.addLabel("thesis");
     tl.to({}, { duration: 0.7 }) // hold — let the line land
       .to(thesis, { autoAlpha: 0, y: -70, duration: 0.5, ease: "power2.in" }, ">")
       .to([rail, progress], { autoAlpha: 1, duration: 0.3 }, "<");
@@ -111,7 +124,9 @@ export function buildApproachScene({ gsap }) {
     tl.to(beliefs, { autoAlpha: 1, duration: 0.5, ease: "power2.out" })
       .to({}, { duration: 1.3 });
 
+    sceneTl = tl;
     return () => {
+      sceneTl = null;
       document.documentElement.classList.remove("approach-live");
       beliefSplits.forEach((s) => s.revert());
     };
