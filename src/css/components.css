@@ -591,7 +591,7 @@
   font-size: var(--fs-sm);
   color: var(--text-1);
   margin-top: 6px;
-  max-width: 68ch;
+  max-width: 54ch; /* ~68 characters of this copy per line */
 }
 /* right rail: the year sits hard-right on every row so the list can be scanned
    down one edge; the recap link stacks under it when a row has one. */
