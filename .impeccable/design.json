@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-23T14:05:07+00:00",
+  "generatedAt": "2026-09-23T14:49:42+00:00",
   "title": "Design System: Jose Gayondato",
   "extensions": {
     "colorMeta": {
@@ -260,7 +260,7 @@
       "refersTo": "row-card",
       "description": "Hairline-ruled row: type label, title and description, year rail on the right.",
       "html": "<article class=\"ds-row\"><span class=\"ds-row-meta\">Industry talk</span><div><h3 class=\"ds-row-title\">Building AI-Driven Applications</h3><p class=\"ds-row-desc\">Industry session at Swinburne Week 5.0, INTI Subang.</p></div><div class=\"ds-row-rail\"><span class=\"ds-row-meta\">2026</span><a class=\"ds-row-link\" href=\"#\">Recap →</a></div></article>",
-      "css": ".ds-row{display:grid;grid-template-columns:1fr 2fr auto;gap:32px;align-items:center;padding:40px 0;border-top:1px solid rgba(244,241,234,.10);border-bottom:1px solid rgba(244,241,234,.10)}.ds-row>*{transition:transform .3s cubic-bezier(.16,.84,.3,1.06)}.ds-row:hover>*{transform:translateX(14px)}.ds-row-meta{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.04em;color:#9a958c}.ds-row-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:24px;color:#f4f1ea;margin:0;letter-spacing:-.02em}.ds-row-desc{font-family:'Libre Franklin',sans-serif;font-size:14px;color:#c9c5bc;margin:6px 0 0}.ds-row-rail{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.ds-row-link{font-family:'Space Mono',monospace;font-size:12px;color:#1cbdd4;text-decoration:none}.ds-row-link:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
+      "css": ".ds-row{display:grid;grid-template-columns:160px 1fr auto;gap:32px;align-items:center;padding:40px 0;border-top:1px solid rgba(244,241,234,.10);border-bottom:1px solid rgba(244,241,234,.10)}.ds-row>:not(.ds-row-rail){transition:transform .3s cubic-bezier(.16,.84,.3,1.06)}.ds-row:hover>:not(.ds-row-rail){transform:translateX(14px)}.ds-row-meta{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.04em;color:#9a958c}.ds-row-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:24px;color:#f4f1ea;margin:0;letter-spacing:-.02em}.ds-row-desc{font-family:'Libre Franklin',sans-serif;font-size:14px;color:#c9c5bc;margin:6px 0 0;max-width:54ch}.ds-row-rail{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.ds-row-link{font-family:'Space Mono',monospace;font-size:12px;color:#1cbdd4;text-decoration:none}.ds-row-link:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
     },
     {
       "name": "Stat Gauge",
@@ -281,7 +281,7 @@
   ],
   "narrative": {
     "northStar": "The Keynote Stage",
-    "overview": "The site is a dark room with one speaker in one spotlight. The canvas is near-black obsidian with a faint film grain, so the black reads as a lit space, not a flat screen. Only one color, Spotlight Cyan, cuts through it. It marks the thing to look at next: the main button, the active nav tick, the key word in a headline.\n\nThe mood is cinematic, bold, and lit. Big tight-set Space Grotesk headlines carry the energy. The Approach section runs as a pinned keynote: the thesis builds on scroll, then each belief slides in like the next slide. The draggable 3D lanyard badge makes the speaker physical and present. Structure stays quiet: hairline rules, mono labels, one centered column. That way the type, the photos, and the badge own the stage.\n\nSoft warnings (lean away, not hard bans): generic SaaS landing pages (gradient blobs, glass cards, pastel buttons), hype-AI or crypto looks (neon glow everywhere, many colors), and corporate CV templates (stock icons, skill bars, timeline boxes).",
+    "overview": "The site is a dark room with one speaker in one spotlight. The canvas is near-black obsidian with a faint film grain, so the black reads as a lit space, not a flat screen. Only one color, Spotlight Cyan, cuts through it. It marks the thing to look at next: the main button, the active nav tick, the key word in a headline.\n\nThe mood is cinematic, bold, and lit. Big tight-set Space Grotesk headlines carry the energy. The Approach section runs as a pinned keynote: the thesis builds on scroll, then the beliefs rise into place one by one and hold together as a recap. The draggable 3D lanyard badge makes the speaker physical and present. Structure stays quiet: hairline rules, mono labels, one centered column. That way the type, the photos, and the badge own the stage.\n\nSoft warnings (lean away, not hard bans): generic SaaS landing pages (gradient blobs, glass cards, pastel buttons), hype-AI or crypto looks (neon glow everywhere, many colors), and corporate CV templates (stock icons, skill bars, timeline boxes).",
     "keyCharacteristics": [
       "Near-black canvas with a live film-grain layer and one soft cyan glow behind the hero.",
       "One accent color, used for signal, never for decoration.",

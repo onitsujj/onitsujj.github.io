@@ -124,7 +124,7 @@ components:
 
 The site is a dark room with one speaker in one spotlight. The canvas is near-black obsidian with a faint film grain, so the black reads as a lit space, not a flat screen. Only one color, Spotlight Cyan, cuts through it. It marks the thing to look at next: the main button, the active nav tick, the key word in a headline.
 
-The mood is cinematic, bold, and lit. Big tight-set Space Grotesk headlines carry the energy. The Approach section runs as a pinned keynote: the thesis builds on scroll, then each belief slides in like the next slide. The draggable 3D lanyard badge makes the speaker physical and present. Structure stays quiet: hairline rules, mono labels, one centered column. That way the type, the photos, and the badge own the stage.
+The mood is cinematic, bold, and lit. Big tight-set Space Grotesk headlines carry the energy. The Approach section runs as a pinned keynote: the thesis builds on scroll, then the beliefs rise into place one by one and hold together as a recap. The draggable 3D lanyard badge makes the speaker physical and present. Structure stays quiet: hairline rules, mono labels, one centered column. That way the type, the photos, and the badge own the stage.
 
 Soft warnings (lean away, not hard bans): generic SaaS landing pages (gradient blobs, glass cards, pastel buttons), hype-AI or crypto looks (neon glow everywhere, many colors), and corporate CV templates (stock icons, skill bars, timeline boxes).
 
@@ -141,7 +141,7 @@ Soft warnings (lean away, not hard bans): generic SaaS landing pages (gradient b
 A dark, near-neutral stage with warm-white type and a single cyan spotlight.
 
 ### Primary
-- **Spotlight Cyan** (`spotlight-cyan`): the one signal. Primary button fill, brand mark, eyebrow dash, active nav underline, active section-index tick, scroll-progress bar, stat gauge bar, accent words in headlines, belief keys, recap links, focus rings, and text selection.
+- **Spotlight Cyan** (`spotlight-cyan`): the one signal. Primary button fill, brand mark, eyebrow dash, active nav underline, active section-index tick, scroll-progress bar, stat gauge bar, accent words in headlines, recap links, focus rings, and text selection.
 - **Spotlight Cyan Press** (`spotlight-cyan-press`): hover state of the primary button only.
 - **Spotlight Haze** (`spotlight-haze`): the soft radial glow behind the hero badge, and the hover fill of lightbox controls.
 - **Spotlight Line** (`spotlight-line`): the border of a gallery thumb on hover.
@@ -173,11 +173,11 @@ Space Grotesk is a brand lock. The detector suppression in `src/css/tokens.css` 
 ### Hierarchy
 - **Display** (600, `clamp(48px, 6vw, 92px)`, 0.95): the hero headline only. Tracked at -0.035em, with a soft dark text-shadow so it holds over the 3D stage.
 - **Headline** (600, `clamp(30px, 3.4vw, 48px)`, 1.05): section h2s. The pinned Approach thesis scales up to `clamp(34px, 6vw, 76px)`.
-- **Title** (600, `clamp(20px, 1.6vw, 26px)`): talk titles and the hero sub-line (at 500). Beliefs use it at 500 with 1.25 leading.
+- **Title** (600, `clamp(20px, 1.6vw, 26px)`): talk titles and the hero sub-line (at 500). The hero sub-line uses 1.3 leading. Beliefs use it at 500 with 1.38 leading.
 - **Stat** (700, `clamp(40px, 4vw, 64px)`, tabular numbers): the About numbers.
 - **Lead** (400, `clamp(19px, 1.5vw, 22px)`, 1.55): opening paragraphs, around 32 to 46ch wide.
 - **Body** (400, 17px, 1.7): running copy. `text-wrap: pretty` on paragraphs, `balance` on headings.
-- **Label** (400 or 700, 12px, 0.16em, uppercase): section labels, eyebrows, belief keys. The drag hint and scroll cue use 11px.
+- **Label** (400 or 700, 12px, 0.16em, uppercase): section labels, eyebrows, the section-index label, the drag hint, the scroll cue, and the gallery cue.
 - **Control** (400, 13px, 0.04em): buttons and nav links, in mono.
 
 ### Named Rules
@@ -195,7 +195,8 @@ Fixed chrome sits outside the scroll layer: the nav (76px), a 2px cyan progress 
 
 Responsive:
 - At 900px and below, the 3D stage is removed. The flat badge leads the hero above the copy, with a gentle sway. Grids and talk rows collapse to one column.
-- At 820px and below, the section index hides, and the nav becomes a drop-down drawer on Obsidian Raised. The Approach keynote scene only runs above 820px with motion allowed.
+- Below 1380px the section index hides: the right margin is too narrow for its label, and the nav underline carries wayfinding.
+- At 820px and below, the nav links move into a drop-down drawer on Obsidian Raised, while a compact "Follow" button stays in the bar beside the toggle. The Approach keynote scene only runs above 820px with motion allowed.
 
 ## Elevation & Depth
 
@@ -219,32 +220,33 @@ Components should feel tactile and confident: they respond to the hand with clea
 
 ### Buttons
 - **Shape:** gently rounded (8px), mono label, 14px by 22px padding.
-- **Primary:** Spotlight Cyan fill with On Cyan text. Used for the conversion path only: "Follow" in the nav, "Let's connect" in the hero, "Follow on LinkedIn" in Connect.
+- **Primary:** Spotlight Cyan fill with On Cyan text. Used for the conversion path only, and every one opens LinkedIn directly in a new tab: "Follow on LinkedIn" in the nav ("Follow" on phones, with the full name kept for screen readers), in the hero, and in Connect. On phones the Connect follow button runs full width, with the two ghost buttons sharing the row below.
 - **Hover / Focus:** fill deepens to Spotlight Cyan Press; the trailing arrow springs 4px right on the signature ease. Focus shows a 2px cyan outline at 3px offset.
 - **Tactile layer (fine pointers, motion allowed):** primary buttons and the brand mark pull magnetically toward the cursor. On press, a primary button gives to 0.96 scale and springs back on the signature ease (`src/js/animations/micro.js`).
 - **Ghost:** transparent with a Hairline Strong border and Stage White text; hover turns border and text cyan. No press feedback today.
 
 ### Talk rows
-- **Style:** full-width rows split by hairlines, three columns (type label, title and description, year rail). The year and recap link sit hard right so the list scans down one edge.
+- **Style:** full-width rows split by hairlines, three columns (a fixed 160px type label, title and description capped near 67 characters per line, year rail). The year and recap link sit hard right so the list scans down one edge; the rail holds still on hover.
 - **Hover:** the row content steps 14px right on the signature ease; the dividers stay still.
-- **Gallery:** a draggable strip of 130px-tall photo thumbs under the row. On hover devices, thumbs rest in greyscale and come to full color, lift 2px, and take a Spotlight Line border on hover or focus.
+- **Gallery:** a draggable two-row strip of full-colour photos under the row. The packed-auditorium photo leads at double height, and the collage closes it. Hover or focus lifts a thumb 2px and adds a Spotlight Line border; keyboard focus slides an off-screen thumb into view.
+- **Gallery cue:** a mono line under the strip with the photo count, a hairline meter of how much of the strip has been seen, and "Drag →" ("Scroll →" under reduced motion). The strip's right edge fades until the end is reached.
 
 ### Navigation
 - **Style:** fixed 76px bar that fades from Obsidian to clear, with an 8px backdrop blur; it turns solid with a hairline once scrolled. The brand is a cyan 34px "JG" mark plus the name in Space Grotesk.
 - **Links:** mono 13px in Muted Stone; hover and active turn Stage White, and the active link gets a cyan underline that draws in from the left.
-- **Mobile:** a three-line toggle that morphs into an X opens a drawer below the bar.
+- **Mobile:** a compact "Follow" button and a 44px three-line toggle sit in the bar; the toggle morphs into an X and opens a drawer below the bar.
 
 ### Section index
-A right-edge column of hairline ticks, one per section. At rest each tick is half length and dim. Hover or focus extends it and reveals a mono label. The active section's tick is full length and cyan. Hidden at 820px and below.
+A right-edge column of hairline ticks, one per section. At rest each tick is half length and dim. Hover or focus extends it and reveals a mono label. The active section's tick is full length and cyan. Hidden below 1380px.
 
 ### Lightbox
 A full-screen Obsidian veil (92% opacity, 6px blur) holding one photo, a caption, and a counter. Controls are 46px circles with a hairline border; on hover they take a cyan border, cyan icon, and Spotlight Haze fill. On small screens the prev and next controls move to the bottom.
 
 ### Lanyard badge (signature)
-The site's signature object. On capable desktop browsers, a 3D badge (React Three Fiber and Rapier physics) hangs from a white Mandrill-logo strap and can be dragged. Everywhere else, a pixel-matched flat twin stands in: strap, brushed-metal clip, and a 232px card with a deep drop shadow. On mobile it leads the hero and sways gently.
+The site's signature object. On capable desktop browsers, a 3D badge (React Three Fiber and Rapier physics) hangs from a white Mandrill-logo strap and can be dragged. Everywhere else, a pixel-matched flat twin stands in: strap, brushed-metal clip, and a 232px card with a deep drop shadow. On mobile it leads the hero at a smaller 128px card, so the headline still lands on the first screen, and sways gently.
 
 ### Approach keynote scene
-On desktop with motion, the Approach section pins to the viewport on Obsidian Raised. The thesis assembles line by line, the accent word holds, then each belief slides through the center one at a time. A left-edge rail of 2px ticks fills in cyan as each belief arrives. Without the scene, the same content reads as a normal three-column section.
+On desktop with motion, the Approach section pins to the viewport on Obsidian Raised. The scene runs about 2.5 viewports. The thesis assembles line by line, the accent word holds, then the thesis lifts away. Each belief then rises into its slot on a three-across grid, with the note below, while earlier beliefs dim to 0.45. The scene ends on a recap with all four at full strength, then the pin releases. A left-edge rail of 2px ticks, aligned to the content column, fills in cyan as each belief arrives. Without the scene, the same content reads as a normal three-column section.
 
 ## Do's and Don'ts
 
