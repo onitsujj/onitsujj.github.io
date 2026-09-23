@@ -174,7 +174,7 @@
   bottom: 56px;
   z-index: 2;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -196,7 +196,7 @@
   align-items: center;
   gap: 10px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -581,11 +581,12 @@
   border-bottom: 1px solid var(--line);
 }
 /* hover nudge: step the content in via transform (composited) so the row's
-   divider hairlines stay put — the gallery row is excluded so it doesn't jog. */
-.row-card > :not(.row-card__gallery, .gallery__cue) {
+   divider hairlines stay put — the gallery row is excluded so it doesn't jog,
+   and the year rail holds the right edge so it can't push past the column. */
+.row-card > :not(.row-card__gallery, .gallery__cue, .row-card__rail) {
   transition: transform 0.3s var(--ease-signature);
 }
-.row-card:hover > :not(.row-card__gallery, .gallery__cue) {
+.row-card:hover > :not(.row-card__gallery, .gallery__cue, .row-card__rail) {
   transform: translateX(14px);
 }
 .row-card__meta {
@@ -916,4 +917,8 @@ html:not(.js) .gallery__meter { visibility: hidden; }
 
 @media (max-width: 520px) {
   .stats { gap: var(--space-4); }
+  /* phones: the follow leads full width, the two secondary routes share a row,
+     so nothing wraps into an orphan */
+  .connect__actions .btn { flex: 1 1 0; justify-content: center; }
+  .connect__actions .btn--primary { flex-basis: 100%; }
 }
