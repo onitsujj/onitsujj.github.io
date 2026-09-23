@@ -20,12 +20,17 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
   let io = null;
 
   // Pinned Approach scene first: it adds pin-spacing, so it must be created
-  // before the triggers below (progress bar, scroll-spy) read page positions.
+  // before the triggers below (scroll-spy) read page positions.
   // (The fonts.ready refresh is owned by motion.js now, so the scene's pin
   // spacing settles in one ordered pass before any deep-link scroll.)
   const sceneMM = reduced ? null : buildApproachScene({ gsap });
 
   // ---- scroll-progress bar
+  // Spans 0 → the real max scroll. ScrollTrigger refreshes triggers sorted by
+  // start, not creation order, so a "bottom bottom" end on <html> is measured
+  // before the Approach pin re-inserts its spacer and the bar fills mid-scene.
+  // end: "max" is re-resolved in ScrollTrigger's final pass, after every pin
+  // has refreshed, so it tracks any pin length, resize, or content change.
   const bar = document.querySelector(".progress-bar");
   if (bar) {
     gsap.fromTo(
@@ -34,7 +39,7 @@ export function setupScroll({ gsap, ScrollTrigger, reduced }) {
       {
         scaleX: 1,
         ease: PROGRESS_EASE,
-        scrollTrigger: { trigger: document.documentElement, start: "top top", end: "bottom bottom", scrub: 0.3 },
+        scrollTrigger: { start: 0, end: "max", scrub: 0.3 },
       }
     );
   }
