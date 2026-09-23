@@ -532,6 +532,9 @@
 .list-head {
   grid-column: 1 / span 12;
 }
+.list-head h2 {
+  font-size: var(--fs-h2);
+}
 .list-head .lead {
   max-width: 46ch;
   margin-top: var(--space-2);
