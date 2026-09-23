@@ -31,7 +31,8 @@ export function createDraggableStrip({ gallery, track, cue = null, reduced = fal
   if (!reduced && track !== gallery) {
     gallery.classList.add("is-draggable");
     const verb = cue?.querySelector(".gallery__verb");
-    if (verb) verb.textContent = "Drag →";
+    // touch screens swipe, mice drag
+    if (verb) verb.textContent = matchMedia("(pointer: coarse)").matches ? "Swipe →" : "Drag →";
     [drag] = Draggable.create(track, {
       type: "x",
       bounds: gallery,

@@ -229,7 +229,7 @@ Components should feel tactile and confident: they respond to the hand with clea
 - **Style:** full-width rows split by hairlines, three columns (a fixed 160px type label, title and description capped near 67 characters per line, year rail). The year and recap link sit hard right so the list scans down one edge; the rail holds still on hover.
 - **Hover:** the row content steps 14px right on the signature ease; the dividers stay still.
 - **Gallery:** a draggable two-row strip of full-colour photos under the row. The packed-auditorium photo leads at double height, and the collage closes it. Hover or focus lifts a thumb 2px and adds a Spotlight Line border; keyboard focus slides an off-screen thumb into view.
-- **Gallery cue:** a mono line under the strip with the photo count, a hairline meter of how much of the strip has been seen, and "Drag →" ("Scroll →" under reduced motion). The strip's right edge fades until the end is reached.
+- **Gallery cue:** a mono line under the strip with the photo count, a hairline meter of how much of the strip has been seen, and "Drag →" ("Swipe →" on touch screens, "Scroll →" under reduced motion). The strip's right edge fades until the end is reached.
 
 ### Navigation
 - **Style:** fixed 76px bar that fades from Obsidian to clear, with an 8px backdrop blur; it turns solid with a hairline once scrolled. The brand is a cyan 34px "JG" mark plus the name in Space Grotesk.
