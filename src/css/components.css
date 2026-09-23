@@ -566,10 +566,10 @@
 }
 /* hover nudge: step the content in via transform (composited) so the row's
    divider hairlines stay put — the gallery row is excluded so it doesn't jog. */
-.row-card > :not(.row-card__gallery) {
+.row-card > :not(.row-card__gallery, .gallery__cue) {
   transition: transform 0.3s var(--ease-signature);
 }
-.row-card:hover > :not(.row-card__gallery) {
+.row-card:hover > :not(.row-card__gallery, .gallery__cue) {
   transform: translateX(14px);
 }
 .row-card__meta {
@@ -623,6 +623,44 @@
   scrollbar-width: none;
 }
 .row-card__gallery.is-draggable:active { cursor: grabbing; }
+/* the strip always overflows the column: fade its right edge so the cut reads
+   as "more this way"; the JS drops the fade once the end is reached */
+.row-card__gallery {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+}
+.row-card__gallery[data-edge="end"] {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+/* count + a hairline meter of how much of the strip has been seen + the verb
+   (Drag when the JS strip is live, Scroll for native overflow) */
+.gallery__cue {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: calc(var(--space-2) - var(--gutter));
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gallery__meter {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.gallery__meter-fill {
+  display: block;
+  height: 2px;
+  margin-top: -0.5px;
+  background: var(--accent);
+  transform: scaleX(var(--seen, 0));
+  transform-origin: left;
+}
+html:not(.js) .gallery__meter { visibility: hidden; }
 /* a two-row filmstrip: the packed hall leads at double height, pairs of stills
    follow, and the collage closes it at double height again */
 .gallery__track {
@@ -839,6 +877,7 @@
     gap: 8px;
     align-items: start;
   }
+  .gallery__cue { margin-top: 8px; } /* row gap is 8px here, not the gutter */
   /* one column on phones: the rail collapses to an inline left-aligned row */
   .row-card__rail {
     flex-direction: row;
