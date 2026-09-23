@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T14:05:07+00:00",
+  "title": "Design System: Jose Gayondato",
+  "extensions": {
+    "colorMeta": {
+      "obsidian": {
+        "role": "neutral",
+        "displayName": "Obsidian",
+        "canonical": "oklch(15.1% 0.004 286)",
+        "tonalRamp": [
+          "oklch(15% 0.004 286)",
+          "oklch(25% 0.004 286)",
+          "oklch(35% 0.004 286)",
+          "oklch(45% 0.004 286)",
+          "oklch(58% 0.004 286)",
+          "oklch(70% 0.004 286)",
+          "oklch(82% 0.004 286)",
+          "oklch(95% 0.004 286)"
+        ]
+      },
+      "obsidian-raised": {
+        "role": "neutral",
+        "displayName": "Obsidian Raised",
+        "canonical": "oklch(17.4% 0.006 286)",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(25% 0.006 286)",
+          "oklch(35% 0.006 286)",
+          "oklch(45% 0.006 286)",
+          "oklch(58% 0.006 286)",
+          "oklch(70% 0.006 286)",
+          "oklch(82% 0.006 286)",
+          "oklch(95% 0.006 286)"
+        ]
+      },
+      "stage-white": {
+        "role": "neutral",
+        "displayName": "Stage White",
+        "canonical": "oklch(95.9% 0.010 87)",
+        "tonalRamp": [
+          "oklch(15% 0.01 87)",
+          "oklch(25% 0.01 87)",
+          "oklch(35% 0.01 87)",
+          "oklch(45% 0.01 87)",
+          "oklch(58% 0.01 87)",
+          "oklch(70% 0.01 87)",
+          "oklch(82% 0.01 87)",
+          "oklch(95% 0.01 87)"
+        ]
+      },
+      "body-ash": {
+        "role": "neutral",
+        "displayName": "Body Ash",
+        "canonical": "oklch(82.4% 0.013 87)",
+        "tonalRamp": [
+          "oklch(15% 0.013 87)",
+          "oklch(25% 0.013 87)",
+          "oklch(35% 0.013 87)",
+          "oklch(45% 0.013 87)",
+          "oklch(58% 0.013 87)",
+          "oklch(70% 0.013 87)",
+          "oklch(82% 0.013 87)",
+          "oklch(95% 0.013 87)"
+        ]
+      },
+      "muted-stone": {
+        "role": "neutral",
+        "displayName": "Muted Stone",
+        "canonical": "oklch(67.1% 0.014 82)",
+        "tonalRamp": [
+          "oklch(15% 0.014 82)",
+          "oklch(25% 0.014 82)",
+          "oklch(35% 0.014 82)",
+          "oklch(45% 0.014 82)",
+          "oklch(58% 0.014 82)",
+          "oklch(70% 0.014 82)",
+          "oklch(82% 0.014 82)",
+          "oklch(95% 0.014 82)"
+        ]
+      },
+      "spotlight-cyan": {
+        "role": "primary",
+        "displayName": "Spotlight Cyan",
+        "canonical": "oklch(73.3% 0.123 211)",
+        "tonalRamp": [
+          "oklch(15% 0.123 211)",
+          "oklch(25% 0.123 211)",
+          "oklch(35% 0.123 211)",
+          "oklch(45% 0.123 211)",
+          "oklch(58% 0.123 211)",
+          "oklch(70% 0.123 211)",
+          "oklch(82% 0.123 211)",
+          "oklch(95% 0.123 211)"
+        ]
+      },
+      "spotlight-cyan-press": {
+        "role": "primary",
+        "displayName": "Spotlight Cyan Press",
+        "canonical": "oklch(63.4% 0.106 211)",
+        "tonalRamp": [
+          "oklch(15% 0.106 211)",
+          "oklch(25% 0.106 211)",
+          "oklch(35% 0.106 211)",
+          "oklch(45% 0.106 211)",
+          "oklch(58% 0.106 211)",
+          "oklch(70% 0.106 211)",
+          "oklch(82% 0.106 211)",
+          "oklch(95% 0.106 211)"
+        ]
+      },
+      "on-cyan": {
+        "role": "primary",
+        "displayName": "On Cyan",
+        "canonical": "oklch(23.4% 0.038 219)",
+        "tonalRamp": [
+          "oklch(15% 0.038 219)",
+          "oklch(25% 0.038 219)",
+          "oklch(35% 0.038 219)",
+          "oklch(45% 0.038 219)",
+          "oklch(58% 0.038 219)",
+          "oklch(70% 0.038 219)",
+          "oklch(82% 0.038 219)",
+          "oklch(95% 0.038 219)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section h2s; the Approach thesis scales it up."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Talk titles, hero sub-line, beliefs."
+      },
+      "stat": {
+        "displayName": "Stat",
+        "purpose": "About numbers, tabular."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Opening paragraphs."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running copy."
+      },
+      "body-sm": {
+        "displayName": "Small Body",
+        "purpose": "Card copy, notes, captions."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase mono section labels, eyebrows, belief keys."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Buttons and nav links."
+      }
+    },
+    "shadows": [
+      {
+        "name": "stage-lift",
+        "value": "0 2px 30px rgba(0,0,0,0.55), 0 0 1px rgba(0,0,0,0.85)",
+        "purpose": "text-shadow on the hero headline over the 3D stage."
+      },
+      {
+        "name": "badge-drop",
+        "value": "drop-shadow(0 26px 48px rgba(0,0,0,0.6))",
+        "purpose": "filter on the flat badge card."
+      },
+      {
+        "name": "lightbox-float",
+        "value": "0 30px 80px rgba(0,0,0,0.55)",
+        "purpose": "Enlarged talk photo."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Default state transitions."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Scroll-cue pulse."
+      },
+      {
+        "name": "ease-signature",
+        "value": "cubic-bezier(0.16, 0.84, 0.3, 1.06)",
+        "purpose": "Confident settle with slight overshoot; translate hovers and press release. Mirrors the GSAP 'jg' ease."
+      },
+      {
+        "name": "grain-opacity",
+        "value": "0.05",
+        "purpose": "Film-grain overlay; drifts on the motion branch."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "520px"
+      },
+      {
+        "name": "lightbox-sm",
+        "value": "600px"
+      },
+      {
+        "name": "nav",
+        "value": "820px"
+      },
+      {
+        "name": "stage",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Conversion action: Follow, Let's connect, Follow on LinkedIn.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Follow on LinkedIn <span class=\"ds-btn-arrow\" aria-hidden=\"true\">→</span></a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono,'Space Mono',monospace);font-size:13px;letter-spacing:.04em;padding:14px 22px;border-radius:8px;border:1px solid transparent;text-decoration:none;cursor:pointer;transition:transform .2s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s}.ds-btn-arrow{transition:transform .3s cubic-bezier(.16,.84,.3,1.06)}.ds-btn:hover .ds-btn-arrow{transform:translateX(4px)}.ds-btn-primary{background:#1cbdd4;color:#04222a}.ds-btn-primary:hover{background:#179bae}.ds-btn-primary:active{transform:scale(.96)}.ds-btn:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary routes: Read my take, GitHub, Email.",
+      "html": "<a class=\"ds-btn ds-btn-ghost\" href=\"#\">GitHub</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono,'Space Mono',monospace);font-size:13px;letter-spacing:.04em;padding:14px 22px;border-radius:8px;border:1px solid transparent;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s,color .2s}.ds-btn-ghost{border-color:rgba(244,241,234,.18);color:#f4f1ea;background:transparent}.ds-btn-ghost:hover{border-color:#1cbdd4;color:#1cbdd4}.ds-btn:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Fixed bar: cyan JG mark, mono links with a cyan underline on the active one.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-mark\">JG</span><span class=\"ds-name\">Jose Gayondato</span><a class=\"ds-link\" href=\"#\" aria-current=\"true\">About</a><a class=\"ds-link\" href=\"#\">Approach</a><a class=\"ds-link\" href=\"#\">Talks</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:28px;padding:20px 24px;background:rgba(11,11,13,.92);border-bottom:1px solid rgba(244,241,234,.10)}.ds-mark{display:grid;place-items:center;width:34px;height:34px;background:#1cbdd4;color:#04222a;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;margin-right:-16px}.ds-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#f4f1ea;margin-right:auto}.ds-link{position:relative;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.04em;color:#9a958c;text-decoration:none;transition:color .2s}.ds-link::after{content:'';position:absolute;left:0;bottom:-6px;width:100%;height:1px;background:#1cbdd4;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1)}.ds-link:hover,.ds-link[aria-current]{color:#f4f1ea}.ds-link[aria-current]::after{transform:scaleX(1)}.ds-link:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
+    },
+    {
+      "name": "Section Label",
+      "kind": "chip",
+      "refersTo": "label",
+      "description": "Mono uppercase eyebrow with a cyan 2px dash.",
+      "html": "<span class=\"ds-eyebrow\">Talks &amp; workshops</span>",
+      "css": ".ds-eyebrow{display:inline-flex;align-items:center;gap:14px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#9a958c}.ds-eyebrow::before{content:'';width:32px;height:2px;background:#1cbdd4}"
+    },
+    {
+      "name": "Talk Row",
+      "kind": "card",
+      "refersTo": "row-card",
+      "description": "Hairline-ruled row: type label, title and description, year rail on the right.",
+      "html": "<article class=\"ds-row\"><span class=\"ds-row-meta\">Industry talk</span><div><h3 class=\"ds-row-title\">Building AI-Driven Applications</h3><p class=\"ds-row-desc\">Industry session at Swinburne Week 5.0, INTI Subang.</p></div><div class=\"ds-row-rail\"><span class=\"ds-row-meta\">2026</span><a class=\"ds-row-link\" href=\"#\">Recap →</a></div></article>",
+      "css": ".ds-row{display:grid;grid-template-columns:1fr 2fr auto;gap:32px;align-items:center;padding:40px 0;border-top:1px solid rgba(244,241,234,.10);border-bottom:1px solid rgba(244,241,234,.10)}.ds-row>*{transition:transform .3s cubic-bezier(.16,.84,.3,1.06)}.ds-row:hover>*{transform:translateX(14px)}.ds-row-meta{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.04em;color:#9a958c}.ds-row-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:24px;color:#f4f1ea;margin:0;letter-spacing:-.02em}.ds-row-desc{font-family:'Libre Franklin',sans-serif;font-size:14px;color:#c9c5bc;margin:6px 0 0}.ds-row-rail{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.ds-row-link{font-family:'Space Mono',monospace;font-size:12px;color:#1cbdd4;text-decoration:none}.ds-row-link:focus-visible{outline:2px solid #1cbdd4;outline-offset:3px}"
+    },
+    {
+      "name": "Stat Gauge",
+      "kind": "custom",
+      "refersTo": "stat",
+      "description": "Big tabular number with a cyan hairline gauge and a muted label.",
+      "html": "<div class=\"ds-stat\"><div class=\"ds-stat-num\">5</div><div class=\"ds-stat-bar\"></div><p class=\"ds-stat-label\">Years leading teams to delivery</p></div>",
+      "css": ".ds-stat-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:56px;line-height:1;letter-spacing:-.02em;color:#f4f1ea;font-variant-numeric:tabular-nums}.ds-stat-bar{height:2px;width:72px;margin-top:12px;background:#1cbdd4}.ds-stat-label{font-family:'Libre Franklin',sans-serif;font-size:13px;color:#9a958c;margin:8px 0 0;max-width:18ch}"
+    },
+    {
+      "name": "Lightbox Control",
+      "kind": "button",
+      "refersTo": "lightbox-control",
+      "description": "Circular control over the photo lightbox.",
+      "html": "<button class=\"ds-lb\" aria-label=\"Next photo\">›</button>",
+      "css": ".ds-lb{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px solid rgba(244,241,234,.10);background:rgba(255,255,255,.05);color:#f4f1ea;font-size:24px;line-height:1;cursor:pointer;transition:border-color .3s,color .3s,background .3s}.ds-lb:hover,.ds-lb:focus-visible{border-color:#1cbdd4;color:#1cbdd4;background:rgba(28,189,212,.14);outline:none}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Keynote Stage",
+    "overview": "The site is a dark room with one speaker in one spotlight. The canvas is near-black obsidian with a faint film grain, so the black reads as a lit space, not a flat screen. Only one color, Spotlight Cyan, cuts through it. It marks the thing to look at next: the main button, the active nav tick, the key word in a headline.\n\nThe mood is cinematic, bold, and lit. Big tight-set Space Grotesk headlines carry the energy. The Approach section runs as a pinned keynote: the thesis builds on scroll, then each belief slides in like the next slide. The draggable 3D lanyard badge makes the speaker physical and present. Structure stays quiet: hairline rules, mono labels, one centered column. That way the type, the photos, and the badge own the stage.\n\nSoft warnings (lean away, not hard bans): generic SaaS landing pages (gradient blobs, glass cards, pastel buttons), hype-AI or crypto looks (neon glow everywhere, many colors), and corporate CV templates (stock icons, skill bars, timeline boxes).",
+    "keyCharacteristics": [
+      "Near-black canvas with a live film-grain layer and one soft cyan glow behind the hero.",
+      "One accent color, used for signal, never for decoration.",
+      "Oversized, tightly tracked grotesk display type against calm, readable body text.",
+      "Mono uppercase labels and hairline ticks as the wayfinding language.",
+      "Scroll-driven \"keynote\" scenes on desktop; plain readable sections everywhere else.",
+      "A physical signature object: the lanyard badge, in 3D or as its flat twin."
+    ],
+    "rules": [
+      {
+        "name": "The One Spotlight Rule",
+        "body": "Spotlight Cyan is the only hue on the page. Photos may bring their own color; the interface never adds a second accent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signal-Not-Paint Rule",
+        "body": "Cyan marks a place to look or act. It never fills a large area; the largest cyan surface is the primary button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "Grotesk for claims, Franklin for explanation, Mono for labels and controls. A font never borrows another voice's job.",
+        "section": "typography"
+      },
+      {
+        "name": "The Real-Object Rule",
+        "body": "Only things that exist as objects cast shadows: the badge, its clip, a photo held up to the light. Interface panels stay flat.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep Spotlight Cyan as the only interface hue, and keep it to signals: the conversion buttons, active states, key words.",
+      "**Do** set claims in Space Grotesk at 600 with tight negative tracking, and explanations in Libre Franklin at 17px / 1.7.",
+      "**Do** use mono uppercase labels (12px, 0.16em) and 2px hairline ticks for wayfinding.",
+      "**Do** separate sections and rows with hairlines (`hairline`), not boxes or cards.",
+      "**Do** give every scroll scene a plain static fallback for narrow screens, no-JS, and reduced motion.",
+      "**Do** keep the lanyard badge, in 3D or its flat twin, as the hero's signature object.",
+      "**Do** keep hover and press feedback clear and physical, like the arrow spring, the row step, the magnetic pull, and the press-and-spring on primary buttons."
+    ],
+    "donts": [
+      "**Don't** add a second accent color or tint large surfaces cyan.",
+      "**Don't** put shadows on panels or cards; shadows belong to real objects only.",
+      "**Don't** lean toward generic SaaS landing styling: gradient blobs, glass cards, pastel buttons (soft warning).",
+      "**Don't** lean toward hype-AI or crypto styling: neon glow everywhere, many colors (soft warning).",
+      "**Don't** lean toward corporate CV templates: stock icons, skill bars, timeline boxes (soft warning)."
+    ]
+  }
+}
