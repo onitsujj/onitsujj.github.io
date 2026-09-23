@@ -381,7 +381,7 @@
   font-family: var(--font-display);
   font-weight: 500;
   color: var(--text);
-  line-height: 1.25;
+  line-height: 1.38;
 }
 .belief__text b {
   font-weight: 700;
@@ -446,10 +446,12 @@
   overflow: hidden;
   background: var(--bg-elev);
 }
+/* the tag and the progress rail sit on the shared content-column edge (the
+   same left edge as every .container), not the viewport gutter */
 .approach-live .approach__tag {
   position: absolute;
   top: calc(var(--nav-h) + 20px);
-  left: var(--gutter);
+  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)));
   z-index: 3;
   margin: 0;
 }
@@ -491,7 +493,6 @@
 }
 .approach-live .belief__text {
   font-size: clamp(20px, 2vw, 28px);
-  line-height: 1.28;
 }
 .approach-live .belief--note {
   width: clamp(300px, 36vw, 440px);
@@ -503,7 +504,7 @@
   flex-direction: column;
   gap: 12px;
   position: absolute;
-  left: var(--gutter); /* left edge — clear of the right-edge section index */
+  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); /* column edge — clear of the right-edge section index */
   top: 50%;
   transform: translateY(-50%);
   z-index: 3;
