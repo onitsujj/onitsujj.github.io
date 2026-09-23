@@ -17,11 +17,12 @@ const DIMMED = 0.45;
 // built thesis instead of the scene's first frame, where every line is still
 // hidden and the stage reads as an empty room. Null when the scene is off.
 let sceneTl = null;
+const LANDING = "thesis";
 
-// Scroll position of the "thesis" label (the frame where "magnifies" has
+// Scroll position of the LANDING label (the frame where "magnifies" has
 // landed), or null when the scene isn't running and #approach is a plain block.
 export function approachLanding() {
-  return sceneTl?.scrollTrigger ? sceneTl.scrollTrigger.labelToScroll("thesis") : null;
+  return sceneTl?.scrollTrigger ? sceneTl.scrollTrigger.labelToScroll(LANDING) : null;
 }
 
 export function buildApproachScene({ gsap }) {
@@ -102,7 +103,7 @@ export function buildApproachScene({ gsap }) {
     // before the word that carries the whole thesis.
     if (em) tl.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: SIGNATURE_EASE }, ">-0.3");
     // an anchor jump lands here: thesis built, payoff word in place
-    tl.addLabel("thesis");
+    tl.addLabel(LANDING);
     tl.to({}, { duration: 0.7 }) // hold — let the line land
       .to(thesis, { autoAlpha: 0, y: -70, duration: 0.5, ease: "power2.in" }, ">")
       .to([rail, progress], { autoAlpha: 1, duration: 0.3 }, "<");
