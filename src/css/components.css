@@ -637,13 +637,14 @@
   transition: filter 0.4s var(--ease-out), border-color 0.3s var(--ease-out),
     transform 0.3s var(--ease-out);
 }
-/* greyed at rest, full colour on intent — only where hover exists (so touch
-   devices, which can't hover, always show colour) */
+/* full colour at rest: the photos are the proof. Intent lifts the photo and
+   takes the spotlight line (hover only where it exists; focus everywhere). */
+.gallery__thumb:focus-visible img {
+  border-color: var(--accent-line);
+  transform: translateY(-2px);
+}
 @media (hover: hover) {
-  .gallery__thumb img { filter: grayscale(1) brightness(0.85); }
-  .gallery__thumb:hover img,
-  .gallery__thumb:focus-visible img {
-    filter: none;
+  .gallery__thumb:hover img {
     border-color: var(--accent-line);
     transform: translateY(-2px);
   }
