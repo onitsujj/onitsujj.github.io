@@ -333,13 +333,9 @@
     /* .nav raises specificity over .btn, which loads later in components.css */
     padding: 12px 16px;
   }
+  /* the link's aria-label keeps the full name, so the words can simply go */
   .nav__follow-where {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    display: none;
   }
   .nav__toggle[aria-expanded="true"] span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
