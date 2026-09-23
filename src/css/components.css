@@ -287,6 +287,15 @@
 .about__body .lead {
   margin-bottom: var(--space-3);
 }
+/* the stat anchors the foot of the headline column, flush with the end of the
+   body copy, so the left column is framed top and bottom instead of trailing
+   off into empty space */
+.about__stats {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+  align-self: end;
+  margin-top: 0;
+}
 
 .stats {
   display: flex;
@@ -804,6 +813,11 @@
   .about__head,
   .about__body { grid-column: 1 / span 12; }
   .about__body { margin-top: var(--space-4); }
+  .about__stats {
+    grid-column: 1 / span 12;
+    grid-row: auto;
+    margin-top: var(--space-5);
+  }
   .approach__track { grid-template-columns: 1fr; gap: var(--space-4); }
   .row-card {
     grid-template-columns: 1fr;
