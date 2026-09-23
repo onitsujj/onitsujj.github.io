@@ -19,7 +19,6 @@ export function buildApproachScene({ gsap }) {
     const rail = document.querySelector(".approach__rail");
     const progress = document.querySelector(".approach__progress");
     const ticks = gsap.utils.toArray(".approach__tick i");
-    const eyebrow = document.querySelector(".approach__eyebrow");
     const lines = gsap.utils.toArray(".approach__thesis .ln");
     const em = document.querySelector(".approach__h2 em");
     const beliefs = gsap.utils.toArray(".approach__track .belief");
@@ -40,7 +39,7 @@ export function buildApproachScene({ gsap }) {
     // switch on the pinned layout (CSS keys off this class), then hide the
     // pieces the timeline will bring in.
     document.documentElement.classList.add("approach-live");
-    gsap.set([eyebrow, ...lines], { autoAlpha: 0, y: 42 });
+    gsap.set(lines, { autoAlpha: 0, y: 42 });
     if (em) gsap.set(em, { autoAlpha: 0, yPercent: 20 });
     gsap.set([rail, progress], { autoAlpha: 0 });
     gsap.set(ticks, { scaleY: 0, transformOrigin: "top" });
@@ -80,8 +79,7 @@ export function buildApproachScene({ gsap }) {
     });
 
     // phase 1 — the thesis assembles
-    tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0)
-      .to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0.2);
+    tl.to(lines, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.5, ease: "power2.out" }, 0);
     // the payoff word lands a half-beat after its line — like a speaker pausing
     // before the word that carries the whole thesis.
     if (em) tl.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: SIGNATURE_EASE }, ">-0.3");
