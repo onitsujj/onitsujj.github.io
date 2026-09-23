@@ -173,7 +173,7 @@ Space Grotesk is a brand lock. The detector suppression in `src/css/tokens.css` 
 ### Hierarchy
 - **Display** (600, `clamp(48px, 6vw, 92px)`, 0.95): the hero headline only. Tracked at -0.035em, with a soft dark text-shadow so it holds over the 3D stage.
 - **Headline** (600, `clamp(30px, 3.4vw, 48px)`, 1.05): section h2s. The pinned Approach thesis scales up to `clamp(34px, 6vw, 76px)`.
-- **Title** (600, `clamp(20px, 1.6vw, 26px)`): talk titles and the hero sub-line (at 500). The hero sub-line uses 1.3 leading. Beliefs use it at 500 with 1.38 leading.
+- **Title** (600, `clamp(20px, 1.6vw, 26px)`): talk titles and the hero sub-line (at 500). The hero sub-line uses 1.3 leading. Beliefs use it at 500 with 1.32 leading.
 - **Stat** (700, `clamp(40px, 4vw, 64px)`, tabular numbers): the About numbers.
 - **Lead** (400, `clamp(19px, 1.5vw, 22px)`, 1.55): opening paragraphs, around 32 to 46ch wide.
 - **Body** (400, 17px, 1.7): running copy. `text-wrap: pretty` on paragraphs, `balance` on headings.

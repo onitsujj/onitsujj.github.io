@@ -417,7 +417,7 @@
   font-family: var(--font-display);
   font-weight: 500;
   color: var(--text);
-  line-height: 1.38;
+  line-height: 1.32;
 }
 .belief__text b {
   font-weight: 700;
