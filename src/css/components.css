@@ -271,9 +271,11 @@
 }
 .about__head {
   grid-column: 1 / span 5;
+  grid-row: 1;
 }
 .about__body {
   grid-column: 7 / span 6;
+  grid-row: 1;
   /* drop the body so its lead aligns with the headline rather than the
      "01 / About" kicker above it (kicker line + the head's space-4 gap) */
   margin-top: calc(var(--fs-label) * 1.7 + var(--space-4));
@@ -864,7 +866,7 @@ html:not(.js) .gallery__meter { visibility: hidden; }
     align-self: flex-start;
   }
   .about__head,
-  .about__body { grid-column: 1 / span 12; }
+  .about__body { grid-column: 1 / span 12; grid-row: auto; }
   .about__body { margin-top: var(--space-4); }
   .about__stats {
     grid-column: 1 / span 12;
