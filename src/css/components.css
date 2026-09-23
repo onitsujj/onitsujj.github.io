@@ -351,7 +351,8 @@
    Static baseline (no-JS / reduced-motion / narrow screens) reads as a
    normal section. On desktop with motion the `.approach-live` class (added
    by the scene JS) turns it into a pinned "keynote": the thesis assembles on
-   scroll, then the beliefs slide in from the right. See reveals.js.
+   scroll, the beliefs build in one at a time, then all four hold together as
+   a recap. See approach-scene.js.
    ============================================================ */
 .approach__stage {
   max-width: var(--maxw);
@@ -368,14 +369,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-}
-.approach__eyebrow {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
 }
 .approach__h2 {
   font-size: var(--fs-h2);
@@ -408,20 +401,12 @@
   flex-direction: column;
   gap: 14px;
 }
-.belief__key {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 .belief__text {
   font-size: var(--fs-h3);
   font-family: var(--font-display);
   font-weight: 500;
   color: var(--text);
-  line-height: 1.25;
+  line-height: 1.38;
 }
 .belief__text b {
   font-weight: 700;
@@ -466,7 +451,6 @@
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
   /* pre-paint hide for the pieces the timeline brings in — reuses the global
      .reveal-fallback failsafe, so content still shows if the script never runs */
-  html.js:not(.reveal-fallback) .approach__eyebrow,
   html.js:not(.reveal-fallback) .approach__thesis .ln,
   html.js:not(.reveal-fallback) .approach__rail {
     opacity: 0;
@@ -487,10 +471,12 @@
   overflow: hidden;
   background: var(--bg-elev);
 }
+/* the tag and the progress rail sit on the shared content-column edge (the
+   same left edge as every .container), not the viewport gutter */
 .approach-live .approach__tag {
   position: absolute;
   top: calc(var(--nav-h) + 20px);
-  left: var(--gutter);
+  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)));
   z-index: 3;
   margin: 0;
 }
@@ -517,34 +503,38 @@
   inset: 0;
   overflow: hidden;
 }
-/* beliefs are stacked on top of each other and shown one at a time; the JS
-   centres each (xPercent/yPercent -50) and slides it through on scroll. */
+/* the beliefs build in place on the static grid (three across, the note
+   spanning below), centred on the stage in the content column. Every belief
+   already sits in its recap slot, so the scene only fades and lifts them;
+   nothing travels across the stage. */
 .approach-live .approach__track {
-  position: absolute;
-  inset: 0;
-}
-.approach-live .belief {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(320px, 40vw, 480px);
-  gap: 18px;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: var(--maxw);
+  /* stays three across down to the scene's 821px floor, over the ≤900px
+     single-column rule (which is for the static layout) */
+  grid-template-columns: repeat(3, 1fr);
+  /* indented past the progress rail on the left, mirrored on the right so
+     the third column stays clear of the section index at narrow desktops */
+  padding-inline: calc(var(--gutter) + var(--space-5));
+  column-gap: var(--space-4);
+  row-gap: var(--space-5);
 }
-.approach-live .belief__text {
-  font-size: clamp(20px, 2vw, 28px);
-  line-height: 1.28;
-}
-.approach-live .belief--note {
-  width: clamp(300px, 36vw, 440px);
-  max-width: none;
-  border-left: 2px solid var(--line-strong);
+/* the closing note gets its own beat on stage, so it steps up from small
+   body to lead size (still Franklin: it explains, it doesn't claim) */
+.approach-live .belief--note .belief__text {
+  font-size: var(--fs-lead);
+  line-height: 1.55;
 }
 .approach-live .approach__progress {
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: absolute;
-  left: var(--gutter); /* left edge — clear of the right-edge section index */
+  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); /* column edge — clear of the right-edge section index */
   top: 50%;
   transform: translateY(-50%);
   z-index: 3;
