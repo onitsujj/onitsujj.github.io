@@ -139,10 +139,6 @@
   margin-bottom: var(--space-3);
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
 }
-/* each phrase holds together, so lines break between phrases, never at "full-" */
-.hero__sub span {
-  white-space: nowrap;
-}
 .hero__lead {
   max-width: 32ch;
   margin-bottom: var(--space-4);
