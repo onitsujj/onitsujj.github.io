@@ -77,21 +77,33 @@
           <span class="brand-name">Jose&nbsp;Gayondato</span>
         </a>
 
-        <button
-          class="nav__toggle"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          aria-controls="nav-links"
-        >
-          <span></span><span></span><span></span>
-        </button>
+        <div class="nav__right">
+          <button
+            class="nav__toggle"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            aria-controls="nav-links"
+          >
+            <span></span><span></span><span></span>
+          </button>
 
-        <nav class="nav__links" id="nav-links" aria-label="Sections">
-          <a class="nav__link" href="#about">About</a>
-          <a class="nav__link" href="#approach">Approach</a>
-          <a class="nav__link" href="#talks">Talks</a>
-          <a class="nav__link btn btn--primary" href="#connect">Follow</a>
-        </nav>
+          <nav class="nav__links" id="nav-links" aria-label="Sections">
+            <a class="nav__link" href="#about">About</a>
+            <a class="nav__link" href="#approach">Approach</a>
+            <a class="nav__link" href="#talks">Talks</a>
+          </nav>
+
+          <!-- the one ask, straight to LinkedIn; outside the drawer so it stays
+               in the bar on mobile. On narrow bars only "Follow" shows; the
+               full label stays in the accessible name. -->
+          <a
+            class="nav__follow btn btn--primary"
+            href="https://www.linkedin.com/in/jose-j-g-17100774/"
+            target="_blank"
+            rel="noopener"
+            >Follow<span class="nav__follow-where"> on LinkedIn</span></a
+          >
+        </div>
       </div>
     </header>
 
