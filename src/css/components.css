@@ -67,6 +67,18 @@
   width: 130%;
   height: 100%;
   z-index: 1;
+  /* fade the strap out as it rises under the fixed nav: the nav's gradient is
+     near-clear, so the bright strap would otherwise wash over the nav links */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent calc(var(--nav-h) - 12px),
+    #000 calc(var(--nav-h) + 36px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent calc(var(--nav-h) - 12px),
+    #000 calc(var(--nav-h) + 36px)
+  );
 }
 
 /* text overlay: pointer-events fall THROUGH to the canvas so you can drag the
