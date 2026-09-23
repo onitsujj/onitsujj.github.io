@@ -1,4 +1,12 @@
 /* Entry stylesheet — order matters (tokens first). */
+/* Self-hosted fonts (vendored via @fontsource, no Google request). Loaded from
+   CSS, not JS, so the brand faces still apply with scripting off. */
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/libre-franklin/400.css";
+@import "@fontsource/space-mono/400.css";
+@import "@fontsource/space-mono/700.css";
 @import "./tokens.css";
 @import "./base.css";
 @import "./layout.css";

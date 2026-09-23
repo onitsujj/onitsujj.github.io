@@ -1,11 +1,4 @@
-// ---- self-hosted fonts (vendored via @fontsource, no Google request) ----
-import "@fontsource/space-grotesk/500.css";
-import "@fontsource/space-grotesk/600.css";
-import "@fontsource/space-grotesk/700.css";
-import "@fontsource/libre-franklin/400.css";
-import "@fontsource/space-mono/400.css";
-import "@fontsource/space-mono/700.css";
-
+// Fonts load from css/main.css (so they apply with JS off), not from here.
 import { initNav } from "./nav.js";
 import { initLanyard } from "./lanyard/index.js";
 import { initMotion } from "./animations/motion.js";
