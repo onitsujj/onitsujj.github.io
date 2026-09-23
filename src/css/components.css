@@ -546,7 +546,7 @@
 }
 .row-card {
   display: grid;
-  grid-template-columns: 1fr 2fr auto;
+  grid-template-columns: 160px minmax(0, 1fr) auto;
   gap: var(--gutter);
   align-items: center;
   padding: var(--space-4) 0;
@@ -580,6 +580,7 @@
   font-size: var(--fs-sm);
   color: var(--text-1);
   margin-top: 6px;
+  max-width: 68ch;
 }
 /* right rail: the year sits hard-right on every row so the list can be scanned
    down one edge; the recap link stacks under it when a row has one. */
