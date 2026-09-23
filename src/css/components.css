@@ -595,6 +595,10 @@
   font-size: 12px;
   color: var(--accent);
   white-space: nowrap;
+  /* 44px-tall hit area; the negative margin keeps the 20px layout footprint */
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -12px;
 }
 /* viewport: native scroll by default; JS swaps to clipped + draggable */
 .row-card__gallery {
