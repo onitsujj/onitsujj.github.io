@@ -1,6 +1,6 @@
 // Talks photo gallery — composes the three pieces of the filmstrip:
 //   • lightbox.js      — the full-image viewer (Flip morph, a11y, keyboard).
-//   • gallery-strip.js — the draggable/throwable strip (overflow only).
+//   • gallery-strip.js — the draggable/throwable strip (overflow only) + its cue.
 //   • the stagger reveal of the tiles, wired here (it's the only bit unique to
 //     the strip-in-page, not to either collaborator).
 // Reduced-motion users get plain fades + native scroll: no morph, no inertia,
@@ -24,7 +24,8 @@ export function initGallery({ reduced = false } = {}) {
   });
 
   const lightbox = createLightbox({ slides, thumbs, reduced });
-  const strip = createDraggableStrip({ gallery, track, reduced });
+  const cue = gallery.parentElement.querySelector(".gallery__cue");
+  const strip = createDraggableStrip({ gallery, track, cue, reduced });
 
   // ---------- wire interactions ----------
   thumbs.forEach((btn, i) =>

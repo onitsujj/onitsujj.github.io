@@ -295,9 +295,11 @@
 }
 .about__head {
   grid-column: 1 / span 5;
+  grid-row: 1;
 }
 .about__body {
   grid-column: 7 / span 6;
+  grid-row: 1;
   /* drop the body so its lead aligns with the headline rather than the
      "01 / About" kicker above it (kicker line + the head's space-4 gap) */
   margin-top: calc(var(--fs-label) * 1.7 + var(--space-4));
@@ -310,6 +312,15 @@
 }
 .about__body .lead {
   margin-bottom: var(--space-3);
+}
+/* the stat anchors the foot of the headline column, flush with the end of the
+   body copy, so the left column is framed top and bottom instead of trailing
+   off into empty space */
+.about__stats {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+  align-self: end;
+  margin-top: 0;
 }
 
 .stats {
@@ -546,6 +557,9 @@
 .list-head {
   grid-column: 1 / span 12;
 }
+.list-head h2 {
+  font-size: var(--fs-h2);
+}
 .list-head .lead {
   max-width: 46ch;
   margin-top: var(--space-2);
@@ -557,7 +571,7 @@
 }
 .row-card {
   display: grid;
-  grid-template-columns: 1fr 2fr auto;
+  grid-template-columns: 160px minmax(0, 1fr) auto;
   gap: var(--gutter);
   align-items: center;
   padding: var(--space-4) 0;
@@ -568,10 +582,10 @@
 }
 /* hover nudge: step the content in via transform (composited) so the row's
    divider hairlines stay put — the gallery row is excluded so it doesn't jog. */
-.row-card > :not(.row-card__gallery) {
+.row-card > :not(.row-card__gallery, .gallery__cue) {
   transition: transform 0.3s var(--ease-signature);
 }
-.row-card:hover > :not(.row-card__gallery) {
+.row-card:hover > :not(.row-card__gallery, .gallery__cue) {
   transform: translateX(14px);
 }
 .row-card__meta {
@@ -591,6 +605,7 @@
   font-size: var(--fs-sm);
   color: var(--text-1);
   margin-top: 6px;
+  max-width: 54ch; /* ~68 characters of this copy per line */
 }
 /* right rail: the year sits hard-right on every row so the list can be scanned
    down one edge; the recap link stacks under it when a row has one. */
@@ -605,6 +620,10 @@
   font-size: 12px;
   color: var(--accent);
   white-space: nowrap;
+  /* 44px-tall hit area; the negative margin keeps the 20px layout footprint */
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -12px;
 }
 /* viewport: native scroll by default; JS swaps to clipped + draggable */
 .row-card__gallery {
@@ -620,13 +639,59 @@
   scrollbar-width: none;
 }
 .row-card__gallery.is-draggable:active { cursor: grabbing; }
-.gallery__track {
+/* the strip always overflows the column: fade its right edge so the cut reads
+   as "more this way"; the JS drops the fade once the end is reached */
+.row-card__gallery {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+}
+.row-card__gallery[data-edge="end"] {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+/* count + a hairline meter of how much of the strip has been seen + the verb
+   (Drag when the JS strip is live, Scroll for native overflow) */
+.gallery__cue {
+  grid-column: 1 / -1;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: calc(var(--space-2) - var(--gutter));
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gallery__meter {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.gallery__meter-fill {
+  display: block;
+  height: 2px;
+  margin-top: -0.5px;
+  background: var(--accent);
+  transform: scaleX(var(--seen, 0));
+  transform-origin: left;
+}
+html:not(.js) .gallery__meter { visibility: hidden; }
+/* a two-row filmstrip: the packed hall leads at double height, pairs of stills
+   follow, and the collage closes it at double height again */
+.gallery__track {
+  --thumb-h: 130px;
+  --thumb-gap: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, var(--thumb-h));
+  gap: var(--thumb-gap);
   width: max-content;
 }
+@media (max-width: 600px) {
+  .gallery__track { --thumb-h: 76px; }
+}
 .gallery__thumb {
-  flex: 0 0 auto;
   padding: 0;
   border: 0;
   background: none;
@@ -636,11 +701,16 @@
 }
 .gallery__thumb:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  /* inset: the strip's viewport clips anything drawn outside a thumb */
+  outline-offset: -2px;
+}
+.gallery__thumb--large {
+  grid-row: span 2;
 }
 .gallery__thumb img {
-  height: 130px;
+  height: var(--thumb-h);
   width: auto;
+  min-width: 100%; /* fill the column when a pair's aspect ratios differ */
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid var(--line);
@@ -648,13 +718,17 @@
   transition: filter 0.4s var(--ease-out), border-color 0.3s var(--ease-out),
     transform 0.3s var(--ease-out);
 }
-/* greyed at rest, full colour on intent — only where hover exists (so touch
-   devices, which can't hover, always show colour) */
+.gallery__thumb--large img {
+  height: calc(var(--thumb-h) * 2 + var(--thumb-gap));
+}
+/* full colour at rest: the photos are the proof. Intent lifts the photo and
+   takes the spotlight line (hover only where it exists; focus everywhere). */
+.gallery__thumb:focus-visible img {
+  border-color: var(--accent-line);
+  transform: translateY(-2px);
+}
 @media (hover: hover) {
-  .gallery__thumb img { filter: grayscale(1) brightness(0.85); }
-  .gallery__thumb:hover img,
-  .gallery__thumb:focus-visible img {
-    filter: none;
+  .gallery__thumb:hover img {
     border-color: var(--accent-line);
     transform: translateY(-2px);
   }
@@ -818,14 +892,20 @@
     filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6));
   }
   .about__head,
-  .about__body { grid-column: 1 / span 12; }
+  .about__body { grid-column: 1 / span 12; grid-row: auto; }
   .about__body { margin-top: var(--space-4); }
+  .about__stats {
+    grid-column: 1 / span 12;
+    grid-row: auto;
+    margin-top: var(--space-5);
+  }
   .approach__track { grid-template-columns: 1fr; gap: var(--space-4); }
   .row-card {
     grid-template-columns: 1fr;
     gap: 8px;
     align-items: start;
   }
+  .gallery__cue { margin-top: 8px; } /* row gap is 8px here, not the gutter */
   /* one column on phones: the rail collapses to an inline left-aligned row */
   .row-card__rail {
     flex-direction: row;
