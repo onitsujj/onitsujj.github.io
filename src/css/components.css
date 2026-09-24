@@ -814,7 +814,8 @@ html:not(.js) .gallery__meter { visibility: hidden; }
    CONNECT
    ============================================================ */
 .connect {
-  padding-block: clamp(72px, 9vh, 120px);
+  --connect-y: clamp(72px, 9vh, 120px);
+  padding-block: var(--connect-y);
 }
 .connect__inner {
   grid-column: 1 / span 12;
@@ -824,9 +825,11 @@ html:not(.js) .gallery__meter { visibility: hidden; }
 /* the badge hangs back in for the close: the same object as the hero, at
    about half size (explicit part sizes, since the sway owns transform) */
 .connect__badge {
-  margin: 0 auto var(--space-4);
+  /* pulled up through the section padding so the strap hangs from the
+     section's top hairline, like a lanyard from a rail */
+  margin: calc(-1 * var(--connect-y)) auto var(--space-4);
 }
-.connect__badge .badge__strap { width: 17px; height: 40px; }
+.connect__badge .badge__strap { width: 17px; height: calc(40px + var(--connect-y)); }
 .connect__badge .badge__clip { width: 20px; height: 12px; margin-top: -2px; border-radius: 4px; }
 .connect__badge .badge__clip::after { top: 4px; width: 7px; height: 4px; border-radius: 2px; }
 .connect__badge .badge__card {
