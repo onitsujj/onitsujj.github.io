@@ -560,6 +560,24 @@
   max-width: 46ch;
   margin-top: var(--space-2);
 }
+/* the organiser's route: a quiet text link, so the LinkedIn follow stays the
+   one primary button on the page */
+.list-head__invite {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding-block: 12px; /* 44px-tall hit area */
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.list-head__invite .btn__arrow {
+  display: inline-block;
+}
+.list-head__invite:hover .btn__arrow,
+.list-head__invite:focus-visible .btn__arrow {
+  transform: translateX(4px);
+}
 .card-list {
   grid-column: 1 / span 12;
   display: flex;
