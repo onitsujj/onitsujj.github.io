@@ -307,19 +307,32 @@
     inset: var(--nav-h) 0 auto 0;
     flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
-    padding: 28px var(--gutter) 36px;
+    gap: 0;
+    padding: 16px var(--gutter) 24px;
     background: var(--bg-elev);
     border-bottom: 1px solid var(--line);
     transform: translateY(-12px);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+    /* hidden, not just faded: the closed drawer's links leave the tab order
+       and the accessibility tree. visibility flips after the fade-out ends. */
+    visibility: hidden;
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out),
+      visibility 0s linear 0.25s;
   }
   .nav__links[data-open="true"] {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /* 44px-tall tap rows */
+  .nav__links .nav__link {
+    padding-block: 12px;
+  }
+  .nav__links .nav__link::after {
+    bottom: 6px;
   }
   .nav__toggle {
     display: flex;

@@ -9,13 +9,13 @@ import { SplitText } from "gsap/SplitText";
 import { SIGNATURE_EASE } from "./motion-tokens.js";
 
 // how far a belief rests while a later one has the stage — dimmed enough to
-// step back, bright enough to stay legible as "already said" (0.45 keeps the
-// dimmed text above 3:1 on the raised stage).
-const DIMMED = 0.45;
+// step back, bright enough to stay legible as "already said" (0.5 keeps the
+// dimmed 23px text at ~4.8:1 on the raised stage, clear of WCAG AA).
+const DIMMED = 0.5;
 
-// The live scene's timeline, so an anchor jump to #approach can land on the
-// built thesis instead of the scene's first frame, where every line is still
-// hidden and the stage reads as an empty room. Null when the scene is off.
+// The live scene's pinned timeline, so an anchor jump to #approach can land on
+// the pin start, where the intro has already built the thesis. Null when the
+// scene is off.
 let sceneTl = null;
 const LANDING = "thesis";
 
@@ -34,8 +34,6 @@ export function buildApproachScene({ gsap }) {
 
     const thesis = document.querySelector(".approach__thesis");
     const rail = document.querySelector(".approach__rail");
-    const progress = document.querySelector(".approach__progress");
-    const ticks = gsap.utils.toArray(".approach__tick i");
     const lines = gsap.utils.toArray(".approach__thesis .ln");
     const em = document.querySelector(".approach__h2 em");
     const beliefs = gsap.utils.toArray(".approach__track .belief");
@@ -58,19 +56,36 @@ export function buildApproachScene({ gsap }) {
     document.documentElement.classList.add("approach-live");
     gsap.set(lines, { autoAlpha: 0, y: 42 });
     if (em) gsap.set(em, { autoAlpha: 0, yPercent: 20 });
-    gsap.set([rail, progress], { autoAlpha: 0 });
-    gsap.set(ticks, { scaleY: 0, transformOrigin: "top" });
+    gsap.set(rail, { autoAlpha: 0 });
     beliefWords.forEach((words) => words && gsap.set(words, { yPercent: 110 }));
     // every belief already sits in its recap slot (CSS grid); park each one
     // hidden and a little low, ready to rise into place.
     gsap.set(beliefs, { autoAlpha: 0, y: 48 });
+
+    // phase 1 — the thesis assembles while the section scrolls up into view,
+    // before the pin, so the stage never arrives as an empty room. By the time
+    // the pin takes over, "magnifies" has landed.
+    const intro = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: ".approach",
+        start: "top 75%",
+        end: "top top",
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+      },
+    });
+    intro.to(lines, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.4, ease: "power2.out" }, 0);
+    // the payoff word lands a half-beat after its line — like a speaker pausing
+    // before the word that carries the whole thesis.
+    if (em) intro.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: SIGNATURE_EASE }, ">-0.3");
 
     const tl = gsap.timeline({
       defaults: { ease: "none" },
       scrollTrigger: {
         trigger: ".approach",
         start: "top top",
-        end: () => "+=" + Math.round(window.innerHeight * 2.5),
+        end: () => "+=" + Math.round(window.innerHeight * 1.8),
         pin: ".approach__stage",
         anticipatePin: 1,
         // 0.5, not the old 0.8: each belief's beat is now ~0.4 viewport, and a
@@ -90,31 +105,24 @@ export function buildApproachScene({ gsap }) {
       },
     });
 
-    // Shape (timeline units; scrub spreads ~12 units over 2.5 viewports):
-    //   0 – 3     thesis assembles, "magnifies" holds, thesis lifts away
-    //   3 – 10.2  four beliefs, each: 0.5 arrive + 1.3 dwell
-    //   10.2 – 12 recap: all four lift to full, then hold before the release
+    // Shape (timeline units; scrub spreads ~10.5 units over 1.8 viewports):
+    //   0 – 1.2    the built thesis holds, then lifts away
+    //   1.2 – 8.4  four beliefs, each: 0.5 arrive + 1.3 dwell
+    //   8.4 – 10.2 recap: all four lift to full, then hold before the release
     // Transitions are short against the dwell, so a stopped scroll almost
     // always lands on a settled, readable frame.
 
-    // phase 1 — the thesis assembles
-    tl.to(lines, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.4, ease: "power2.out" }, 0);
-    // the payoff word lands a half-beat after its line — like a speaker pausing
-    // before the word that carries the whole thesis.
-    if (em) tl.to(em, { autoAlpha: 1, yPercent: 0, duration: 0.5, ease: SIGNATURE_EASE }, ">-0.3");
-    // an anchor jump lands here: thesis built, payoff word in place
-    tl.addLabel(LANDING);
+    // an anchor jump lands here: the pin start, thesis built by the intro
+    tl.addLabel(LANDING, 0);
     tl.to({}, { duration: 0.7 }) // hold — let the line land
       .to(thesis, { autoAlpha: 0, y: -70, duration: 0.5, ease: "power2.in" }, ">")
-      .to([rail, progress], { autoAlpha: 1, duration: 0.3 }, "<");
+      .to(rail, { autoAlpha: 1, duration: 0.3 }, "<");
 
     // phase 2 — each belief rises into its slot while the ones before it step
     // back, like a keynote build with "dim previous".
     beliefs.forEach((belief, i) => {
       tl.to(belief, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" });
       if (i > 0) tl.to(beliefs.slice(0, i), { autoAlpha: DIMMED, duration: 0.4, ease: "power2.out" }, "<");
-      // the progress rail fills one tick per belief — a "you are N of 4" spine
-      if (ticks[i]) tl.to(ticks[i], { scaleY: 1, duration: 0.4, ease: "power2.out" }, "<");
       // the bold clause writes itself in as the belief settles
       if (beliefWords[i]) tl.to(beliefWords[i], { yPercent: 0, duration: 0.4, stagger: 0.03, ease: SIGNATURE_EASE }, "<0.1");
       tl.to({}, { duration: 1.3 }); // dwell

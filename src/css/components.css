@@ -432,28 +432,6 @@
   color: var(--text-1);
 }
 
-/* progress rail — only rendered inside the live keynote scene (positioned in
-   the .approach-live block below). Each tick is a dim track with a cyan fill
-   (the <i>) that scaleY-fills as its belief reaches centre. */
-.approach__progress {
-  display: none;
-}
-.approach__tick {
-  display: block;
-  width: 2px;
-  height: 30px;
-  background: var(--line-strong);
-  overflow: hidden;
-}
-.approach__tick i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--accent);
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
 /* ---- Desktop + motion: the pinned keynote scene ---- */
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
   /* pre-paint hide for the pieces the timeline brings in — reuses the global
@@ -478,8 +456,8 @@
   overflow: hidden;
   background: var(--bg-elev);
 }
-/* the tag and the progress rail sit on the shared content-column edge (the
-   same left edge as every .container), not the viewport gutter */
+/* the tag sits on the shared content-column edge (the same left edge as
+   every .container), not the viewport gutter */
 .approach-live .approach__tag {
   position: absolute;
   top: calc(var(--nav-h) + 20px);
@@ -524,8 +502,8 @@
   /* stays three across down to the scene's 821px floor, over the ≤900px
      single-column rule (which is for the static layout) */
   grid-template-columns: repeat(3, 1fr);
-  /* indented past the progress rail on the left, mirrored on the right so
-     the third column stays clear of the section index at narrow desktops */
+  /* inset on both sides so the third column stays clear of the section
+     index at narrow desktops, and the grid stays centred */
   padding-inline: calc(var(--gutter) + var(--space-5));
   column-gap: var(--space-4);
   row-gap: var(--space-5);
@@ -535,16 +513,6 @@
 .approach-live .belief--note .belief__text {
   font-size: var(--fs-lead);
   line-height: 1.55;
-}
-.approach-live .approach__progress {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: absolute;
-  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); /* column edge — clear of the right-edge section index */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 3;
 }
 
 /* ============================================================
@@ -559,6 +527,24 @@
 .list-head .lead {
   max-width: 46ch;
   margin-top: var(--space-2);
+}
+/* the organiser's route: a quiet text link, so the LinkedIn follow stays the
+   one primary button on the page */
+.list-head__invite {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding-block: 12px; /* 44px-tall hit area */
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.list-head__invite .btn__arrow {
+  display: inline-block;
+}
+.list-head__invite:hover .btn__arrow,
+.list-head__invite:focus-visible .btn__arrow {
+  transform: translateX(4px);
 }
 .card-list {
   grid-column: 1 / span 12;
@@ -828,21 +814,43 @@ html:not(.js) .gallery__meter { visibility: hidden; }
    CONNECT
    ============================================================ */
 .connect {
-  padding-block: clamp(72px, 9vh, 120px);
+  --connect-y: clamp(72px, 9vh, 120px);
+  padding-block: var(--connect-y);
 }
 .connect__inner {
   grid-column: 1 / span 12;
   text-align: center;
   margin-inline: auto;
 }
-.connect__inner .section-head {
-  justify-content: center;
+/* the badge hangs back in for the close: the same object as the hero, at
+   about half size (explicit part sizes, since the sway owns transform) */
+.connect__badge {
+  /* pulled up through the section padding so the strap hangs from the
+     section's top hairline, like a lanyard from a rail */
+  margin: calc(-1 * var(--connect-y)) auto var(--space-4);
+}
+.connect__badge .badge__strap { width: 17px; height: calc(40px + var(--connect-y)); }
+.connect__badge .badge__clip { width: 20px; height: 12px; margin-top: -2px; border-radius: 4px; }
+.connect__badge .badge__clip::after { top: 4px; width: 7px; height: 4px; border-radius: 2px; }
+.connect__badge .badge__card {
+  width: 128px;
+  margin-top: 5px;
+  filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .connect__badge .badge__card {
+    transform-origin: top center;
+    animation: badge-sway 7s ease-in-out infinite;
+  }
 }
 .connect__h2 {
   font-size: var(--fs-h2);
   max-width: 26ch;
   margin-inline: auto;
-  margin-bottom: var(--space-4);
+}
+.connect__lead {
+  max-width: 40ch;
+  margin: var(--space-2) auto var(--space-4);
 }
 .connect__actions {
   display: flex;
@@ -911,6 +919,11 @@ html:not(.js) .gallery__meter { visibility: hidden; }
 }
 
 @media (max-width: 520px) {
+  /* tighter hero rhythm so the follow button makes the first screen (390x844) */
+  .hero__static-badge { margin-bottom: var(--space-3); }
+  .hero__eyebrow,
+  .hero__sub { margin-bottom: var(--space-2); }
+  .hero__lead { margin-bottom: var(--space-3); }
   .stats { gap: var(--space-4); }
   /* phones: the follow leads full width, the two secondary routes share a row,
      so nothing wraps into an orphan */
