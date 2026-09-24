@@ -348,12 +348,20 @@
       <section class="section connect" id="connect" aria-labelledby="connect-h">
         <div class="grid-12 container">
           <div class="connect__inner">
-            <p class="section-head" data-reveal>
-              <span class="section-label">Connect</span>
-            </p>
+            <!-- the badge returns for the close, so the page ends on the same
+                 person it opened with; decorative, the hero carries its alt -->
+            <figure class="badge connect__badge" aria-hidden="true" data-reveal-close>
+              <span class="badge__strap"></span>
+              <span class="badge__clip"></span>
+              <img class="badge__card" src="/assets/card-badge.webp" width="232" height="324" alt="" loading="lazy" decoding="async" />
+            </figure>
             <h2 class="connect__h2" id="connect-h" data-reveal-close>
-              If any of this resonates, follow along.
+              Your experts, <span class="accent">magnified</span>.
             </h2>
+            <p class="lead connect__lead" data-reveal-close>
+              I post what I learn leading AI adoption: what works, and where it goes
+              confidently wrong.
+            </p>
             <div class="connect__actions" data-reveal-close>
               <a class="btn btn--primary" href="https://www.linkedin.com/in/jose-j-g-17100774/" target="_blank" rel="noopener">
                 Follow on LinkedIn <span class="btn__arrow" aria-hidden="true">→</span>

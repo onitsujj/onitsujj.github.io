@@ -853,14 +853,33 @@ html:not(.js) .gallery__meter { visibility: hidden; }
   text-align: center;
   margin-inline: auto;
 }
-.connect__inner .section-head {
-  justify-content: center;
+/* the badge hangs back in for the close: the same object as the hero, at
+   about half size (explicit part sizes, since the sway owns transform) */
+.connect__badge {
+  margin: 0 auto var(--space-4);
+}
+.connect__badge .badge__strap { width: 17px; height: 40px; }
+.connect__badge .badge__clip { width: 20px; height: 12px; margin-top: -2px; border-radius: 4px; }
+.connect__badge .badge__clip::after { top: 4px; width: 7px; height: 4px; border-radius: 2px; }
+.connect__badge .badge__card {
+  width: 128px;
+  margin-top: 5px;
+  filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.6));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .connect__badge .badge__card {
+    transform-origin: top center;
+    animation: badge-sway 7s ease-in-out infinite;
+  }
 }
 .connect__h2 {
   font-size: var(--fs-h2);
   max-width: 26ch;
   margin-inline: auto;
-  margin-bottom: var(--space-4);
+}
+.connect__lead {
+  max-width: 40ch;
+  margin: var(--space-2) auto var(--space-4);
 }
 .connect__actions {
   display: flex;
