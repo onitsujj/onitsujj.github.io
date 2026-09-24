@@ -246,7 +246,7 @@ A full-screen Obsidian veil (92% opacity, 6px blur) holding one photo, a caption
 The site's signature object. On capable desktop browsers, a 3D badge (React Three Fiber and Rapier physics) hangs from a white Mandrill-logo strap and can be dragged. Everywhere else, a pixel-matched flat twin stands in: strap, brushed-metal clip, and a 232px card with a deep drop shadow. On mobile it leads the hero at a smaller 128px card, so the headline still lands on the first screen, and sways gently.
 
 ### Approach keynote scene
-On desktop with motion, the Approach section pins to the viewport on Obsidian Raised. The scene runs about 2.5 viewports. The thesis assembles line by line, the accent word holds, then the thesis lifts away. Each belief then rises into its slot on a three-across grid, with the note below, while earlier beliefs dim to 0.45. The scene ends on a recap with all four at full strength, then the pin releases. A left-edge rail of 2px ticks, aligned to the content column, fills in cyan as each belief arrives. Without the scene, the same content reads as a normal three-column section.
+On desktop with motion, the thesis assembles line by line as the section scrolls into view, so the stage never arrives empty. The section then pins to the viewport on Obsidian Raised for about 1.8 viewports: the accent word holds, then the thesis lifts away. Each belief then rises into its slot on a three-across grid, with the note below, while earlier beliefs dim to 0.45. The scene ends on a recap with all four at full strength, then the pin releases. A left-edge rail of 2px ticks, aligned to the content column, fills in cyan as each belief arrives. Without the scene, the same content reads as a normal three-column section.
 
 ## Do's and Don'ts
 
