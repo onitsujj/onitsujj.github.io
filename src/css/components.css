@@ -948,6 +948,11 @@ html:not(.js) .gallery__meter { visibility: hidden; }
 }
 
 @media (max-width: 520px) {
+  /* tighter hero rhythm so the follow button makes the first screen (390x844) */
+  .hero__static-badge { margin-bottom: var(--space-3); }
+  .hero__eyebrow,
+  .hero__sub { margin-bottom: var(--space-2); }
+  .hero__lead { margin-bottom: var(--space-3); }
   .stats { gap: var(--space-4); }
   /* phones: the follow leads full width, the two secondary routes share a row,
      so nothing wraps into an orphan */
