@@ -34,8 +34,6 @@ export function buildApproachScene({ gsap }) {
 
     const thesis = document.querySelector(".approach__thesis");
     const rail = document.querySelector(".approach__rail");
-    const progress = document.querySelector(".approach__progress");
-    const ticks = gsap.utils.toArray(".approach__tick i");
     const lines = gsap.utils.toArray(".approach__thesis .ln");
     const em = document.querySelector(".approach__h2 em");
     const beliefs = gsap.utils.toArray(".approach__track .belief");
@@ -58,8 +56,7 @@ export function buildApproachScene({ gsap }) {
     document.documentElement.classList.add("approach-live");
     gsap.set(lines, { autoAlpha: 0, y: 42 });
     if (em) gsap.set(em, { autoAlpha: 0, yPercent: 20 });
-    gsap.set([rail, progress], { autoAlpha: 0 });
-    gsap.set(ticks, { scaleY: 0, transformOrigin: "top" });
+    gsap.set(rail, { autoAlpha: 0 });
     beliefWords.forEach((words) => words && gsap.set(words, { yPercent: 110 }));
     // every belief already sits in its recap slot (CSS grid); park each one
     // hidden and a little low, ready to rise into place.
@@ -119,15 +116,13 @@ export function buildApproachScene({ gsap }) {
     tl.addLabel(LANDING, 0);
     tl.to({}, { duration: 0.7 }) // hold — let the line land
       .to(thesis, { autoAlpha: 0, y: -70, duration: 0.5, ease: "power2.in" }, ">")
-      .to([rail, progress], { autoAlpha: 1, duration: 0.3 }, "<");
+      .to(rail, { autoAlpha: 1, duration: 0.3 }, "<");
 
     // phase 2 — each belief rises into its slot while the ones before it step
     // back, like a keynote build with "dim previous".
     beliefs.forEach((belief, i) => {
       tl.to(belief, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" });
       if (i > 0) tl.to(beliefs.slice(0, i), { autoAlpha: DIMMED, duration: 0.4, ease: "power2.out" }, "<");
-      // the progress rail fills one tick per belief — a "you are N of 4" spine
-      if (ticks[i]) tl.to(ticks[i], { scaleY: 1, duration: 0.4, ease: "power2.out" }, "<");
       // the bold clause writes itself in as the belief settles
       if (beliefWords[i]) tl.to(beliefWords[i], { yPercent: 0, duration: 0.4, stagger: 0.03, ease: SIGNATURE_EASE }, "<0.1");
       tl.to({}, { duration: 1.3 }); // dwell

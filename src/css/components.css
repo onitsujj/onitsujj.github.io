@@ -432,28 +432,6 @@
   color: var(--text-1);
 }
 
-/* progress rail — only rendered inside the live keynote scene (positioned in
-   the .approach-live block below). Each tick is a dim track with a cyan fill
-   (the <i>) that scaleY-fills as its belief reaches centre. */
-.approach__progress {
-  display: none;
-}
-.approach__tick {
-  display: block;
-  width: 2px;
-  height: 30px;
-  background: var(--line-strong);
-  overflow: hidden;
-}
-.approach__tick i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--accent);
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
 /* ---- Desktop + motion: the pinned keynote scene ---- */
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
   /* pre-paint hide for the pieces the timeline brings in — reuses the global
@@ -478,8 +456,8 @@
   overflow: hidden;
   background: var(--bg-elev);
 }
-/* the tag and the progress rail sit on the shared content-column edge (the
-   same left edge as every .container), not the viewport gutter */
+/* the tag sits on the shared content-column edge (the same left edge as
+   every .container), not the viewport gutter */
 .approach-live .approach__tag {
   position: absolute;
   top: calc(var(--nav-h) + 20px);
@@ -524,8 +502,8 @@
   /* stays three across down to the scene's 821px floor, over the ≤900px
      single-column rule (which is for the static layout) */
   grid-template-columns: repeat(3, 1fr);
-  /* indented past the progress rail on the left, mirrored on the right so
-     the third column stays clear of the section index at narrow desktops */
+  /* inset on both sides so the third column stays clear of the section
+     index at narrow desktops, and the grid stays centred */
   padding-inline: calc(var(--gutter) + var(--space-5));
   column-gap: var(--space-4);
   row-gap: var(--space-5);
@@ -535,16 +513,6 @@
 .approach-live .belief--note .belief__text {
   font-size: var(--fs-lead);
   line-height: 1.55;
-}
-.approach-live .approach__progress {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: absolute;
-  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); /* column edge — clear of the right-edge section index */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 3;
 }
 
 /* ============================================================
