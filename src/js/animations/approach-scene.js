@@ -9,9 +9,9 @@ import { SplitText } from "gsap/SplitText";
 import { SIGNATURE_EASE } from "./motion-tokens.js";
 
 // how far a belief rests while a later one has the stage — dimmed enough to
-// step back, bright enough to stay legible as "already said" (0.45 keeps the
-// dimmed text above 3:1 on the raised stage).
-const DIMMED = 0.45;
+// step back, bright enough to stay legible as "already said" (0.5 keeps the
+// dimmed 23px text at ~4.8:1 on the raised stage, clear of WCAG AA).
+const DIMMED = 0.5;
 
 // The live scene's pinned timeline, so an anchor jump to #approach can land on
 // the pin start, where the intro has already built the thesis. Null when the
