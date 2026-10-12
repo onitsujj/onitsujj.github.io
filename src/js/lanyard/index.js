@@ -5,8 +5,15 @@ import { LANYARD_MOUNT, HERO } from "../dom.js";
 
 // Whether to mount the live WebGL badge. Phones / narrow / no-WebGL get the
 // static card instead. (Vendoring the libs locally means Brave desktop now
-// passes this — the old esm.sh block is gone.)
+// passes this — the old esm.sh block is gone.) Probed once per load: main.js
+// and initLanyard both ask, and each probe costs a WebGL context.
+let use3D;
 export function canUse3D() {
+  if (use3D === undefined) use3D = probe3D();
+  return use3D;
+}
+
+function probe3D() {
   if (typeof window === "undefined") return false;
   if (
     window.matchMedia &&
@@ -21,7 +28,9 @@ export function canUse3D() {
       window.WebGLRenderingContext &&
       (c.getContext("webgl2") || c.getContext("webgl") || c.getContext("experimental-webgl"));
     if (!gl) return false;
-    return !isSoftwareRenderer(gl);
+    const software = isSoftwareRenderer(gl);
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return !software;
   } catch (e) {
     return false;
   }
@@ -41,7 +50,7 @@ function isSoftwareRenderer(gl) {
 
 // Lazy-load + mount the 3D badge over the static one. Resolves true once the
 // live badge is on screen, false if 3D isn't used or fails — the load
-// choreography (M3) awaits this with its own timeout race.
+// choreography (M3) awaits this to fade the canvas in.
 export function initLanyard({ onReady } = {}) {
   const mountEl = document.querySelector(LANYARD_MOUNT);
   const hero = document.querySelector(HERO);

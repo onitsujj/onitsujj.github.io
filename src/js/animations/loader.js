@@ -31,7 +31,7 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady, onHeroShown }) 
       gsap.set(h1, { opacity: 0, y: 24 });
     }
 
-    const content = gsap.timeline({ paused: true, defaults: { ease: SIGNATURE_EASE }, onComplete: onHeroShown });
+    const content = gsap.timeline({ defaults: { ease: SIGNATURE_EASE }, onComplete: onHeroShown });
     content
       .to(".hero__eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0);
     if (lines.length) {
@@ -56,8 +56,6 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady, onHeroShown }) 
       .to(".hero__sub", { opacity: 1, y: 0, duration: 0.6 }, 0.32)
       .to(".hero__lead", { opacity: 1, y: 0, duration: 0.7 }, 0.45)
       .to(".hero__actions", { opacity: 1, y: 0, duration: 0.7 }, 0.6);
-
-    content.play();
 
     Promise.resolve(lanyardReady).then((used) => {
       if (used) {
