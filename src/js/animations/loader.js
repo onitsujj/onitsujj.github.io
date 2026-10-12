@@ -1,5 +1,6 @@
-// First-load choreography. The hero copy and the static badge arrive together;
-// the live 3D badge, where used, cross-fades over the static one once ready.
+// First-load choreography. The hero copy cascades straight away; the static
+// badge drops in beside it, or, where 3D is used, the live badge fades in once
+// it has mounted after the cascade.
 // Content never waits on the 3D libs: the hero lead is the page's largest
 // paint, so holding it for the badge cost up to 1.7s of LCP.
 import { LANYARD_MOUNT, HERO_STATIC_BADGE } from "../dom.js";
@@ -57,14 +58,15 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady, onHeroShown }) 
       .to(".hero__actions", { opacity: 1, y: 0, duration: 0.7 }, 0.6);
 
     content.play();
-    // the static badge drops in with the copy; the live 3D one (if any) mounts
-    // after the cascade and cross-fades over it
-    gsap.to(HERO_STATIC_BADGE, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
 
     Promise.resolve(lanyardReady).then((used) => {
-      if (!used) return;
-      gsap.to(LANYARD_MOUNT, { opacity: 1, duration: 0.8, ease: "power2.out" });
-      gsap.to(HERO_STATIC_BADGE, { opacity: 0, duration: 0.8, ease: "power2.out" });
+      if (used) {
+        // the live 3D badge mounts after the cascade — fade the canvas in, keep static hidden
+        gsap.to(LANYARD_MOUNT, { opacity: 1, duration: 0.8, ease: "power2.out" });
+      } else {
+        // no 3D — drop the static badge in alongside the copy
+        gsap.to(HERO_STATIC_BADGE, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
+      }
     });
   };
 

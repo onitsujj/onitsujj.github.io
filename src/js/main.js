@@ -1,6 +1,6 @@
 // Fonts load from css/main.css (so they apply with JS off), not from here.
 import { initNav } from "./nav.js";
-import { initLanyard } from "./lanyard/index.js";
+import { canUse3D, initLanyard } from "./lanyard/index.js";
 import { initMotion } from "./animations/motion.js";
 
 initNav();
@@ -20,7 +20,8 @@ const heroShownP = new Promise((resolve) => {
   heroShown = resolve;
   setTimeout(resolve, 3000);
 });
-const lanyardReady = reduceMotion ? Promise.resolve(false) : heroShownP.then(() => initLanyard({}));
+const lanyardReady =
+  !reduceMotion && canUse3D() ? heroShownP.then(() => initLanyard({})) : Promise.resolve(false);
 
 initMotion({ lanyardReady, onHeroShown: heroShown });
 
