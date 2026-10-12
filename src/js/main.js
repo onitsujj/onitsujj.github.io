@@ -15,15 +15,15 @@ const reduceMotion =
 // load choreography awaits this to fade the right badge in. Mounting it costs
 // enough GPU work to hold back the hero copy's first paint (~1.2s of LCP), so
 // it starts once the hero cascade has played, or after 3s if motion never runs.
-let heroShown;
-const heroShownP = new Promise((resolve) => {
-  heroShown = resolve;
+let resolveHeroShown;
+const heroShown = new Promise((resolve) => {
+  resolveHeroShown = resolve;
   setTimeout(resolve, 3000);
 });
 const lanyardReady =
-  !reduceMotion && canUse3D() ? heroShownP.then(() => initLanyard({})) : Promise.resolve(false);
+  !reduceMotion && canUse3D() ? heroShown.then(() => initLanyard({})) : Promise.resolve(false);
 
-initMotion({ lanyardReady, onHeroShown: heroShown });
+initMotion({ lanyardReady, onHeroShown: resolveHeroShown });
 
 // Talks photo strip: Flip lightbox, stagger reveal, glide nav, draggable strip.
 // Its GSAP plugins (Flip/Draggable/Inertia, ~24KB gzip) lazy-load off the
