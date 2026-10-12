@@ -1,6 +1,6 @@
 // Fonts load from css/main.css (so they apply with JS off), not from here.
 import { initNav } from "./nav.js";
-import { initLanyard } from "./lanyard/index.js";
+import { canUse3D, initLanyard } from "./lanyard/index.js";
 import { initMotion } from "./animations/motion.js";
 
 initNav();
@@ -12,10 +12,18 @@ const reduceMotion =
 
 // Live 3D lanyard lazy-loads + mounts over the static badge on capable
 // browsers. Resolves true once the badge is on screen, false otherwise — the
-// load choreography awaits this to time "badge first, then content".
-const lanyardReady = reduceMotion ? Promise.resolve(false) : initLanyard({});
+// load choreography awaits this to fade the right badge in. Mounting it costs
+// enough GPU work to hold back the hero copy's first paint (~1.2s of LCP), so
+// it starts once the hero cascade has played, or after 3s if motion never runs.
+let resolveHeroShown;
+const heroShown = new Promise((resolve) => {
+  resolveHeroShown = resolve;
+  setTimeout(resolve, 3000);
+});
+const lanyardReady =
+  !reduceMotion && canUse3D() ? heroShown.then(() => initLanyard({})) : Promise.resolve(false);
 
-initMotion({ lanyardReady });
+initMotion({ lanyardReady, onHeroShown: resolveHeroShown });
 
 // Talks photo strip: Flip lightbox, stagger reveal, glide nav, draggable strip.
 // Its GSAP plugins (Flip/Draggable/Inertia, ~24KB gzip) lazy-load off the

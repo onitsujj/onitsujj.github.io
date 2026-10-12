@@ -138,6 +138,10 @@ export function buildApproachScene({ gsap }) {
       sceneTl = null;
       document.documentElement.classList.remove("approach-live");
       beliefSplits.forEach((s) => s.revert());
+      // the revert leaves the thesis holding the pinned layout's centring
+      // transform inline, which throws it off-canvas once the scene is off
+      // (desktop -> phone resize); drop what the scene wrote.
+      gsap.set(thesis, { clearProps: "transform,translate,rotate,scale,opacity,visibility" });
     };
   });
   return mm;

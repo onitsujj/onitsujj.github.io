@@ -11,7 +11,7 @@ import { approachLanding } from "./approach-scene.js";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
-export function initMotion({ lanyardReady } = {}) {
+export function initMotion({ lanyardReady, onHeroShown } = {}) {
   const mm = gsap.matchMedia();
 
   mm.add(
@@ -59,7 +59,7 @@ export function initMotion({ lanyardReady } = {}) {
         };
         document.addEventListener("click", onAnchorClick);
 
-        const loadCleanup = buildLoadReveal({ gsap, SplitText, lanyardReady });
+        const loadCleanup = buildLoadReveal({ gsap, SplitText, lanyardReady, onHeroShown });
         const cleanup = setupScroll({ gsap, ScrollTrigger, reduced: false });
         const microCleanup = setupMicro({ gsap });
 
