@@ -1,11 +1,11 @@
-// First-load choreography — "lanyard first, then content", decoupled from the
-// network. The badge (live 3D, or the static fallback) settles in, then the
-// hero copy cascades. Content NEVER waits on the 3D libs: a timeout guarantees
-// it appears even if WebGL is slow/absent.
+// First-load choreography. The hero copy and the static badge arrive together;
+// the live 3D badge, where used, cross-fades over the static one once ready.
+// Content never waits on the 3D libs: the hero lead is the page's largest
+// paint, so holding it for the badge cost up to 1.7s of LCP.
 import { LANYARD_MOUNT, HERO_STATIC_BADGE } from "../dom.js";
 import { SIGNATURE_EASE } from "./motion-tokens.js";
 
-export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
+export function buildLoadReveal({ gsap, SplitText, lanyardReady, onHeroShown }) {
   // the headline line-split, kept so a mid-session reduced-motion switch can
   // revert it (restoring the plain <h1>) instead of leaking the split DOM.
   let splitInstance = null;
@@ -30,7 +30,7 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
       gsap.set(h1, { opacity: 0, y: 24 });
     }
 
-    const content = gsap.timeline({ paused: true, defaults: { ease: SIGNATURE_EASE } });
+    const content = gsap.timeline({ paused: true, defaults: { ease: SIGNATURE_EASE }, onComplete: onHeroShown });
     content
       .to(".hero__eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0);
     if (lines.length) {
@@ -56,20 +56,15 @@ export function buildLoadReveal({ gsap, SplitText, lanyardReady }) {
       .to(".hero__lead", { opacity: 1, y: 0, duration: 0.7 }, 0.45)
       .to(".hero__actions", { opacity: 1, y: 0, duration: 0.7 }, 0.6);
 
-    let started = false;
-    const go = () => { if (!started) { started = true; content.play(); } };
-    const fallback = setTimeout(go, 1700);
+    content.play();
+    // the static badge drops in with the copy; the live 3D one (if any) mounts
+    // after the cascade and cross-fades over it
+    gsap.to(HERO_STATIC_BADGE, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
 
     Promise.resolve(lanyardReady).then((used) => {
-      clearTimeout(fallback);
-      if (used) {
-        // the live 3D badge is the star — fade the canvas in, keep static hidden
-        gsap.to(LANYARD_MOUNT, { opacity: 1, duration: 0.8, ease: "power2.out" });
-      } else {
-        // no 3D — drop the static badge in first
-        gsap.to(HERO_STATIC_BADGE, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
-      }
-      gsap.delayedCall(used ? 0.2 : 0.45, go);
+      if (!used) return;
+      gsap.to(LANYARD_MOUNT, { opacity: 1, duration: 0.8, ease: "power2.out" });
+      gsap.to(HERO_STATIC_BADGE, { opacity: 0, duration: 0.8, ease: "power2.out" });
     });
   };
 

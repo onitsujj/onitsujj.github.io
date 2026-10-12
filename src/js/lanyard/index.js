@@ -17,13 +17,26 @@ export function canUse3D() {
   }
   try {
     const c = document.createElement("canvas");
-    return !!(
+    const gl =
       window.WebGLRenderingContext &&
-      (c.getContext("webgl2") || c.getContext("webgl") || c.getContext("experimental-webgl"))
-    );
+      (c.getContext("webgl2") || c.getContext("webgl") || c.getContext("experimental-webgl"));
+    if (!gl) return false;
+    return !isSoftwareRenderer(gl);
   } catch (e) {
     return false;
   }
+}
+
+// WebGL drawn on the CPU (no usable GPU): the physics + render loop then
+// blocks the main thread for seconds, so those machines keep the static card.
+const SOFTWARE_RENDERERS = /swiftshader|llvmpipe|softpipe|software|basic render/i;
+
+function isSoftwareRenderer(gl) {
+  const info = gl.getExtension("WEBGL_debug_renderer_info");
+  const renderer = info
+    ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL)
+    : gl.getParameter(gl.RENDERER);
+  return SOFTWARE_RENDERERS.test(String(renderer));
 }
 
 // Lazy-load + mount the 3D badge over the static one. Resolves true once the

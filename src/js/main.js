@@ -12,10 +12,17 @@ const reduceMotion =
 
 // Live 3D lanyard lazy-loads + mounts over the static badge on capable
 // browsers. Resolves true once the badge is on screen, false otherwise — the
-// load choreography awaits this to time "badge first, then content".
-const lanyardReady = reduceMotion ? Promise.resolve(false) : initLanyard({});
+// load choreography awaits this to fade the right badge in. Mounting it costs
+// enough GPU work to hold back the hero copy's first paint (~1.2s of LCP), so
+// it starts once the hero cascade has played, or after 3s if motion never runs.
+let heroShown;
+const heroShownP = new Promise((resolve) => {
+  heroShown = resolve;
+  setTimeout(resolve, 3000);
+});
+const lanyardReady = reduceMotion ? Promise.resolve(false) : heroShownP.then(() => initLanyard({}));
 
-initMotion({ lanyardReady });
+initMotion({ lanyardReady, onHeroShown: heroShown });
 
 // Talks photo strip: Flip lightbox, stagger reveal, glide nav, draggable strip.
 // Its GSAP plugins (Flip/Draggable/Inertia, ~24KB gzip) lazy-load off the
